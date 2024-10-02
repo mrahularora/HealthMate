@@ -9,7 +9,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 // import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';
-// import ContactPage from './pages/ContactPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/about" element={<AboutPage />} />
-          {/* <Route path="/contact" element={<ContactPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          {/* <Route path="/admin" element={<AdminPage />} />
           <Route path="/doctor" element={<DoctorPage />} />
           <Route path="/user" element={<UserPage />} />
           <Route path="/appointmentPage" element={<AppointmentPage />} /> */}
