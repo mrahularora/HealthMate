@@ -3,11 +3,11 @@ import Footer from './components/common/Footer';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-// import DoctorPage from './pages/DoctorPage';
-// import AdminPage from './pages/AdminPage';
-// import UserPage from './pages/UserPage';
+import DoctorPage from './pages/DoctorPage';
+import AdminPage from './pages/AdminPage';
+import UserPage from './pages/UserPage';
 import SignupPage from './pages/SignupPage';
-// import AppointmentPage from './pages/AppointmentPage';
+import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 
@@ -22,10 +22,10 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          {/* <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="/doctor" element={<DoctorPage />} />
           <Route path="/user" element={<UserPage />} />
-          <Route path="/appointmentPage" element={<AppointmentPage />} /> */}
+          <Route path="/appointmentPage" element={<AppointmentPage />} />
         </Routes>
       </div>
       <Footer />
