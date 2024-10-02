@@ -1,0 +1,42 @@
+.about-hero-section {
+    height: 85vh;
+    background-image: url('/public/assets/images/mask_guy.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: #fff;
+  }
+  
+  .about-hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+  }
+  
+  .about-hero-content {
+    position: relative;
+    text-align: center;
+    z-index: 1; 
+  }
+  
+  .about-hero-content h1 {
+    font-size: 4rem;
+    margin: 0 0 20px;
+  }
+  
+  .about-hero-content p {
+    font-size: 1.5rem;
+    margin: 0 0 30px;
+  }
+
+  .about-box{
+    width: 80%;
+    margin: auto;
+  }
