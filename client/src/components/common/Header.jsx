@@ -1,12 +1,11 @@
-// src/components/common/Header.jsx
-
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Use react-router-dom for navigation
+import { Link } from 'react-router-dom'; 
 
 const Header = () => {
     return (
-        <Navbar bg="light" expand="lg">
+        <div className="header" bg="light">
+        <Navbar expand="lg">
             <Navbar.Brand as={Link} to="/"><img src="/assets/images/logo2.png" alt="logo" className="width25" /></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
@@ -19,6 +18,7 @@ const Header = () => {
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
+        </div>
     );
 };
 

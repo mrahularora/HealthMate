@@ -1,27 +1,45 @@
 import React, { useState } from 'react';
+import { login } from '../services/authService'; 
+import { useNavigate } from 'react-router-dom'; 
 import '../css/login.css';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform your login logic here
+    
     if (email === '' || password === '') {
       setErrorMessage('Please fill in all fields.');
     } else {
       setErrorMessage('');
-      // TODO: Add authentication logic
-      console.log('Logging in with', { email, password });
+      
+      try {
+        const response = await login({ email, password });
+        console.log('Login successful:', response.message);
+        
+     
+        setSuccessMessage('Login successful! Redirecting...');
+        
+     
+        navigate('/userpage');
+
+      } catch (error) {
+        setErrorMessage(error.message || 'Login failed, please try again.');
+      }
     }
   };
-
+  
   return (
     <div className="login-form-container">
       <h2 className="mb-4">Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email Address<span className="red">* </span>:</label>
@@ -45,7 +63,9 @@ function Login() {
             required
           />
         </div>
-        <div className="form-group"><a href="/signup">Create an Account</a> | <a href="/forgotpassword">Forgot Password</a> </div>
+        <div className="form-group">
+          <a href="/signup">Create an Account</a> | <a href="/forgotpassword">Forgot Password</a> 
+        </div>
         <button type="submit" className="login-button">Login</button>
       </form>
     </div>

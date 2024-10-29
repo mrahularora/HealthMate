@@ -23,6 +23,8 @@ img {
 }
 
 .width25 {width: 250px;}
+.header {width: 80%; margin:auto;}
+.right{ text-decoration: right;}
 .clear{display: table; clear: both;}
 
 .hero-section {

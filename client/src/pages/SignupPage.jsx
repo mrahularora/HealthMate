@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { signup } from '../services/authService'; 
 import '../css/signup.css'; 
 
 function SignupPage() {
@@ -24,7 +25,7 @@ function SignupPage() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { firstName, lastName, email, confirmEmail, password, confirmPassword, gender, role } = formData;
 
@@ -42,23 +43,37 @@ function SignupPage() {
       return;
     }
 
-    // TODO: Add logic to save user data to the database
-    // This could involve sending a POST request to your backend API.
-
-    setErrorMessage('');
-    setSuccessMessage('Signup successful! You can now log in.');
     
-    // Clear the form after successful submission
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      confirmEmail: '',
-      gender: '',
-      password: '',
-      confirmPassword: '',
-      role: 'User', // Reset to default role
-    });
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        password,
+        gender,
+        role,
+      };
+
+      await signup(userData); 
+
+      setSuccessMessage('Signup successful! You can now log in.');
+
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        confirmEmail: '',
+        gender: '',
+        password: '',
+        confirmPassword: '',
+        role: 'User', // Reset to default role
+      });
+    } catch (error) {
+      setErrorMessage(error.message || 'An error occurred during signup.');
+    }
   };
 
   return (
