@@ -1,9 +1,9 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import useAuth from './useAuth'; // Import the useAuth hook
+import useAuth from './useAuth'; 
 
 const ProtectedRoute = ({ component: Component, allowedRoles }) => {
-  const { user } = useAuth(); // Use the custom hook to access user
+  const { user } = useAuth(); 
 
   if (!user) {
     return <Navigate to="/login" />;

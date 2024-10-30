@@ -29,7 +29,7 @@ const Header = () => {
             {user ? (
               <>
                 {/* Render Dashboard link based on role */}
-                {user.role === 'Admin' && <Nav.Link as={Link} to="/adminpage">Dashboard</Nav.Link>}
+                {user.role === 'Admin' && <Nav.Link as={Link} to="/AdminPage">Dashboard</Nav.Link>}
                 {user.role === 'User' && <Nav.Link as={Link} to="/userpage">Dashboard</Nav.Link>}
                 {user.role === 'Doctor' && <Nav.Link as={Link} to="/doctorpage">Dashboard</Nav.Link>}
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>

@@ -35,7 +35,7 @@ function LoginPage() {
 
       switch (role) {
         case 'Admin':
-          redirectPath = '/adminpage'; // Redirect to Admin page
+          redirectPath = '/AdminPage'; // Redirect to Admin page
           break;
         case 'User':
           redirectPath = '/userpage'; // Redirect to User page
