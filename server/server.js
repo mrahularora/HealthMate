@@ -2,11 +2,11 @@
 const express = require('express');
 const connectDB = require('./config/db'); 
 const authRoutes = require('./routes/authRoutes');
-const dotenv = require('dotenv'); // Load environment variables
-const cors = require('cors'); // CORS middleware
-const cookieParser = require('cookie-parser'); // Cookie parser middleware
+const dotenv = require('dotenv');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); 
 
 const app = express();
 
@@ -14,12 +14,17 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+const corsOptions = {
+  origin: 'http://localhost:3000', 
+  credentials: true, 
+};
+
+app.use(cors(corsOptions)); 
 app.use(express.json()); // Parse JSON requests
 app.use(cookieParser()); // Parse cookies
 
 // Routes
-app.use('/api/auth', authRoutes); // Set up authentication routes
+app.use('/api/auth', authRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

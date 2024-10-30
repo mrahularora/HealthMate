@@ -1,4 +1,3 @@
-// /middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
 
 // Middleware to protect routes

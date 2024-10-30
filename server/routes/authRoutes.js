@@ -12,8 +12,8 @@ router.post('/login', login);
 // Protected routes
 router.get('/logout', protect, logout); // Use the protect middleware
 
-// New protected route to get user profile
-router.get('/profile', protect, (req, res) => {
+// New protected route to protectget user profile
+router.get('/profile', (req, res) => {
   res.status(200).json({
     message: 'User profile retrieved successfully',
     user: {
