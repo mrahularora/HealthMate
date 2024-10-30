@@ -2,6 +2,19 @@
   display: flex;
 }
 
+.greeting {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.records-title {
+  font-size: 1.2em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
 .appointments-container {
   flex: 1;
   padding: 20px;
