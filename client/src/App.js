@@ -10,8 +10,9 @@ import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-import ProtectedRoute from './context/ProtectedRoute'; 
-import Unauthorized from './components/Unauthorized'; 
+import ProtectedRoute from './context/ProtectedRoute';
+import Unauthorized from './components/Unauthorized';
+import RedirectIfAuthenticated from './context/RedirectIfAuthenticated';
 
 function App() {
   const navigate = useNavigate();
@@ -22,8 +23,25 @@ function App() {
       <div className="flex-grow-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage navigate={navigate} />} />
-          <Route path="/signup" element={<SignupPage />} />
+          
+          {/* Redirect if authenticated */}
+          <Route 
+            path="/login" 
+            element={
+              <RedirectIfAuthenticated>
+                <LoginPage navigate={navigate} />
+              </RedirectIfAuthenticated>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <RedirectIfAuthenticated>
+                <SignupPage />
+              </RedirectIfAuthenticated>
+            } 
+          />
+
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
 

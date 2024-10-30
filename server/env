@@ -1,0 +1,11 @@
+# MongoDB URI
+MONGO_URI=mongodb+srv://admin:admin@cluster0.4f84kvk.mongodb.net/HealthMate?retryWrites=true&w=majority&appName=Cluster0
+
+# JWT Secret
+JWT_SECRET=123qwe456rty789yui
+
+# Node Environment
+NODE_ENV=development  # or 'production' based on your environment
+
+# Port
+PORT=5000
