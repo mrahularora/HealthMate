@@ -13,7 +13,7 @@ const Header = () => {
   };
 
   return (
-    <div className="header" bg="light">
+    <div className="header">
       <Navbar expand="lg">
         <Navbar.Brand as={Link} to="/">
           <img src="/assets/images/logo2.png" alt="logo" className="width25" />
@@ -25,10 +25,13 @@ const Header = () => {
             <Nav.Link as={Link} to="/about">About</Nav.Link>
             <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
             
-            {/* Conditionally render based on whether the user is logged in or not */}
+            {/* Conditionally render based on user roles */}
             {user ? (
               <>
-                <Nav.Link as={Link} to="/userpage">Dashboard</Nav.Link>
+                {/* Render Dashboard link based on role */}
+                {user.role === 'Admin' && <Nav.Link as={Link} to="/adminpage">Dashboard</Nav.Link>}
+                {user.role === 'User' && <Nav.Link as={Link} to="/userpage">Dashboard</Nav.Link>}
+                {user.role === 'Doctor' && <Nav.Link as={Link} to="/doctorpage">Dashboard</Nav.Link>}
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             ) : (

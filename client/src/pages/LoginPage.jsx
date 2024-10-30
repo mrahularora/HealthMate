@@ -4,53 +4,59 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext'; 
 import '../css/login.css';
 
-function Login() {
+function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  
+
   const navigate = useNavigate();
   const { login: setUser } = useContext(AuthContext); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (email === '' || password === '') {
       setErrorMessage('Please fill in all fields.');
-    } else {
-      setErrorMessage('');
-      
-      try {
-        const response = await login({ email, password });
-        console.log('Login successful:', response.message);
-        
-        setUser(response.user); // Pass the user object from the response
+      return;
+    }
 
-        setSuccessMessage('Login successful! Redirecting...');
-        
-        // Redirect based on user role
-        const { role } = response.user;
-        
-        let redirectPath = '/'; // Default redirect path
-        if (role === 'Admin') {
+    try {
+      const response = await login({ email, password });
+      console.log('Login successful:', response.message);
+
+      setUser(response.user); // Pass the user object from the response
+
+      setSuccessMessage('Login successful! Redirecting...');
+
+      // Redirect based on user role
+      const { role } = response.user;
+      let redirectPath = '/'; // Default redirect path
+
+      switch (role) {
+        case 'Admin':
           redirectPath = '/adminpage'; // Redirect to Admin page
-        } else if (role === 'User') {
+          break;
+        case 'User':
           redirectPath = '/userpage'; // Redirect to User page
-        } else if (role === 'Doctor') {
-          redirectPath = '/doctor'
-        }
-
-        setTimeout(() => {
-          navigate(redirectPath);
-        }, 1000);
-
-      } catch (error) {
-        setErrorMessage(error.message || 'Login failed, please try again.');
+          break;
+        case 'Doctor':
+          redirectPath = '/doctorpage'; // Redirect to Doctor page
+          break;
+        default:
+          redirectPath = '/'; // Redirect to home if no specific role
+          break;
       }
+
+      setTimeout(() => {
+        navigate(redirectPath);
+      }, 1000);
+
+    } catch (error) {
+      setErrorMessage(error.message || 'Login failed, please try again.');
     }
   };
-  
+
   return (
     <div className="login-form-container">
       <h2 className="mb-4">Login</h2>
@@ -58,7 +64,7 @@ function Login() {
       {successMessage && <p className="success-message">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="email">Email Address<span className="red">* </span>:</label>
+          <label htmlFor="email">Email Address<span className="red">*</span>:</label>
           <input
             type="email"
             id="email"
@@ -69,7 +75,7 @@ function Login() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password<span className="red">* </span>:</label>
+          <label htmlFor="password">Password<span className="red">*</span>:</label>
           <input
             type="password"
             id="password"
@@ -88,4 +94,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;
