@@ -28,7 +28,7 @@ const Header = () => {
             {/* Conditionally render based on whether the user is logged in or not */}
             {user ? (
               <>
-                <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                <Nav.Link as={Link} to="/userpage">Dashboard</Nav.Link>
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             ) : (
