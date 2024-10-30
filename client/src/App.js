@@ -47,13 +47,13 @@ function App() {
 
           {/* Protected Routes */}
           <Route
-            path="/admin"
+            path="/AdminPage"
             element={
               <ProtectedRoute component={AdminPage} allowedRoles={['Admin']} />
             }
           />
           <Route
-            path="/doctor"
+            path="/DoctorPage"
             element={
               <ProtectedRoute component={DoctorPage} allowedRoles={['Doctor', 'Admin']} />
             }
