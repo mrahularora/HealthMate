@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { login } from '../services/authService'; 
 import { useNavigate } from 'react-router-dom'; 
+import { AuthContext } from '../context/AuthContext'; 
 import '../css/login.css';
 
 function Login() {
@@ -10,6 +11,7 @@ function Login() {
   const [successMessage, setSuccessMessage] = useState('');
   
   const navigate = useNavigate();
+  const { login: setUser } = useContext(AuthContext); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +25,25 @@ function Login() {
         const response = await login({ email, password });
         console.log('Login successful:', response.message);
         
-     
+        setUser(response.user); // Pass the user object from the response
+
         setSuccessMessage('Login successful! Redirecting...');
         
-     
-        navigate('/userpage');
+        // Redirect based on user role
+        const { role } = response.user;
+        
+        let redirectPath = '/'; // Default redirect path
+        if (role === 'Admin') {
+          redirectPath = '/adminpage'; // Redirect to Admin page
+        } else if (role === 'User') {
+          redirectPath = '/userpage'; // Redirect to User page
+        } else if (role === 'Doctor') {
+          redirectPath = '/doctor'
+        }
+
+        setTimeout(() => {
+          navigate(redirectPath);
+        }, 1000);
 
       } catch (error) {
         setErrorMessage(error.message || 'Login failed, please try again.');
@@ -39,7 +55,7 @@ function Login() {
     <div className="login-form-container">
       <h2 className="mb-4">Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
+      {successMessage && <p className="success-message">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email Address<span className="red">* </span>:</label>

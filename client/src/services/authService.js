@@ -12,6 +12,7 @@ export const signup = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await axios.post('/auth/login', credentials);
+    console.log('Login response:', response); 
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : new Error('Network error');
@@ -25,7 +26,6 @@ export const logout = async () => {
     console.error('Logout failed:', error);
   }
 };
-
 
 const authService = {
   signup,

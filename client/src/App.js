@@ -10,6 +10,8 @@ import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ProtectedRoute from './context/ProtectedRoute'; 
+import Unauthorized from './components/Unauthorized'; 
 
 function App() {
   const navigate = useNavigate();
@@ -24,10 +26,35 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/doctor" element={<DoctorPage />} />
-          <Route path="/userpage" element={<UserPage />} />
-          <Route path="/appointmentPage" element={<AppointmentPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute component={AdminPage} allowedRoles={['Admin']} />
+            }
+          />
+          <Route
+            path="/doctor"
+            element={
+              <ProtectedRoute component={DoctorPage} allowedRoles={['Doctor', 'Admin']} />
+            }
+          />
+          <Route
+            path="/userpage"
+            element={
+              <ProtectedRoute component={UserPage} allowedRoles={['User', 'Admin']} />
+            }
+          />
+          <Route
+            path="/appointmentPage"
+            element={
+              <ProtectedRoute component={AppointmentPage} allowedRoles={['User', 'Doctor', 'Admin']} />
+            }
+          />
+
+          {/* Unauthorized Route */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </div>
       <Footer />
