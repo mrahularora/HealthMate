@@ -38,19 +38,17 @@ function LoginPage() {
           redirectPath = '/AdminPage'; // Redirect to Admin page
           break;
         case 'User':
-          redirectPath = '/userpage'; // Redirect to User page
+          redirectPath = '/UserPage'; // Redirect to User page
           break;
         case 'Doctor':
-          redirectPath = '/doctorpage'; // Redirect to Doctor page
+          redirectPath = '/DoctorPage'; // Redirect to Doctor page
           break;
         default:
           redirectPath = '/'; // Redirect to home if no specific role
           break;
       }
 
-      setTimeout(() => {
         navigate(redirectPath);
-      }, 1000);
 
     } catch (error) {
       setErrorMessage(error.message || 'Login failed, please try again.');

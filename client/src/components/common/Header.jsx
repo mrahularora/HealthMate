@@ -20,7 +20,7 @@ const Header = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
+          <Nav className="links">
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/about">About</Nav.Link>
             <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
@@ -30,8 +30,8 @@ const Header = () => {
               <>
                 {/* Render Dashboard link based on role */}
                 {user.role === 'Admin' && <Nav.Link as={Link} to="/AdminPage">Dashboard</Nav.Link>}
-                {user.role === 'User' && <Nav.Link as={Link} to="/userpage">Dashboard</Nav.Link>}
-                {user.role === 'Doctor' && <Nav.Link as={Link} to="/doctorpage">Dashboard</Nav.Link>}
+                {user.role === 'User' && <Nav.Link as={Link} to="/UserPage">Dashboard</Nav.Link>}
+                {user.role === 'Doctor' && <Nav.Link as={Link} to="/DoctorPage">Dashboard</Nav.Link>}
                 <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
               </>
             ) : (

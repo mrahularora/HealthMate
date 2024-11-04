@@ -23,7 +23,37 @@ img {
 }
 
 .width25 {width: 250px;}
-.header {width: 80%; margin:auto;}
+.header {width: 98%; margin:auto;}
+
+
+/* Navigation */
+.links {
+  display: flex;
+  gap: 1rem; /* Adjust spacing between links */
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-left: auto;
+}
+
+.links a {
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.links a:hover {
+  color: #ff9800;
+  border-bottom: 2px solid #ff9800;
+}
+
+.links .active {
+  color: #ff9800;
+}
+
+/* Navigation Ends*/
+
+
 .right{ text-decoration: right;}
 .clear{display: table; clear: both;}
 

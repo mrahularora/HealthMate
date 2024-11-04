@@ -73,7 +73,7 @@ function App() {
             }
           />
           <Route
-            path="/userpage"
+            path="/UserPage"
             element={
               <ProtectedRoute component={UserPage} allowedRoles={['User', 'Admin']} />
             }
