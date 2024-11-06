@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import '../../css/doctorProfile.css'; // Ensure to create this file with the same styles as userProfile.css
+import '../../css/profile.css';
 import Sidebar from '../common/Sidebar';
 
-const DoctorProfile = () => {
+const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: 'Alice',
-    lastName: 'Smith',
-    email: 'alice.smith@hospital.com',
-    specialization: 'Cardiology',
-    experience: '10 Years',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    gender: 'Male',
+    role: 'User',
   });
 
   const handleInputChange = (e) => {
@@ -21,14 +21,14 @@ const DoctorProfile = () => {
 
   const handleSaveChanges = () => {
     setIsEditing(false);
-    console.log('Changes saved:', formData); // Just for demonstration
+    console.log('Changes saved:', formData);
   };
 
   return (
-    <div className="doctor-profile-container">
+    <div className="user-profile-container">
       <Sidebar />
-      <div className="doctor-profile">
-        <h2 className="title">Doctor Profile</h2>
+      <div className="user-profile">
+        <h2 className="title">User Profile</h2>
         <div className="profile-info">
           {isEditing ? (
             <>
@@ -57,24 +57,25 @@ const DoctorProfile = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  disabled
                 />
               </div>
               <div>
-                <label>Specialization:</label>
+                <label>Gender:</label>
                 <input
                   type="text"
-                  name="specialization"
-                  value={formData.specialization}
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleInputChange}
                 />
               </div>
               <div>
-                <label>Experience:</label>
+                <label>Role:</label>
                 <input
                   type="text"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
+                  name="role"
+                  value={formData.role}
+                  disabled
                 />
               </div>
               <button onClick={handleSaveChanges}>Save Changes</button>
@@ -84,8 +85,8 @@ const DoctorProfile = () => {
               <p><strong>First Name:</strong> {formData.firstName}</p>
               <p><strong>Last Name:</strong> {formData.lastName}</p>
               <p><strong>Email:</strong> {formData.email}</p>
-              <p><strong>Specialization:</strong> {formData.specialization}</p>
-              <p><strong>Experience:</strong> {formData.experience}</p>
+              <p><strong>Gender:</strong> {formData.gender}</p>
+              <p><strong>Role:</strong> {formData.role}</p>
               <button onClick={() => setIsEditing(true)}>Edit Profile</button>
             </>
           )}
@@ -95,4 +96,4 @@ const DoctorProfile = () => {
   );
 };
 
-export default DoctorProfile;
+export default UserProfile;

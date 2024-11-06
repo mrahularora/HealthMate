@@ -4,10 +4,9 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import DoctorPage from './pages/DoctorPage';
-import DoctorProfile from './components/doctor/DoctorProfile';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
-import UserProfile from './components/user/UserProfile';
+import Profile from './components/common/Profile'
 import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';
@@ -61,15 +60,9 @@ function App() {
             }
           />
           <Route
-            path="/DoctorProfile"
+            path="/Profile"
             element={
-              <ProtectedRoute component={DoctorProfile} allowedRoles={['Doctor', 'Admin']} />
-            }
-          />
-          <Route
-            path="/UserProfile"
-            element={
-              <ProtectedRoute component={UserProfile} allowedRoles={['User', 'Admin']} />
+              <ProtectedRoute component={Profile} allowedRoles={['Doctor', 'Admin','User']} />
             }
           />
           <Route
