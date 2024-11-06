@@ -1,12 +1,12 @@
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
-import { Route, Routes, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import DoctorPage from './pages/DoctorPage';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
-import Profile from './components/common/Profile'
+import Profile from './pages/Profile'
 import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
 import AboutPage from './pages/AboutPage';

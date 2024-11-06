@@ -17,45 +17,49 @@ body, h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
 }
 
+.width25 {width: 250px;}
+.header {width: 98%; margin:auto;}
+.right{ text-decoration: right;}
+.clear{display: table; clear: both;}
+.red{color:red;}
+
+/* form and validation css */
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.success-message {
+  color: green;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  box-sizing: border-box;
+}
+  
+input:focus {
+  outline: none;
+  border-color: #ed0d63;
+}
+
+/* form and validation css */
+
 img {
   max-width: 100%;
   height: auto;
 }
-
-.width25 {width: 250px;}
-.header {width: 98%; margin:auto;}
-
-
-/* Navigation */
-.links {
-  display: flex;
-  gap: 1rem; /* Adjust spacing between links */
-  align-items: center;
-  padding: 0.5rem 1rem;
-  margin-left: auto;
-}
-
-.links a {
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease, background-color 0.3s ease;
-}
-
-.links a:hover {
-  color: #ff9800;
-  border-bottom: 2px solid #ff9800;
-}
-
-.links .active {
-  color: #ff9800;
-}
-
-/* Navigation Ends*/
-
-
-.right{ text-decoration: right;}
-.clear{display: table; clear: both;}
 
 .hero-section {
   height: 85vh;
@@ -107,6 +111,7 @@ img {
 
 .btn:hover {
   background-color: #f45793;
+  color: #fff;
 }
 
 .doctor-details h3 {
@@ -125,8 +130,8 @@ img {
   color: #333;
 }
 
-/* GRID */
-.grid-container {
+/* DOCTOR SECTION GRID */
+.doctor-grid-container {
   width: 90%;
   margin: auto;
   display: grid;
@@ -135,7 +140,7 @@ img {
   padding: 20px;
 }
 
-.grid-item {
+.doctor-grid-item {
   border: 1px solid #ccc;
   padding: 0px;
   text-align: center;
@@ -144,11 +149,16 @@ img {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.grid-item:hover {
+.doctor-grid-item:hover {
   cursor: pointer;
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
+/* DOCTOR SECTION GRID ENDED */
+
+
+/* FOOTER STARTED */
 
 .footer {
   background-color: #2C4251;
@@ -217,16 +227,19 @@ img {
 }
 
 
-/* GRID */
+/* FOOTER  ENDED */
+
+
+/* DCOTOR GRID RESPONSIVE */
 
 @media (max-width: 768px) {
-  .grid-container {
+  .doctor-grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
-  .grid-container {
+  .doctor-grid-container {
     grid-template-columns: 1fr;
   }
 }

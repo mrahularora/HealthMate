@@ -56,12 +56,14 @@ function LoginPage() {
   };
 
   return (
-    <div className="login-form-container">
+    <div className="login-main">
+      <section className="login-section">
+        <div class="login-container">
       <h2 className="mb-4">Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className="login-form-group">
           <label htmlFor="email">Email Address<span className="red">*</span>:</label>
           <input
             type="email"
@@ -72,7 +74,7 @@ function LoginPage() {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="login-form-group">
           <label htmlFor="password">Password<span className="red">*</span>:</label>
           <input
             type="password"
@@ -83,11 +85,13 @@ function LoginPage() {
             required
           />
         </div>
-        <div className="form-group">
+        <div className="login-form-group">
           <a href="/signup">Create an Account</a> | <a href="/forgotpassword">Forgot Password</a> 
         </div>
         <button type="submit" className="login-button">Login</button>
       </form>
+      </div>
+      </section>
     </div>
   );
 }

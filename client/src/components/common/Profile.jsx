@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import '../../css/profile.css';
-import Sidebar from '../common/Sidebar';
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -25,8 +23,6 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="user-profile-container">
-      <Sidebar />
       <div className="user-profile">
         <h2 className="title">User Profile</h2>
         <div className="profile-info">
@@ -92,7 +88,6 @@ const UserProfile = () => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 

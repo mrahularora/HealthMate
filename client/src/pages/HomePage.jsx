@@ -7,9 +7,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        // Full URL to backend
         const response = await axios.get('http://localhost:5000/api/doctors');
-        console.log("Fetched doctors:", response.data); // Debugging log
+        console.log("Fetched doctors:", response.data);
         setDoctors(response.data);
       } catch (error) {
         console.error("Error fetching doctors:", error);
@@ -29,13 +28,22 @@ const HomePage = () => {
         </div>
       </div>
 
-      <h1 className="text-center">Doctors</h1>
-      <div className="grid-container mb-4">
+      <h2 className="text-center mb-4">What is HealthMate ?</h2>
+      <div className="mb-4 w-75 mx-auto mb-4">
+        <p className="text-center">HealthMate is a web and mobile application designed to bridge the communication between patients and doctors, 
+          while the patient can manage their medication and health habits through message alerts. 
+          It integrates an intuitive solution into three basic healthcare functionalities: doctor-patient communication, 
+          tracking habits, and medication administration. HealthMate desires to meet the emerging demands of quality patient attention, 
+          remote health management, and medication fidelity, which characterize a digitizing healthcare environment.</p>
+      </div>
+
+      <h2 className="text-center mb-4">Meet our Doctors</h2>
+      <div className="doctor-grid-container mb-4">
         {doctors.length === 0 ? (
           <p>Loading doctors...</p>
         ) : (
           doctors.map((doctor) => (
-            <div key={doctor._id} className="grid-item">
+            <div key={doctor._id} className="doctor-grid-item">
               <img src={doctor.imageUrl} alt={doctor.name} />
               <div className="doctor-details">
                 <h3>{doctor.name}</h3>
@@ -47,6 +55,16 @@ const HomePage = () => {
           ))
         )}
       </div>
+
+      <section className="text-center py-5">
+        <div className="container">
+          <h2 className="mb-4">Download the App</h2>
+          <p>Get HealthMate on your mobile device for easy access to healthcare services and track your health progress on the go.</p>
+          <a href="/download" className="btn m-2">App Store</a>
+          <a href="/download" className="btn m-2">Play Store</a>
+        </div>
+      </section>
+
     </div>
   );
 };

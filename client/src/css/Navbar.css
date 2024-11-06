@@ -1,77 +1,66 @@
+.links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-left: auto;
+}
+
+.links a {
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.links a:hover {
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+}
+
+.links .activelink {
+  color: #ed0d63;
+  border-bottom: 2px solid #ed0d63;
+}
+
+/* Navbar Container */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1em;
-    background-color: #333;
-    color: white;
-  }
-  
-  .navbar h1 {
-    margin: 0;
-    font-size: 1.5em;
-  }
-  
-  .navbar-links a {
-    color: white;
-    text-decoration: none;
-    margin-right: 1em;
-    font-size: 1em;
-  }
-  
-  .navbar-links a:hover {
-    color: #ddd;
-  }
-  
-  .navbar-profile {
-    position: relative;
-  }
-  
-  .profile-button {
-    background: none;
-    color: white;
-    border: none;
-    font-size: 1em;
-    cursor: pointer;
-  }
-  
-  .arrow {
-    font-size: 0.8em;
-    margin-left: 0.2em;
-  }
-  
-  .profile-dropdown {
-    position: absolute;
-    right: 0;
-    top: 2em;
-    background-color: #444;
-    color: white;
-    padding: 0.5em;
-    border-radius: 5px;
-    width: 200px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .profile-dropdown p {
-    margin: 0.5em 0;
-  }
-  
-  .profile-dropdown hr {
-    border: 0.5px solid #555;
-  }
-  
-  .logout-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 0.5em;
-    border-radius: 3px;
-    cursor: pointer;
+  padding: 0;
+}
+
+/* Left-aligned Links */
+.left-links {
+  display: flex;
+  gap: 1em;
+  flex-grow: 1;
+}
+
+/* Right-aligned Links */
+.right-links {
+  display: flex;
+  gap: 1em;
+}
+
+/* Navbar Brand (Logo) */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  /* For smaller screens, stack the links vertically */
+  .left-links, .right-links {
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    text-align: center;
+    gap: 0.5em;
   }
   
-  .logout-button:hover {
-    background-color: #d32f2f;
+  /* Adjust navbar padding */
+  .navbar {
+    padding: 1em;
   }
-  
+}
