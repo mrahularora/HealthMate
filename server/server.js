@@ -3,6 +3,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes"); // Import doctor routes
+const patientRoutes = require("./routes/patientRoutes"); // Import patient routes
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -27,6 +28,7 @@ app.use(cookieParser()); // Parse cookies
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorRoutes); // Add doctor routes
+app.use("/api/patients", patientRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

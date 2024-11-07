@@ -14,6 +14,8 @@ import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './context/ProtectedRoute';
 import Unauthorized from './components/Unauthorized';
 import RedirectIfAuthenticated from './context/RedirectIfAuthenticated';
+import UserDoctorsList from './components/user/UserDoctorsList';
+import Patients from './components/doctor/Patients';
 
 function App() {
   const navigate = useNavigate();
@@ -75,6 +77,18 @@ function App() {
             path="/appointmentPage"
             element={
               <ProtectedRoute component={AppointmentPage} allowedRoles={['User', 'Doctor', 'Admin']} />
+            }
+          />
+          <Route
+            path="/doctorslist"
+            element={
+              <ProtectedRoute component={UserDoctorsList} allowedRoles={['User', 'Admin']} />
+            }
+          />
+          <Route
+            path="/Patients"
+            element={
+              <ProtectedRoute component={Patients} allowedRoles={['Doctor', 'Admin']} />
             }
           />
 
