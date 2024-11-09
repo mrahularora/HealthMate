@@ -36,6 +36,10 @@ const HomePage = () => {
           tracking habits, and medication administration. HealthMate desires to meet the emerging demands of quality patient attention, 
           remote health management, and medication fidelity, which characterize a digitizing healthcare environment.</p>
       </div>
+      <div class="d-flex justify-content-center align-items-center mb-4">
+          <a href="#consult" class="btn">Consult Now</a>
+      </div>
+      <hr class="my-4 w-50 mx-auto"></hr>
 
       <h2 className="text-center mb-4">Meet our Doctors</h2>
       <div className="doctor-grid-container mb-4">
@@ -55,6 +59,7 @@ const HomePage = () => {
           ))
         )}
       </div>
+      <hr class="my-4 w-50 mx-auto"></hr>
 
       <section className="text-center py-5">
         <div className="container">
@@ -64,6 +69,7 @@ const HomePage = () => {
           <a href="/download" className="btn m-2">Play Store</a>
         </div>
       </section>
+      <hr class="my-4 w-50 mx-auto"></hr>
 
     </div>
   );

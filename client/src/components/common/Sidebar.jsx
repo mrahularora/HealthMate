@@ -6,13 +6,13 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <h3 className="mb-4">Features</h3>
       <ul>
         {/* Common links for all users */}
 
         {/* Role-specific links */}
         {user?.role === 'User' && (
           <>
+          <h5 className="mb-4">Patient Portal</h5>
             <li><a href="/Profile">Patient Profile</a></li>
             <li><a href="/UserAppointments">Appointments</a></li>
             <li><a href="/doctorslist">Doctor's List</a></li>
@@ -22,17 +22,20 @@ const Sidebar = () => {
 
         {user?.role === 'Doctor' && (
           <>
+          <h5 className="mb-4 fw-bold">Doctor Portal</h5>
+          <hr class="my-4 w-100 mx-auto"></hr>
             <li><a href="/Profile">See Profile</a></li>
             <li><a href="/ViewAppointments">View Appointments</a></li>
             <li><a href="/RequestedAppointments">Requested Appointments</a></li>
             <li><a href="/ReportsPrescriptions">Reports & Prescriptions</a></li>
             <li><a href="/Patients">Patients List</a></li>
-            
+            <hr class="my-4 w-100 mx-auto"></hr>
           </>
         )}
 
         {user?.role === 'Admin' && (
           <>
+          <h5 className="mb-4">Admin Portal</h5>
             <li><a href="/Profile">Admin Profile</a></li>
             <li><a href="/admin/ManageUsers">Manage Users</a></li>
             <li><a href="/admin/appointments">View All Appointments</a></li>
