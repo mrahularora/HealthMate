@@ -4,21 +4,21 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('User');
+    const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
   const login = (userData) => {
-    setUser(userData); // Set user data after successful login
-    localStorage.setItem('User', JSON.stringify(userData)); // Save user info in localStorage
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData)); 
   };
 
   const logout = () => {
-    setUser(null); // Clear user data on logout
-    localStorage.removeItem('User'); // Remove user info from localStorage
+    setUser(null);
+    localStorage.removeItem('user');
   };
 
-  const value = { user, login, logout }; // Provide login function to context
+  const value = { user, login, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

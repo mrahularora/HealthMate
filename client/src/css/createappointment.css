@@ -1,0 +1,17 @@
+.create-appointment {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .create-appointment input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+  }
+  
+  .create-appointment button {
+    padding: 10px 15px;
+    margin-top: 10px;
+  }
+  

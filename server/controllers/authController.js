@@ -91,7 +91,7 @@ const login = async (req, res) => {
     // Send user role in the response body
     res.status(200).json({
       message: 'Login successful',
-      user: { id: user._id, email: user.email, role: user.role }, // Include role
+      user: { id: user._id, name: user.firstName + " " + user.lastName, email: user.email, role: user.role }, 
     });
   } catch (error) {
     console.error('Error during login:', error);

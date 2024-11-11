@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import '../../css/doctorpage.css'; 
+import { getPatientRecords } from '../../services/doctorService'; 
+import '../../css/doctorpage.css';
 
 const DoctorDashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [patientRecords, setPatientRecords] = useState([]);
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchPatientRecords = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/patients');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch patient records');
-                }
-                const data = await response.json();
+                const data = await getPatientRecords(); 
                 setPatientRecords(data);
                 setLoading(false);
             } catch (error) {
