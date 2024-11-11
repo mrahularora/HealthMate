@@ -78,3 +78,19 @@
     transform: translateY(0); 
   }
   
+/* Styling for gender radio buttons */
+.gender-options {
+  display: flex;
+  align-items:flex-start;
+  flex-direction: row;
+}
+
+.gender-options label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.gender-options input[type="radio"] {
+  margin-right: 8px;  /* Adds space between the radio button and label text */
+}
