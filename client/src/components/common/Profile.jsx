@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
+import React, { useState, useEffect} from "react";
+import { editUser, updateUser } from '../../services/userService';
 
 const UserProfile = () => {
-  const { user } = useContext(AuthContext); // Get user from auth context
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -12,36 +10,22 @@ const UserProfile = () => {
     gender: "",
     role: "",
   });
-  const [errors, setErrors] = useState({}); // For tracking specific field errors
-  const [successMessage, setSuccessMessage] = useState(""); // For success message
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Fetch user data on component mount
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/auth/profile",
-          {
-            withCredentials: true, // Ensure cookies are included in the request
-          }
-        );
-        setFormData(response.data.user);
+        const userData = await editUser();
+        setFormData(userData);
       } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setErrors({ general: error.response?.data?.message || "Failed to load profile data." });
+        setErrors({ general: error.message });
       }
     };
+    fetchData();
+  }, []);
 
-    if (user) {
-      fetchUserProfile(); // Fetch profile only if the user is logged in
-    }
-  }, [user]); // Re-fetch if user is updated
-
-  // Validation for first and last name
-  const validateName = (name) => {
-    const nameRegex = /^[A-Za-z\s\.\-']+$/; // Only letters, spaces, periods, apostrophes, and hyphens
-    return nameRegex.test(name);
-  };
+  const validateName = (name) => /^[A-Za-z\s.'-]+$/.test(name);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -53,54 +37,37 @@ const UserProfile = () => {
   const handleSaveChanges = async () => {
     let formErrors = {};
 
-    // Validate first name
     if (!validateName(formData.firstName)) {
       formErrors.firstNameError = "First name may only contain letters and spaces.";
     }
 
-    // Validate last name
     if (!validateName(formData.lastName)) {
       formErrors.lastNameError = "Last name may only contain letters and spaces.";
     }
 
-    // Validate gender
     if (!formData.gender) {
       formErrors.genderError = "Please select a gender.";
     }
 
-    // If there are validation errors, set them and return early
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
     try {
-      const response = await axios.put(
-        "http://localhost:5000/api/auth/profile",
-        formData,
-        {
-          withCredentials: true, // Ensure cookies are included in the request
-        }
-      );
-
-      setFormData(response.data); // Update with the latest data
+      await updateUser(formData);
+      setSuccessMessage("Profile updated successfully!");
       setIsEditing(false);
-      setErrors({}); // Clear any previous errors
-      setSuccessMessage("Profile updated successfully!"); // Success message
     } catch (error) {
-      console.error("Error updating profile:", error);
-      setErrors({ general: error.response?.data?.message || "Failed to save changes. Please try again." });
-      setSuccessMessage(""); // Clear success message if error occurs
+      setErrors({ general: error.message });
+      setSuccessMessage("");
     }
   };
 
   return (
     <div className="user-profile">
       <h2 className="title">User Profile</h2>
-      {/* Display general error if exists */}
       {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
-      
-      {/* Display success message */}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
       <div className="profile-info">
@@ -115,7 +82,6 @@ const UserProfile = () => {
                 onChange={handleInputChange}
                 required
               />
-              {/* Display first name error if exists, below the input */}
               {errors.firstNameError && <p style={{ color: "red" }}>{errors.firstNameError}</p>}
             </div>
             <div>
@@ -127,7 +93,6 @@ const UserProfile = () => {
                 onChange={handleInputChange}
                 required
               />
-              {/* Display last name error if exists, below the input */}
               {errors.lastNameError && <p style={{ color: "red" }}>{errors.lastNameError}</p>}
             </div>
             <div>
@@ -140,46 +105,21 @@ const UserProfile = () => {
               />
             </div>
             <div>
-              {/* Display gender error if exists */}
               {errors.genderError && <p style={{ color: "red" }}>{errors.genderError}</p>}
               <label>Gender:</label>
               <div className="gender-options">
-                <div className="gender-option">
-                  <label>
+                {["Male", "Female", "Other"].map((gender) => (
+                  <label key={gender}>
                     <input
                       type="radio"
                       name="gender"
-                      value="Male"
-                      checked={formData.gender === "Male"}
+                      value={gender}
+                      checked={formData.gender === gender}
                       onChange={handleInputChange}
                     />
-                    Male
+                    {gender}
                   </label>
-                </div>
-                <div className="gender-option">
-                  <label>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="Female"
-                      checked={formData.gender === "Female"}
-                      onChange={handleInputChange}
-                    />
-                    Female
-                  </label>
-                </div>
-                <div className="gender-option">
-                  <label>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value="Other"
-                      checked={formData.gender === "Other"}
-                      onChange={handleInputChange}
-                    />
-                    Other
-                  </label>
-                </div>
+                ))}
               </div>
             </div>
             <div>
@@ -190,21 +130,11 @@ const UserProfile = () => {
           </>
         ) : (
           <>
-            <p>
-              <strong>First Name:</strong> {formData.firstName}
-            </p>
-            <p>
-              <strong>Last Name:</strong> {formData.lastName}
-            </p>
-            <p>
-              <strong>Email:</strong> {formData.email}
-            </p>
-            <p>
-              <strong>Gender:</strong> {formData.gender}
-            </p>
-            <p>
-              <strong>Role:</strong> {formData.role}
-            </p>
+            <p><strong>First Name:</strong> {formData.firstName}</p>
+            <p><strong>Last Name:</strong> {formData.lastName}</p>
+            <p><strong>Email:</strong> {formData.email}</p>
+            <p><strong>Gender:</strong> {formData.gender}</p>
+            <p><strong>Role:</strong> {formData.role}</p>
             <button onClick={() => setIsEditing(true)}>Edit Profile</button>
           </>
         )}

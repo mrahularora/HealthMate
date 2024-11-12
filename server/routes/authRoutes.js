@@ -1,6 +1,7 @@
 // /routes/authRoutes.js
 const express = require('express');
-const { signup, login, logout, getuserprofile, updateuserprofile } = require('../controllers/authController');
+const { signup, login, logout } = require('../controllers/authController');
+const { getuserprofile, updateuserprofile } = require('../controllers/userController');
 const { protect } = require('../middlewares/authMiddleware'); // Adjusted import
 
 const router = express.Router();

@@ -12,11 +12,11 @@ const Sidebar = () => {
         {/* Role-specific links */}
         {user?.role === 'User' && (
           <>
-          <h5 className="mb-4">Patient Portal</h5>
+          <h5 className="mb-4 fw-bold">Patient Portal</h5>
           <hr class="my-4 w-100 mx-auto"></hr>
-            <li><a href="/Profile">Patient Profile</a></li>
-            <li><a href="/UserAppointments">Appointments</a></li>
-            <li><a href="/doctorslist">Doctor's List</a></li>
+            <li><a href="/Profile">See Profile</a></li>
+            <li><a href="/UserAppointments">All Appointments</a></li>
+            <li><a href="/doctorslist">See a Doctor</a></li>
             {/* <li><a href="/booknew{$ID}">Book New Appointment</a></li> - user will come to this page by doctor's list */} 
             <hr class="my-4 w-100 mx-auto"></hr>
           </>
@@ -38,7 +38,7 @@ const Sidebar = () => {
 
         {user?.role === 'Admin' && (
           <>
-          <h5 className="mb-4">Admin Portal</h5>
+          <h5 className="mb-4 fw-bold">Admin Portal</h5>
           <hr class="my-4 w-100 mx-auto"></hr>
             <li><a href="/Profile">Admin Profile</a></li>
             <li><a href="/admin/ManageUsers">Manage Users</a></li>

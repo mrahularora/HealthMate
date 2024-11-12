@@ -2,7 +2,6 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
 const doctorRoutes = require("./routes/doctorRoutes"); 
 const patientRoutes = require("./routes/patientRoutes"); 
 const appointmentRoutes = require('./routes/appointmentRoutes'); 
@@ -30,7 +29,6 @@ app.use(cookieParser()); // Parse cookies
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use('/api/auth/', userRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/patients", patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
