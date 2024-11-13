@@ -1,0 +1,60 @@
+.user-page {
+  display: flex;
+}
+
+.greeting {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.records-title {
+  font-size: 1.2em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.appointments-container {
+  flex: 1;
+  padding: 20px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column; 
+  gap: 20px;
+}
+
+.appointments-list {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: wrap; 
+  width: 100%;
+}
+
+.appointment-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  width: calc(33.33% - 10px); 
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.reschedule-button,
+.cancel-button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+}
+
+.reschedule-button {
+  background-color: #00adef;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #ed0d63;
+  color: white;
+  margin-left: 10px;
+}

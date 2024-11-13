@@ -1,0 +1,96 @@
+.user-profile-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .user-profile {
+    flex: 1;
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+  }
+  
+  .profile-info div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-info label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  .profile-info input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .profile-info input:focus {
+    border-color: #007bff; /* Highlight border on focus */
+    outline: none; /* Remove default outline */
+  }
+  
+  .profile-info p {
+    font-size: 16px;
+    margin: 5px 0;
+    color: #444; 
+  }
+  
+  .profile-info button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    width: 20%;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .profile-info button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px); 
+  }
+  
+  .profile-info button:active {
+    transform: translateY(0); 
+  }
+  
+/* Styling for gender radio buttons */
+.gender-options {
+  display: flex;
+  align-items:flex-start;
+  flex-direction: row;
+}
+
+.gender-options label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.gender-options input[type="radio"] {
+  margin-right: 8px;  /* Adds space between the radio button and label text */
+}
