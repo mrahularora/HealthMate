@@ -132,24 +132,6 @@
   background-color: #388e3c;
 }
 
-.user-appointments-btn:disabled {
-  background-color: #e0e0e0;
-  color: #ffffff; 
-  cursor: not-allowed;
-}
-
-.user-appointments-btn.cancel:disabled {
-  background-color: #f44336;
-}
-
-.user-appointments-btn.reschedule:disabled {
-  background-color: #4caf50;
-}
-
-.user-appointments-btn:disabled:hover {
-  background-color: #e0e0e0;
-}
-
 .user-appointments-container {
   max-width: 800px;
   margin: 20px auto;
