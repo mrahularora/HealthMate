@@ -21,3 +21,13 @@ export const getAvailableSlots = async (doctorId, date) => {
     throw error;
   }
 };  
+
+// Function to book an appointment
+export const bookAppointment = async (slotId, userId) => {
+  try {
+    const response = await axios.post('/appointments/book', { slotId, userId });
+    return response.data;  // Expected response to include a success message
+  } catch (error) {
+    throw error;  // Throw error to handle in the component
+  }
+};

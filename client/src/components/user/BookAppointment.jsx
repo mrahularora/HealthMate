@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { getAvailableSlots } from '../../services/appointmentService';  // Service for API calls
-import '../../css/bookappointment.css'
+import { getAvailableSlots, bookAppointment } from '../../services/appointmentService';  // Updated to include bookAppointment
+import '../../css/bookappointment.css';
 
 const BookAppointment = () => {
   const [doctorId, setDoctorId] = useState('');
@@ -8,8 +8,9 @@ const BookAppointment = () => {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [error, setError] = useState('');
-  const [rawResponse, setRawResponse] = useState('');  // State to store raw response as text
-  const [bookedSlot, setBookedSlot] = useState(null); // State for storing booked slot
+  const [rawResponse, setRawResponse] = useState('');
+  const [bookedSlot, setBookedSlot] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState('');  // State for booking success or error message
 
   // Function to convert 24-hour time to 12-hour format
   const convertTo12HourFormat = (time) => {
@@ -23,15 +24,31 @@ const BookAppointment = () => {
     setSelectedSlot(slot);  // Set the selected slot
   };
 
-  const handleBookAppointment = () => {
+  const handleBookAppointment = async () => {
     if (!selectedSlot) {
       setError('Please select a time slot.');
       return;
     }
-    // Set the booked slot
-    setBookedSlot(selectedSlot);
-    console.log('Booking appointment for slot:', selectedSlot);
-    setError('');  // Reset any error
+
+    const loggedInUser = JSON.parse(localStorage.getItem('user'));  // Get the logged-in user from localStorage
+    console.log(loggedInUser.id);
+    
+
+    if (!loggedInUser) {
+      setError('You must be logged in to book an appointment.');
+      return;
+    }
+
+    try {
+      // Attempt to book the appointment using the selected slot and the logged-in user ID
+      const response = await bookAppointment(selectedSlot._id, loggedInUser.id);
+      setBookingStatus(response.message || 'Booking failed.');
+      setBookedSlot(selectedSlot);
+      setError('');
+    } catch (err) {
+      setError('Failed to book the appointment.');
+      setBookingStatus('');
+    }
   };
 
   // Function to fetch and sort available slots
@@ -46,7 +63,6 @@ const BookAppointment = () => {
 
       // Sorting the slots based on start time
       const sortedSlots = response.availableSlots.sort((a, b) => {
-        // Create Date objects for comparison
         const timeA = new Date(`1970-01-01T${a.startTime}:00Z`);
         const timeB = new Date(`1970-01-01T${b.startTime}:00Z`);
         return timeA - timeB;  // Sort in ascending order
@@ -75,7 +91,7 @@ const BookAppointment = () => {
           onChange={(e) => setDate(e.target.value)}
         />
       </div>
-      
+
       {/* Search Button to trigger API call */}
       <div className="search-button">
         <button onClick={handleSearch}>Search</button>
@@ -111,6 +127,13 @@ const BookAppointment = () => {
         <div className="booked-slot-info">
           <h3>Your Booked Slot:</h3>
           <p>{convertTo12HourFormat(bookedSlot.startTime)} - {convertTo12HourFormat(bookedSlot.endTime)}</p>
+        </div>
+      )}
+
+      {/* Display success or error booking message */}
+      {bookingStatus && (
+        <div className="booking-status">
+          <p>{bookingStatus}</p>
         </div>
       )}
 

@@ -118,3 +118,42 @@ exports.getAvailableSlots = async (req, res) => {
         res.status(500).json({ message: "Error retrieving available slots", error: err.message || err });
     }
 };
+
+// In the appointment controller (controller/appointmentController.js)
+
+exports.bookAppointment = async (req, res) => {
+    const { slotId, userId } = req.body;
+  
+    if (!slotId || !userId) {
+      return res.status(400).json({ message: 'Slot ID and User ID are required.' });
+    }
+  
+    try {
+      // Find the appointment with the given slotId
+      const appointment = await Appointment.findOne({ 'timeSlots._id': slotId });
+  
+      if (!appointment) {
+        return res.status(404).json({ message: 'Appointment slot not found.' });
+      }
+  
+      // Find the specific slot within the appointment
+      const slot = appointment.timeSlots.find((slot) => slot._id.toString() === slotId);
+  
+      if (slot.isBooked) {
+        return res.status(400).json({ message: 'This slot is already booked.' });
+      }
+  
+      // Mark the slot as booked and associate it with the user
+      slot.isBooked = true;
+      slot.bookedBy = userId;
+      slot.status = 'Requested';  // You can update this as per your requirements
+  
+      await appointment.save();
+  
+      res.status(200).json({ message: 'Appointment booked successfully.' });
+    } catch (err) {
+      console.error('Booking error:', err);
+      res.status(500).json({ message: 'Error booking appointment', error: err.message || err });
+    }
+};
+  
