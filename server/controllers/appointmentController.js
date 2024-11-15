@@ -156,4 +156,34 @@ exports.bookAppointment = async (req, res) => {
       res.status(500).json({ message: 'Error booking appointment', error: err.message || err });
     }
 };
-  
+
+// Method to view appointments for the logged-in user
+exports.viewAppointments = async (req, res) => {
+    const userId = req.user.id; // User ID from the authentication middleware
+
+    try {
+        // Fetch appointments where the logged-in user has booked a time slot
+        const appointments = await Appointment.find({
+            'timeSlots.bookedBy': userId // Match time slots where bookedBy is the user
+        })
+        .populate('doctorId', 'name specialty') // Populate doctor's name and specialty
+        .sort({ date: 1 }); // Sort appointments by date in ascending order
+
+        if (!appointments || appointments.length === 0) {
+            return res.status(404).json({ message: 'No appointments found.' });
+        }
+
+        // Filter time slots for each appointment to only include those booked by the user
+        appointments.forEach(appointment => {
+            // Filter out time slots where bookedBy is null or does not match the userId
+            appointment.timeSlots = appointment.timeSlots.filter(slot => slot.bookedBy && slot.bookedBy.toString() === userId);
+        });
+
+        res.status(200).json({
+            message: 'Appointments retrieved successfully.',
+            appointments
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching appointments', error: err.message || err });
+    }
+};
