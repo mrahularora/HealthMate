@@ -31,3 +31,14 @@ export const bookAppointment = async (slotId, userId) => {
     throw error;  // Throw error to handle in the component
   }
 };
+
+// Function to fetch appointments for the logged-in user
+export const getAppointments = async () => {
+  try {
+    const response = await axios.get('/appointments/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    throw error;
+  }
+};
