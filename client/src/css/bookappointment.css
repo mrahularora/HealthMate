@@ -1,46 +1,166 @@
-.time-slot-boxes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
+/* Global Styles */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f7fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
-.time-slot-box {
-  background-color: #f0f0f0;
-  padding: 10px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 150px;
+.book-appointment {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+h2.title {
+  font-size: 24px;
+  margin-bottom: 20px;
   text-align: center;
-  font-size: 14px;
-  transition: background-color 0.3s;
+  color: #2c3e50;
 }
 
-.time-slot-box:hover {
+/* Step Sections */
+.step {
+  margin-bottom: 20px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  color: #555;
+}
+
+/* Input Fields */
+.input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #27ae60; /* Green border on focus */
+  box-shadow: 0 0 5px rgba(39, 174, 96, 0.5);
+}
+
+/* Dropdown */
+.dropdown {
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.dropdown .dropdown-item {
+  padding: 7px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f4f4f4;
+}
+
+.dropdown .dropdown-item:hover {
   background-color: #e0e0e0;
 }
 
-.time-slot-box.selected {
-  background-color: #4caf50;
-  color: white;
-  border-color: #388e3c;
+.doctor-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
 }
 
-.book-now-button {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.error {
-  color: red;
+.dropdown-item div {
   font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.raw-response {
-  margin-top: 20px;
-  background-color: #f7f7f7;
-  padding: 15px;
+/* Selected Doctor */
+.doctor-selected {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.doctor-img-large {
+  width: 230px;
+  height: 150px;
+  border-radius: 10%;
+  margin-right: 20px;
+}
+
+.doctor-selected div {
+  font-size: 18px;
+  color: #333;
+}
+
+/* Slots Section */
+.slots {
+  margin-top: 10px;
+}
+
+.slot {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
   border-radius: 5px;
-  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slot.selected {
+  background-color: #27ae60;
+  color: white;
+}
+
+.search-button,
+.book-button {
+  background-color: #27ae60;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover,
+.book-button:hover {
+  background-color: #2ecc71;
+}
+
+.error-message,
+.success-message {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+.success-message {
+  color: #2ecc71;
 }

@@ -17,6 +17,7 @@ const Sidebar = () => {
             <li><a href="/Profile">See Profile</a></li>
             <li><a href="/UserAppointments">All Appointments</a></li>
             <li><a href="/doctorslist">See a Doctor</a></li>
+            <li><a href="/book-appointment">Book Appointment</a></li>
             {/* <li><a href="/booknew{$ID}">Book New Appointment</a></li> - user will come to this page by doctor's list */} 
             <hr class="my-4 w-100 mx-auto"></hr>
           </>
