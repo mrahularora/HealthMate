@@ -88,3 +88,33 @@ exports.createAppointmentSlots = async (req, res) => {
         res.status(500).json({ message: 'Error creating appointment slots', error: err.message || err });
     }
 };
+
+// Controller to get available slots for a doctor on a specific date
+exports.getAvailableSlots = async (req, res) => {
+    const { doctorId, date } = req.body;  // Get doctorId and date from the request body
+
+    if (!doctorId || !date) {
+        return res.status(400).json({ message: "Doctor ID and date are required." });
+    }
+
+    try {
+        // Fetch appointment with time slots for the given doctorId and date
+        const appointment = await Appointment.findOne({ doctorId, date });
+
+        if (!appointment) {
+            return res.status(404).json({ message: "No appointments found for this doctor on the selected date." });
+        }
+
+        // Filter out booked slots and return only available ones
+        const availableSlots = appointment.timeSlots.filter(slot => !slot.isBooked);
+
+        if (availableSlots.length === 0) {
+            return res.status(404).json({ message: "No available slots for this doctor on the selected date." });
+        }
+
+        res.status(200).json({ availableSlots });
+    } catch (err) {
+        console.error("Error Details:", err);
+        res.status(500).json({ message: "Error retrieving available slots", error: err.message || err });
+    }
+};
