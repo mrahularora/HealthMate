@@ -16,6 +16,7 @@ import Unauthorized from './components/Unauthorized';
 import RedirectIfAuthenticated from './context/RedirectIfAuthenticated';
 import UserDoctorsList from './components/user/UserDoctorsList';
 import Patients from './components/doctor/Patients';
+import BookAppointment from './components/user/BookAppointment';
 
 function App() {
   const navigate = useNavigate();
@@ -89,6 +90,13 @@ function App() {
             path="/Patients"
             element={
               <ProtectedRoute component={Patients} allowedRoles={['Doctor', 'Admin']} />
+            }
+          />
+
+          <Route
+            path="/book-appointment"
+            element={
+              <ProtectedRoute component={BookAppointment} allowedRoles={['User', 'Admin']} />
             }
           />
 

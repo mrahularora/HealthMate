@@ -1,0 +1,46 @@
+.time-slot-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.time-slot-box {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 150px;
+  text-align: center;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.time-slot-box:hover {
+  background-color: #e0e0e0;
+}
+
+.time-slot-box.selected {
+  background-color: #4caf50;
+  color: white;
+  border-color: #388e3c;
+}
+
+.book-now-button {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+.raw-response {
+  margin-top: 20px;
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}

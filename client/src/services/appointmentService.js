@@ -11,5 +11,13 @@ export const createAppointmentSlots = async (appointmentData) => {
       throw error;
     }
   };
-  
-  
+
+// Fetch available slots for a specific doctor on a given date
+export const getAvailableSlots = async (doctorId, date) => {
+  try {
+    const response = await axios.post(`/appointments/available`, { doctorId, date });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};  
