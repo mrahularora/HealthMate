@@ -42,3 +42,12 @@ export const getAppointments = async () => {
     throw error;
   }
 };
+
+export const cancelAppointment = async (appointmentId, slotId) => {
+  try {
+    const response = await axios.patch(`/appointments/cancel`, { appointmentId, slotId });
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to cancel appointment");
+  }
+};

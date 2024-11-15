@@ -187,3 +187,41 @@ exports.viewAppointments = async (req, res) => {
         res.status(500).json({ message: 'Error fetching appointments', error: err.message || err });
     }
 };
+
+// Controller method to cancel appointment
+exports.cancelAppointment = async (req, res) => {
+    const { appointmentId, slotId } = req.body;
+  
+    if (!appointmentId || !slotId) {
+      return res.status(400).json({ message: 'Appointment ID and Slot ID are required.' });
+    }
+  
+    try {
+      // Find the appointment by appointmentId and update the slot's status
+      const appointment = await Appointment.findById(appointmentId);
+  
+      if (!appointment) {
+        return res.status(404).json({ message: 'Appointment not found.' });
+      }
+  
+      // Find the specific time slot
+      const slot = appointment.timeSlots.id(slotId);
+  
+      if (!slot || !slot.isBooked) {
+        return res.status(400).json({ message: 'Slot is not booked or does not exist.' });
+      }
+  
+      // Cancel the appointment by setting isBooked to false
+      slot.isBooked = false;
+      slot.bookedBy = null;
+      slot.status = 'Cancelled';
+  
+      await appointment.save();
+  
+      res.status(200).json({ message: 'Appointment cancelled successfully.' });
+    } catch (err) {
+      console.error('Cancellation error:', err);
+      res.status(500).json({ message: 'Error canceling appointment', error: err.message || err });
+    }
+};
+  

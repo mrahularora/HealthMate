@@ -15,4 +15,7 @@ router.post('/book', appointmentController.bookAppointment);
 // Route to get appointments for the logged-in user
 router.get('/', protect, appointmentController.viewAppointments);
 
+// Route to cancel an appointment
+router.patch('/cancel', protect, appointmentController.cancelAppointment);
+
 module.exports = router;
