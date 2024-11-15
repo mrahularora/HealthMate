@@ -11,19 +11,21 @@ export const getPatientRecords = async () => {
 
 // Fetch all doctors
 export const fetchDoctors = async () => {
-    try {
-      const response = await axios.get('/doctors');
-      return response.data; // Return the list of doctors
-    } catch (error) {
-      throw new Error('Error fetching doctors');
-    }
+  try {
+    const response = await axios.get('/doctors');
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching doctors');
+  }
 };
 
-// Search doctors by name or specialty
-export const searchDoctors = (doctors, query) => {
-    return doctors.filter(
-      (doctor) =>
-        doctor.name.toLowerCase().includes(query.toLowerCase()) ||
-        doctor.specialty.toLowerCase().includes(query.toLowerCase())
-    );
+// Search doctors by name or specialty via API
+export const searchDoctorsByQuery = async (query) => {
+  if (!query) return [];
+  try {
+    const response = await axios.get(`/doctors/search?query=${encodeURIComponent(query)}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error searching doctors');
+  }
 };
