@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchDoctors, searchDoctors } from '../../services/doctorService';
 import '../../css/doctorslist.css';
 
 const UserDoctorsList = () => {
   const [doctors, setDoctors] = useState([]);
-  const [filteredDoctors, setFilteredDoctors] = useState([]); // For filtered doctors based on search
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(''); // Search query state
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // Function to fetch the doctors list
-    const fetchDoctors = async () => {
+    // Fetch the doctors list when the component mounts
+    const loadDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/doctors');
-        console.log("Fetched doctors:", response.data);
-        setDoctors(response.data);
-        setFilteredDoctors(response.data); // Set all doctors initially
+        const data = await fetchDoctors();
+        setDoctors(data);
+        setFilteredDoctors(data); // Initially, display all doctors
       } catch (error) {
         console.error("Error fetching doctors:", error);
       } finally {
@@ -23,20 +22,16 @@ const UserDoctorsList = () => {
       }
     };
 
-    fetchDoctors();
+    loadDoctors();
   }, []);
 
-  // Handle search query change
+  // Handle search input change
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // Filter doctors based on the search query (by name, specialty, etc.)
-    const filtered = doctors.filter(
-      (doctor) =>
-        doctor.name.toLowerCase().includes(query.toLowerCase()) ||
-        doctor.specialty.toLowerCase().includes(query.toLowerCase())
-    );
+    // Filter doctors based on the search query
+    const filtered = searchDoctors(doctors, query);
     setFilteredDoctors(filtered);
   };
 
