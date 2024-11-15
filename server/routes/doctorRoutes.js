@@ -1,15 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Doctor = require('../models/Doctor');
+const { getDoctors, searchDoctors } = require('../controllers/doctorController');
 
 // Route to get all doctors
-router.get('/', async (req, res) => {
-  try {
-    const doctors = await Doctor.find();
-    res.json(doctors);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get('/', getDoctors);
+
+// Search for doctors by name or specialty
+router.get('/search', searchDoctors);
 
 module.exports = router;
