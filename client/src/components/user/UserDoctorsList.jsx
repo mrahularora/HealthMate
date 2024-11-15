@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { fetchDoctors, searchDoctors } from '../../services/doctorService';
+import { fetchDoctors, searchDoctorsByQuery } from '../../services/doctorService';
 import '../../css/doctorslist.css';
 
 const UserDoctorsList = () => {
-  const [doctors, setDoctors] = useState([]);
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [doctors, setDoctors] = useState([]); // Cache of all doctors
+  const [filteredDoctors, setFilteredDoctors] = useState([]); // Displayed doctors
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch the doctors list when the component mounts
+    // Fetch and cache the initial list of doctors
     const loadDoctors = async () => {
       try {
         const data = await fetchDoctors();
-        setDoctors(data);
+        setDoctors(data); // Cache the full doctor list
         setFilteredDoctors(data); // Initially, display all doctors
       } catch (error) {
-        console.error("Error fetching doctors:", error);
+        setError('Error fetching doctors.');
       } finally {
         setLoading(false);
       }
@@ -25,14 +26,30 @@ const UserDoctorsList = () => {
     loadDoctors();
   }, []);
 
-  // Handle search input change
-  const handleSearchChange = (e) => {
+  // Handle search input changes
+  const handleSearchChange = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // Filter doctors based on the search query
-    const filtered = searchDoctors(doctors, query);
-    setFilteredDoctors(filtered);
+    if (query.length === 0) {
+      // Reset to cached doctors if query is cleared
+      setFilteredDoctors(doctors);
+    } else if (query.length < 3) {
+      // Use cached data for short queries
+      const filtered = doctors.filter((doctor) =>
+        doctor.name.toLowerCase().includes(query.toLowerCase()) ||
+        doctor.specialty.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredDoctors(filtered);
+    } else {
+      // Call API for longer or complex queries
+      try {
+        const filteredDoctors = await searchDoctorsByQuery(query);
+        setFilteredDoctors(filteredDoctors);
+      } catch (error) {
+        setError('Error searching doctors.');
+      }
+    }
   };
 
   return (
@@ -66,8 +83,12 @@ const UserDoctorsList = () => {
                 />
                 <div className="doctor-details">
                   <h3>{doctor.name}</h3>
-                  <p><strong>Specialty:</strong> {doctor.specialty}</p>
-                  <p><strong>Experience:</strong> {doctor.experience} years</p>
+                  <p>
+                    <strong>Specialty:</strong> {doctor.specialty}
+                  </p>
+                  <p>
+                    <strong>Experience:</strong> {doctor.experience} years
+                  </p>
                   <p>{doctor.description}</p>
                 </div>
               </div>
@@ -75,6 +96,8 @@ const UserDoctorsList = () => {
           )}
         </div>
       )}
+
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
