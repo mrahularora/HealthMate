@@ -9,6 +9,7 @@ import UserPage from './pages/UserPage';
 import Profile from './pages/Profile'
 import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
+import CreateAppointments from './pages/CreateAppointment';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './context/ProtectedRoute';
@@ -98,6 +99,13 @@ function App() {
             path="/book-appointment"
             element={
               <ProtectedRoute component={BookAppointment} allowedRoles={['User', 'Admin']} />
+            }
+          />
+
+          <Route
+            path="/CreateAppointment"
+            element={
+              <ProtectedRoute component={CreateAppointments} allowedRoles={['Doctor', 'Admin']} />
             }
           />
 

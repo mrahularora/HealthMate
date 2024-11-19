@@ -1,17 +1,15 @@
 import React from 'react';
 import Sidebar from '../components/common/Sidebar';
-import DoctorDashboard from '../components/doctor/DoctorDashboard';
-
-import '../css/doctorpage.css';
+import CreateAppointment from '../components/doctor/CreateAppointment';
 import '../css/sidebar.css';
 
-const DoctorPage = () => {
+const CreateAppointments = () => {
   return (
     <div className="doctor-page">
       <Sidebar />
-      <DoctorDashboard />
+      <CreateAppointment />
     </div>
   );
 };
 
-export default DoctorPage;
+export default CreateAppointments;
