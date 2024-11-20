@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../css/contact.css';
+import submitContactForm from '../services/contactService';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -19,35 +20,32 @@ const ContactPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, message } = formData;
 
-    // Validate form inputs
     if (!name || !email || !message) {
       setErrorMessage('All fields are required.');
       return;
     }
 
-    // TODO: Add logic to send the message, e.g., via an API request
-
-    setErrorMessage('');
-    setSuccessMessage('Your message has been sent successfully!');
-
-    setFormData({
-      name: '',
-      email: '',
-      message: '',
-    });
+    try {
+      const result = await submitContactForm({ name, email, message });
+      setErrorMessage('');
+      setSuccessMessage(result.message);
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to submit the form.');
+    }
   };
 
   return (
     <div className="contact-page">
-       <div className="contact-hero-section mb-4">
-            <div className="contact-hero-content">
-                <h1>Contact HealthMate</h1>
-            </div>
+      <div className="contact-hero-section mb-4">
+        <div className="contact-hero-content">
+          <h1>Contact HealthMate</h1>
         </div>
+      </div>
 
       <div className="contact-info">
         <div className="address">
@@ -57,7 +55,7 @@ const ContactPage = () => {
           <p>Email: info@healthmate.com</p>
           <p>Phone: +1(548) 333-3418</p>
 
-            <hr />
+          <hr />
 
           <h2 className="mb-4">Our Branch</h2>
           <p>299 Doon Valley Drive</p>

@@ -53,7 +53,7 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Nav.Link className={location.pathname === '/login' ? 'activelink' : ''} as={Link} to="/login">Login</Nav.Link>
+                <Nav.Link className={location.pathname === '/login' ? 'activelink' : ''} as={Link} to="/login"><img src="./assets/images/icons/user.png" className="wid25" alt="login" /> Login</Nav.Link>
                 <Nav.Link className={location.pathname === '/signup' ? 'activelink' : ''} as={Link} to="/signup">Sign Up</Nav.Link>
               </>
             )}
