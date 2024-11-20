@@ -15,10 +15,9 @@ const Footer = () => {
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href={Link} to="/">Home</a></li>
-                        <li><a href="/admin">Admin</a></li>
+                        <li><a href="/login">Login</a> / <a href="/signup">Sign Up</a></li>
                         <li><a href="/about">About Us</a></li>
                         <li><a href="/contact">Contact Us</a></li>
-                        <li><a href="/appointments">Book an Appointment</a></li>
                     </ul>
                     </div>
 

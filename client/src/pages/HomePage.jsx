@@ -23,8 +23,8 @@ const HomePage = () => {
       <div className="hero-section mb-4">
         <div className="hero-content">
           <h1>Welcome to HealthMate</h1>
-          <p>Your journey begins here.</p>
-          <a href="#get-started" className="btn">Get Started</a>
+          <p>Connecting You to Better Health.</p>
+          <a href="/signup" className="btn">Get Started</a>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const HomePage = () => {
           remote health management, and medication fidelity, which characterize a digitizing healthcare environment.</p>
       </div>
       <div class="d-flex justify-content-center align-items-center mb-4">
-          <a href="#consult" class="btn">Consult Now</a>
+          <a href="/login" class="btn">Consult Now</a>
       </div>
       <hr class="my-4 w-50 mx-auto"></hr>
 
