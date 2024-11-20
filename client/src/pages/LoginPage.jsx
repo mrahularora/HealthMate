@@ -59,7 +59,7 @@ function LoginPage() {
     <div className="login-main">
       <section className="login-section">
         <div class="login-container">
-      <h2 className="mb-4">Login</h2>
+      <h2 className="mb-4"><img src="./assets/images/icons/user.png" className="wid35" alt="login" /> Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}
       <form onSubmit={handleSubmit}>

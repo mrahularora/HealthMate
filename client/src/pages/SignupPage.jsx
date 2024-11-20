@@ -80,7 +80,7 @@ function SignupPage() {
     <div className="sign-main">
     <section className="sign-section">
       <div class="signup-container">
-      <h2 className="mb-4">Signup</h2>
+      <h2 className="mb-4"><img src="./assets/images/icons/adduser.png" className="wid35" alt="signup" />Signup</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}
       <form onSubmit={handleSubmit} className="signup-form">

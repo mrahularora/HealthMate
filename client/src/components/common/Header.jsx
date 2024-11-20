@@ -46,10 +46,10 @@ const Header = () => {
           <Nav className="links right-links justify-content-end ml-auto">
             {user ? (
               <>
-                {user.role === 'Admin' && <Nav.Link className={location.pathname === '/AdminPage' ? 'activelink' : ''} as={Link} to="/AdminPage">Dashboard</Nav.Link>}
-                {user.role === 'User' && <Nav.Link className={location.pathname === '/UserPage' ? 'activelink' : ''} as={Link} to="/UserPage">Dashboard</Nav.Link>}
-                {user.role === 'Doctor' && <Nav.Link className={location.pathname === '/DoctorPage' ? 'activelink' : ''} as={Link} to="/DoctorPage">Dashboard</Nav.Link>}
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                {user.role === 'Admin' && <Nav.Link className={location.pathname === '/AdminPage' ? 'activelink' : ''} as={Link} to="/AdminPage"><img src="./assets/images/icons/admin.png" className="wid35" alt="admin" />Dashboard</Nav.Link>}
+                {user.role === 'User' && <Nav.Link className={location.pathname === '/UserPage' ? 'activelink' : ''} as={Link} to="/UserPage"><img src="./assets/images/icons/patient.png" className="wid25" alt="patient" /> Dashboard</Nav.Link>}
+                {user.role === 'Doctor' && <Nav.Link className={location.pathname === '/DoctorPage' ? 'activelink' : ''} as={Link} to="/DoctorPage"><img src="./assets/images/icons/doctor.png" className="wid35" alt="doctor" />Dashboard</Nav.Link>}
+                <Nav.Link onClick={handleLogout}>Logout <img src="./assets/images/icons/logout.png" className="wid25" alt="logout" /></Nav.Link>
               </>
             ) : (
               <>
