@@ -19,6 +19,7 @@ import UserDoctorsList from './components/user/UserDoctorsList';
 import Patients from './components/doctor/Patients';
 import BookAppointment from './components/user/BookAppointment';
 import UserAppointments from './components/user/UserAppointments';
+import NotFoundPage from './pages/NotFoundPage'; // Import the NotFoundPage
 
 function App() {
   const navigate = useNavigate();
@@ -118,6 +119,9 @@ function App() {
 
           {/* Unauthorized Route */}
           <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* Catch-all route for undefined paths */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
       <Footer />
