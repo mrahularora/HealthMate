@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/contact.css';
 import submitContactForm from '../services/contactService';
+import { getLoggedInUser } from '../services/authService'; // Import the function
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,21 @@ const ContactPage = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+
+  // UseEffect hook to track login status and pre-fill email if logged in
+  useEffect(() => {
+    const user = getLoggedInUser(); // Check if the user is logged in
+    if (user) {
+      setIsLoggedIn(true);
+      setFormData({
+        ...formData,
+        email: user.email, // Set the logged-in user's email
+      });
+    } else {
+      setIsLoggedIn(false); // User is not logged in
+    }
+  }, []);
 
   const validateForm = () => {
     const { name, email, message } = formData;
@@ -72,7 +88,12 @@ const ContactPage = () => {
       const result = await submitContactForm(formData);
       setErrorMessage('');
       setSuccessMessage(result.message);
-      setFormData({ name: '', email: '', message: '' });
+      // Retain email if logged in when resetting form data
+      setFormData((prevState) => ({
+        name: '',
+        email: isLoggedIn ? prevState.email : '',
+        message: '',
+      }));
     } catch (error) {
       setErrorMessage(error.message || 'Failed to submit the form.');
     }
@@ -123,6 +144,7 @@ const ContactPage = () => {
           <p>Fill the following form to get in touch with our team. We'll contact you shortly.</p>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}
+          
           <div className="form-group">
             <label htmlFor="name">Full Name<span className="red">* </span>:</label>
             <input
@@ -135,6 +157,7 @@ const ContactPage = () => {
               required
             />
           </div>
+          
           <div className="form-group">
             <label htmlFor="email">Email Address<span className="red">* </span>:</label>
             <input
@@ -145,8 +168,10 @@ const ContactPage = () => {
               onChange={handleChange}
               placeholder="Email Address"
               required
+              disabled={isLoggedIn} // Disable email input if logged in
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="message">Message<span className="red">* </span>:</label>
             <textarea
@@ -159,6 +184,7 @@ const ContactPage = () => {
               required
             />
           </div>
+          
           <button type="submit" className="submit-button">Send Message</button>
         </form>
       </div>
