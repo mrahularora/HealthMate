@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../css/contact.css';
 import submitContactForm from '../services/contactService';
-import { getLoggedInUser } from '../services/authService'; // Import the function
+import { AuthContext } from '../context/AuthContext'; // Import the context
 
 const ContactPage = () => {
+  const { user } = useContext(AuthContext); // Access the user from context
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,17 +17,16 @@ const ContactPage = () => {
 
   // UseEffect hook to track login status and pre-fill email if logged in
   useEffect(() => {
-    const user = getLoggedInUser(); // Check if the user is logged in
     if (user) {
       setIsLoggedIn(true);
-      setFormData({
-        ...formData,
+      setFormData((prevState) => ({
+        ...prevState,
         email: user.email, // Set the logged-in user's email
-      });
+      }));
     } else {
       setIsLoggedIn(false); // User is not logged in
     }
-  }, []);
+  }, [user]); // Add 'user' as a dependency
 
   const validateForm = () => {
     const { name, email, message } = formData;
@@ -109,7 +109,7 @@ const ContactPage = () => {
 
       <div className="contact-info">
         <div className="address">
-          <h2 className="mb-4">Our Main Office</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/pin.png" className="wid35" alt="map" /> Our Main Office</h2>
           <p>299 Doon Valley Drive</p>
           <p>Kitchener, ON. N2R 0N6</p>
           <p>Email: info@healthmate.com</p>
@@ -117,7 +117,7 @@ const ContactPage = () => {
 
           <hr />
 
-          <h2 className="mb-4">Our Branch</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/pin.png" className="wid35" alt="pin" /> Our Branch</h2>
           <p>299 Doon Valley Drive</p>
           <p>Kitchener, ON. N2R 0N6</p>
           <p>Email: info@healthmate.com</p>
@@ -140,7 +140,7 @@ const ContactPage = () => {
 
       <div className="contact-form-section mb-4">
         <form onSubmit={handleSubmit} className="contact-form">
-          <h2 className="mb-4">Get in Touch</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/getintouch.png" className="wid35" alt="getintouch" /> Get in Touch</h2>
           <p>Fill the following form to get in touch with our team. We'll contact you shortly.</p>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}
