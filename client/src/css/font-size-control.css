@@ -1,0 +1,24 @@
+.font-size-control {
+    position: fixed;
+    bottom: 10px;  /* Position it at the bottom */
+    right: 10px;   /* Keep it on the right side */
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    z-index: 9999;  /* Ensure it stays on top of other elements */
+  }
+  
+  .font-size-control button {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .font-size-control button:hover {
+    background-color: #444;
+  }
+  

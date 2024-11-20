@@ -1,3 +1,4 @@
+import React, { useState } from 'react';  // Add this import to use useState
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
@@ -6,7 +7,7 @@ import LoginPage from './pages/LoginPage';
 import DoctorPage from './pages/DoctorPage';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
-import Profile from './pages/Profile'
+import Profile from './pages/Profile';
 import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
 import CreateAppointments from './pages/CreateAppointment';
@@ -19,15 +20,26 @@ import UserDoctorsList from './components/user/UserDoctorsList';
 import Patients from './components/doctor/Patients';
 import BookAppointment from './components/user/BookAppointment';
 import UserAppointments from './components/user/UserAppointments';
-import NotFoundPage from './pages/NotFoundPage'; // Import the NotFoundPage
+import NotFoundPage from './pages/NotFoundPage';
+import FontSizeControl from './components/common/FontSizeControl'; // Import FontSizeControl
 
 function App() {
   const navigate = useNavigate();
 
+  const [fontSize, setFontSize] = useState(16); // Default font size
+
+  // Dynamically apply font size to the entire page
+  const pageStyle = {
+    fontSize: `${fontSize}px`,
+  };
+
   return (
-    <div className="App d-flex flex-column min-vh-100">
+    <div className="App d-flex flex-column min-vh-100" style={pageStyle}>
       <Header />
       <div className="flex-grow-1">
+        {/* Font size control component */}
+        <FontSizeControl setFontSize={setFontSize} />
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           
