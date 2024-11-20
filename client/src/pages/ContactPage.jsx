@@ -15,18 +15,19 @@ const ContactPage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
-  // UseEffect hook to track login status and pre-fill email if logged in
+  // UseEffect hook to track login status and pre-fill name and email if logged in
   useEffect(() => {
     if (user) {
       setIsLoggedIn(true);
       setFormData((prevState) => ({
         ...prevState,
+        name: user.name,  // Set the logged-in user's name
         email: user.email, // Set the logged-in user's email
       }));
     } else {
       setIsLoggedIn(false); // User is not logged in
     }
-  }, [user]); // Add 'user' as a dependency
+  }, [user]); // Dependency array includes user to run effect when user changes
 
   const validateForm = () => {
     const { name, email, message } = formData;
@@ -88,9 +89,9 @@ const ContactPage = () => {
       const result = await submitContactForm(formData);
       setErrorMessage('');
       setSuccessMessage(result.message);
-      // Retain email if logged in when resetting form data
+      // Retain name and email if logged in when resetting form data
       setFormData((prevState) => ({
-        name: '',
+        name: isLoggedIn ? prevState.name : '',
         email: isLoggedIn ? prevState.email : '',
         message: '',
       }));
@@ -154,6 +155,7 @@ const ContactPage = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Full Name"
+              disabled={isLoggedIn}
               required
             />
           </div>
@@ -168,7 +170,7 @@ const ContactPage = () => {
               onChange={handleChange}
               placeholder="Email Address"
               required
-              disabled={isLoggedIn} // Disable email input if logged in
+              disabled={isLoggedIn}
             />
           </div>
 
