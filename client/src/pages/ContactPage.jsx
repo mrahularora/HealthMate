@@ -12,6 +12,47 @@ const ContactPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const validateForm = () => {
+    const { name, email, message } = formData;
+
+    // Name validation
+    if (!name.trim()) {
+      setErrorMessage('Name is required.');
+      return false;
+    }
+    if (!/^[A-Za-z\s]+$/.test(name)) {
+      setErrorMessage('Name must contain only alphabets and spaces.');
+      return false;
+    }
+    if (name.length < 3 || name.length > 50) {
+      setErrorMessage('Name must be between 3 and 50 characters.');
+      return false;
+    }
+
+    // Email validation
+    if (!email.trim()) {
+      setErrorMessage('Email is required.');
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErrorMessage('Invalid email format.');
+      return false;
+    }
+
+    // Message validation
+    if (!message.trim()) {
+      setErrorMessage('Message is required.');
+      return false;
+    }
+    if (message.length < 10) {
+      setErrorMessage('Message must be at least 10 characters long.');
+      return false;
+    }
+
+    setErrorMessage('');
+    return true;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -22,15 +63,13 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, message } = formData;
 
-    if (!name || !email || !message) {
-      setErrorMessage('All fields are required.');
+    if (!validateForm()) {
       return;
     }
 
     try {
-      const result = await submitContactForm({ name, email, message });
+      const result = await submitContactForm(formData);
       setErrorMessage('');
       setSuccessMessage(result.message);
       setFormData({ name: '', email: '', message: '' });
