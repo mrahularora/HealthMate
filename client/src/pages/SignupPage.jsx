@@ -77,7 +77,9 @@ function SignupPage() {
   };
 
   return (
-    <div className="signup-container">
+    <div className="sign-main">
+    <section className="sign-section">
+      <div class="signup-container">
       <h2 className="mb-4">Signup</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}
@@ -192,6 +194,8 @@ function SignupPage() {
         </div>
         <button type="submit" className="signup-button">Signup</button>
       </form>
+    </div>
+    </section>
     </div>
   );
 }

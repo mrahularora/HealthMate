@@ -40,3 +40,27 @@
     width: 80%;
     margin: auto;
   }
+
+  .about-box ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.about-box ul li {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.about-box h3 {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.about-box p, .about-box li {
+    color: #555;
+    font-size: 1rem;
+}
