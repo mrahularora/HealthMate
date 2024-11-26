@@ -1,21 +1,15 @@
-const express = require('express');
-const appointmentController = require('../controllers/appointmentController');
-const { protect } = require('../middlewares/authMiddleware');
+const express = require("express");
+const appointmentController = require("../controllers/appointmentController");
+const { protect } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
 // Route to create appointment slots
-router.post('/create', appointmentController.createAppointmentSlots);
+router.post("/create", appointmentController.createAppointmentSlots);
 
 // Route to get available slots for a doctor on a specific date
-router.post('/available', appointmentController.getAvailableSlots);
+router.post("/available", appointmentController.getAvailableSlots);
 
-// Route to book an appointment slot
-router.post('/book', appointmentController.bookAppointment);
-
-// Route to get appointments for the logged-in user
-router.get('/', protect, appointmentController.viewAppointments);
-
-// Route to cancel an appointment
-router.patch('/cancel', protect, appointmentController.cancelAppointment);
+// // Route to get appointments for the logged-in user
+// router.get('/', protect, appointmentController.viewAppointments);
 
 module.exports = router;
