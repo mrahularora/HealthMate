@@ -16,8 +16,8 @@ import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './context/ProtectedRoute';
 import Unauthorized from './components/Unauthorized';
 import RedirectIfAuthenticated from './context/RedirectIfAuthenticated';
-import UserDoctorsList from './components/user/UserDoctorsList';
-import Patients from './components/doctor/Patients';
+import DoctorList from "./components/user/UserDoctorsList";
+import Patients from "./components/doctor/Patients";
 import BookAppointment from './components/user/BookAppointment';
 import UserAppointments from './components/user/UserAppointments';
 import NotFoundPage from './pages/NotFoundPage';
@@ -98,7 +98,7 @@ function App() {
           <Route
             path="/doctorslist"
             element={
-              <ProtectedRoute component={UserDoctorsList} allowedRoles={['User', 'Admin']} />
+              <ProtectedRoute component={DoctorList} allowedRoles={['User', 'Admin']} />
             }
           />
           <Route
@@ -109,9 +109,12 @@ function App() {
           />
 
           <Route
-            path="/book-appointment"
+            path="/book-appointment/:doctorId"
             element={
-              <ProtectedRoute component={BookAppointment} allowedRoles={['User', 'Admin']} />
+              <ProtectedRoute
+                component={BookAppointment}
+                allowedRoles={["User", "Admin"]}
+              />
             }
           />
 

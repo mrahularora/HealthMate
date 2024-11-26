@@ -1,215 +1,219 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { searchDoctorsByQuery } from '../../services/doctorService';
-import { getAvailableSlots, bookAppointment } from '../../services/appointmentService';
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  getAvailableSlots,
+  bookAppointmentRequest,
+} from "../../services/appointmentService";
 import '../../css/bookappointment.css';
 
-const BookAppointment = () => {
-  const [doctorName, setDoctorName] = useState('');
-  const [doctorsList, setDoctorsList] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [date, setDate] = useState('');
-  const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isSearching, setIsSearching] = useState(false); // For search button
-  const [isBooking, setIsBooking] = useState(false); // For booking button
+const BookAppointmentComponent = () => {
+  const { doctorId } = useParams(); // Doctor ID from URL params
+  const [selectedDate, setSelectedDate] = useState(""); // Selected date
+  const [availableSlots, setAvailableSlots] = useState([]); // Time slots for the selected date
+  const [selectedSlot, setSelectedSlot] = useState(""); // Selected time slot
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    gender: "",
+    age: "",
+    phone: "",
+    email: "",
+    address: "",
+    bloodGroup: "",
+    illness: "",
+    notes: "",
+  });
+  const [error, setError] = useState(null); // Error message state
+  const [successMessage, setSuccessMessage] = useState(null); // Success message state
 
-  const debounceTimeout = useRef(null);
+  // Fetch available slots when a date is selected
+  const handleDateChange = async (e) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+    setAvailableSlots([]);
+    setError(null); // Clear previous errors
 
-  // Convert time to 12-hour format
-  const convertTo12HourFormat = (time) => {
-    const [hours, minutes] = time.split(':');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const newHour = hours % 12 || 12;
-    return `${newHour}:${minutes} ${ampm}`;
-  };
-
-  // Debounced doctor search function
-  const handleDoctorSearch = async (e) => {
-    const query = e.target.value;
-    setDoctorName(query);
-    resetForm();
-    if (query.length >= 3) {
-      clearTimeout(debounceTimeout.current);
-      debounceTimeout.current = setTimeout(async () => {
-        setIsSearching(true);
-        try {
-          const results = await searchDoctorsByQuery(query);
-          setDoctorsList(results);
-        } catch (err) {
-          setError('No doctors found matching your search. Please try a different name or specialty.');
-        } finally {
-          setIsSearching(false);
-        }
-      }, 500);
+    try {
+      const response = await getAvailableSlots(doctorId, date); // Fix: Pass doctorId and date as separate arguments
+      setAvailableSlots(response.availableSlots);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Error fetching available slots."
+      );
     }
   };
 
-  // Handle doctor selection
-  const handleDoctorSelect = (doctor) => {
-    setSelectedDoctor(doctor);
-    setDoctorName(doctor.name);
-    setDoctorsList([]);
-    setError('');
+  // Update form data dynamically
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Reset form when needed
-  const resetForm = () => {
-    setDoctorsList([]);
-    setSelectedDoctor(null);
-    setAvailableSlots([]);
-    setSelectedSlot(null);
-    setDate('');
-    setSuccessMessage('');
-    setError('');
-  };
-
-  // Handle appointment booking
+  // Handle booking request submission
   const handleBookAppointment = async () => {
     if (!selectedSlot) {
-      setError('Please select a time slot.');
-      return;
-    }
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-      setError('You must be logged in to book an appointment.');
+      setError("Please select a time slot.");
       return;
     }
 
-    setIsBooking(true); // Booking in progress
+    const [startTime, endTime] = selectedSlot.split("-");
+
     try {
-      const response = await bookAppointment(selectedSlot._id, user.id);
-      setSuccessMessage(response.message || 'Appointment booked successfully!');
+      await bookAppointmentRequest({
+        doctorId,
+        date: selectedDate,
+        startTime,
+        endTime,
+        userDetails: { ...formData },
+      });
+      setSuccessMessage("Appointment request sent successfully.");
+      setError(null); // Clear any errors
     } catch (err) {
-      setError('Error booking the appointment.');
-    } finally {
-      setIsBooking(false); // Booking complete
+      setError(
+        err.response?.data?.message || "Error sending appointment request."
+      );
+      setSuccessMessage(null); // Clear success message on error
     }
   };
-
-  // Fetch available slots based on selected doctor and date
-  const handleSearchSlots = async () => {
-    if (!date) {
-      setError('Please select a valid date.');
-      return;
-    }
-
-    setAvailableSlots([]);
-    setSelectedSlot(null);
-    setError('');
-
-    if (selectedDoctor) {
-      setIsSearching(true);
-      try {
-        const response = await getAvailableSlots(selectedDoctor._id, date);
-        const sortedSlots = response.availableSlots.sort((a, b) => {
-          const timeA = new Date(`1970-01-01T${a.startTime}:00Z`);
-          const timeB = new Date(`1970-01-01T${b.startTime}:00Z`);
-          return timeA - timeB;
-        });
-        setAvailableSlots(sortedSlots);
-        if (sortedSlots.length === 0) {
-          setError('No slots available for this date.');
-        }
-      } catch (err) {
-        setError('Error fetching available slots.');
-      } finally {
-        setIsSearching(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    return () => clearTimeout(debounceTimeout.current); // Cleanup timeout on component unmount
-  }, []);
 
   return (
     <div className="book-appointment">
-      <h2 className="title">Book an Appointment</h2>
+      <h1>Book Appointment</h1>
 
-      <div className="step">
-        <label className="label">Doctor Name or Specialty</label>
+      {/* Date Selection */}
+      <div>
+        <label>Select Date:</label>
         <input
-          type="text"
-          placeholder="Search for a doctor or specialty"
-          value={doctorName}
-          onChange={handleDoctorSearch}
-          className="input"
+          type="date"
+          value={selectedDate}
+          onChange={handleDateChange}
+          min={new Date().toISOString().split("T")[0]} // Disable past dates
         />
-        {doctorsList.length > 0 && (
-          <div className="dropdown">
-            {doctorsList.map((doctor) => (
-              <div
-                key={doctor._id}
-                onClick={() => handleDoctorSelect(doctor)}
-                className="dropdown-item"
-              >
-                <img src={doctor.imageUrl || '/default-avatar.png'} alt={doctor.name} className="doctor-img" />
-                {doctor.name} - {doctor.specialty}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
-      {selectedDoctor && (
-        <div className="step">
-          <label className="label">Selected Doctor:</label>
-          <div className="doctor-selected">
-            <img src={selectedDoctor.imageUrl || '/default-avatar.png'} alt={selectedDoctor.name} className="doctor-img-large" />
-            <div>
-              <div><strong>{selectedDoctor.name}</strong></div>
-              <div>{selectedDoctor.specialty}</div>
-            </div>
-          </div>
+      {/* Time Slot Selection */}
+      {selectedDate && (
+        <div>
+          <label>Select Time Slot:</label>
+          <select
+            value={selectedSlot}
+            onChange={(e) => setSelectedSlot(e.target.value)}
+          >
+            <option value="">Select a time slot</option>
+            {availableSlots.length > 0 ? (
+              availableSlots.map((slot, idx) => (
+                <option key={idx} value={`${slot.startTime}-${slot.endTime}`}>
+                  {slot.startTime} - {slot.endTime}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                No available slots
+              </option>
+            )}
+          </select>
         </div>
       )}
 
-      {selectedDoctor && (
-        <div className="step">
-          <label className="label">Select a Date:</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="input"
-          />
-        </div>
-      )}
+      {/* Form Fields */}
+      <div>
+        <label>First Name:</label>
+        <input
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Last Name:</label>
+        <input
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Gender:</label>
+        <input
+          type="text"
+          name="gender"
+          value={formData.gender}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Age:</label>
+        <input
+          type="number"
+          name="age"
+          value={formData.age}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Phone:</label>
+        <input
+          type="text"
+          name="phone"
+          value={formData.phone}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Address:</label>
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Blood Group:</label>
+        <input
+          type="text"
+          name="bloodGroup"
+          value={formData.bloodGroup}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div>
+        <label>Illness:</label>
+        <textarea
+          name="illness"
+          value={formData.illness}
+          onChange={handleInputChange}
+        ></textarea>
+      </div>
+      <div>
+        <label>Notes:</label>
+        <textarea
+          name="notes"
+          value={formData.notes}
+          onChange={handleInputChange}
+        ></textarea>
+      </div>
 
-      {selectedDoctor && date && (
-        <div className="step">
-          <button className="search-button" onClick={handleSearchSlots} disabled={isSearching}>
-            {isSearching ? 'Searching...' : 'Search for Available Slots'}
-          </button>
-        </div>
-      )}
+      {/* Error and Success Messages */}
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
 
-      {availableSlots.length > 0 && (
-        <div className="slots">
-          {availableSlots.map((slot) => (
-            <div
-              key={slot._id}
-              className={`slot ${selectedSlot?._id === slot._id ? 'selected' : ''}`}
-              onClick={() => setSelectedSlot(slot)}
-            >
-              {convertTo12HourFormat(slot.startTime)} - {convertTo12HourFormat(slot.endTime)}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {selectedSlot && (
-        <button className="book-button" onClick={handleBookAppointment} disabled={isBooking}>
-          {isBooking ? 'Booking...' : 'Book Now'}
-        </button>
-      )}
-
-      {error && <p className="error-message">{error}</p>}
-      {successMessage && <p className="success-message">{successMessage}</p>}
+      {/* Submit Button */}
+      <button onClick={handleBookAppointment}>Book Appointment</button>
     </div>
   );
 };
 
-export default BookAppointment;
+export default BookAppointmentComponent;
+

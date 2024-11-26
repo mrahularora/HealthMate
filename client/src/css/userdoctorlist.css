@@ -1,0 +1,106 @@
+  /* Doctor List Container */
+  .doctor-list-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease-in-out;
+  }
+  
+.page-content {
+    flex-grow: 1;
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+  /* Heading Styles */
+  .doctor-list-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: #e74c3c;
+    background-color: #f8d7da;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  /* Doctor List Styles */
+  .doctor-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  /* Each Doctor Item */
+  .doctor-item {
+    background-color: #fff;
+    border: 1px solid #e1e8f0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .doctor-item:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+  }
+  
+  /* Doctor Info */
+  .doctor-item p {
+    margin: 8px 0;
+    color: #34495e;
+    font-size: 1.1rem;
+  }
+  
+  /* Strong Text Styling */
+  .doctor-item p strong {
+    color: #2980b9;
+    font-weight: 600;
+  }
+  
+  /* Book Appointment Button */
+  .book-appointment-btn {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .book-appointment-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  
+  .book-appointment-btn:active {
+    transform: translateY(1px);
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .doctor-list-title {
+      font-size: 1.6rem;
+    }
+  
+    .doctor-item {
+      padding: 15px;
+    }
+  
+    .book-appointment-btn {
+      padding: 8px 16px;
+    }
+  }
+  
