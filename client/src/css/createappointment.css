@@ -1,17 +1,107 @@
 .create-appointment {
-    padding: 20px;
-    max-width: 600px;
-    margin: 0 auto;
+  padding: 20px;
+ margin:20px;
+}
+
+.create-appointment h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333; /* Dark text for readability */
+}
+
+.create-appointment .form-group {
+  margin-bottom: 15px;
+}
+
+.create-appointment label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555; /* Subtle text color for labels */
+}
+
+.create-appointment input[type="date"],
+.create-appointment select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc; /* Standard input border */
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease; /* Smooth interaction */
+}
+
+.create-appointment input[type="date"]:focus,
+.create-appointment select:focus {
+  border-color: #007bff; /* Highlight border on focus */
+  outline: none;
+}
+
+.create-appointment button {
+  background-color: #007bff; /* Primary button color */
+  color: #fff; /* White text for contrast */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-appointment button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Glow effect on hover */
+}
+
+.create-appointment .error-text {
+  color: #dc3545; /* Red for errors */
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.create-appointment .added-slots h3 {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  color: #333; /* Consistent text color */
+}
+
+.create-appointment .added-slots ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.create-appointment .added-slots li {
+  margin-bottom: 10px;
+  color: #555; /* Subtle text color */
+}
+
+.create-appointment .added-slots button {
+  background-color: #dc3545; /* Danger button color */
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.create-appointment .added-slots button:hover {
+  background-color: #b02a37; /* Darker red on hover */
+}
+
+@media (max-width: 768px) {
+  .create-appointment {
+    padding: 15px;
+    max-width: 100%; /* Full-width on smaller screens */
   }
-  
-  .create-appointment input {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
+
+  .create-appointment h1 {
+    font-size: 1.5rem;
   }
-  
+
   .create-appointment button {
-    padding: 10px 15px;
+    width: 100%; /* Full-width buttons on mobile */
     margin-top: 10px;
   }
-  
+}
