@@ -12,24 +12,22 @@ const Sidebar = () => {
         {/* Role-specific links */}
         {user?.role === 'User' && (
           <>
-          <h5 className="mb-4 fw-bold"><img src="./assets/images/icons/patient-portal.png" className="wid35" alt="patientportal" /> Patient Portal</h5>
+          <h5 className="mb-4 fw-bold"><img src="/assets/images/icons/patient-portal.png" className="wid35" alt="patientportal" /> Patient Portal</h5>
           <hr class="my-4 w-100 mx-auto"></hr>
             <li><a href="/Profile">See Profile</a></li>
             <li><a href="/UserAppointments">All Appointments</a></li>
             <li><a href="/doctorslist">See a Doctor</a></li>
-            <li><a href="/book-appointment">Book Appointment</a></li>
-            {/* <li><a href="/booknew{$ID}">Book New Appointment</a></li> - user will come to this page by doctor's list */} 
             <hr class="my-4 w-100 mx-auto"></hr>
           </>
         )}
 
         {user?.role === 'Doctor' && (
           <>
-          <h5 className="mb-4 fw-bold"><img src="./assets/images/icons/doctor-portal.png" className="wid35" alt="doctorportal" /> Doctor Portal</h5>
+          <h5 className="mb-4 fw-bold"><img src="/assets/images/icons/doctor-portal.png" className="wid35" alt="doctorportal" /> Doctor Portal</h5>
           <hr class="my-4 w-100 mx-auto"></hr>
             <li><a href="/Profile">See Profile</a></li>
             <li><a href="/CreateAppointment">Create Appointment</a></li>
-            <li><a href="/ViewAppointments">View All Appointments</a></li>
+            <li><a href="/AcceptedAppointments">View All Appointments</a></li>
             <li><a href="/RequestedAppointments">Requested Appointments</a></li>
             <li><a href="/ReportsPrescriptions">Reports & Prescriptions</a></li>
             <li><a href="/Patients">Patients List</a></li>
