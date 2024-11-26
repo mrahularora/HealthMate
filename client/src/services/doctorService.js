@@ -12,10 +12,10 @@ export const getPatientRecords = async () => {
 // Fetch all doctors
 export const fetchDoctors = async () => {
   try {
-    const response = await axios.get('/doctors');
+    const response = await axios.get("/doctors");
     return response.data;
   } catch (error) {
-    throw new Error('Error fetching doctors');
+    throw new Error("Error fetching doctors");
   }
 };
 
@@ -27,5 +27,19 @@ export const searchDoctorsByQuery = async (query) => {
     return response.data;
   } catch (error) {
     throw new Error('Error searching doctors');
+  }
+};
+
+
+export const getDoctorList = async () => {
+  return axios.get("/doctors");
+};
+
+export const fetchDoctorsFromSchema = async () => {
+  try {
+    const response = await axios.get("/doctors/list");
+    return response.data;
+  } catch (error) {
+    throw new Error("Error fetching doctors from Doctor schema");
   }
 };

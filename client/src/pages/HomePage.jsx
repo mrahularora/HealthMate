@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchDoctorsFromSchema } from '../services/doctorService';
 
 const HomePage = () => {
   const [doctors, setDoctors] = useState([]);
@@ -7,9 +7,9 @@ const HomePage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/doctors');
-        console.log("Fetched doctors:", response.data);
-        setDoctors(response.data);
+        const doctorsData = await fetchDoctorsFromSchema();
+        console.log("Fetched doctors from Doctor schema:", doctorsData);
+        setDoctors(doctorsData);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
