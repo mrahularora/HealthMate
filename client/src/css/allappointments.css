@@ -1,0 +1,40 @@
+/* Wrapper for the entire page */
+.page-container {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  /* Content styling */
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+
+  .heading {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 5px;
+  }
+  
+  .alert {
+    margin-top: 20px;
+  }
+  
+  /* Card styling for appointments */
+  .card {
+    margin-top:20px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .page-container {
+      flex-direction: column;
+    }
+  
+    .content {
+      padding: 10px;
+    }
+  }
+  

@@ -1,12 +1,12 @@
-import axios from './api'; 
+import axios from "./api";
 
 export const getPatientRecords = async () => {
-    try {
-        const response = await axios.get('/patients');
-        return response.data;
-    } catch (error) {
-        throw new Error('Failed to fetch patient records');
-    }
+  try {
+    const response = await axios.get("/patients");
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch patient records");
+  }
 };
 
 // Fetch all doctors
@@ -23,13 +23,14 @@ export const fetchDoctors = async () => {
 export const searchDoctorsByQuery = async (query) => {
   if (!query) return [];
   try {
-    const response = await axios.get(`/doctors/search?query=${encodeURIComponent(query)}`);
+    const response = await axios.get(
+      `/doctors/search?query=${encodeURIComponent(query)}`
+    );
     return response.data;
   } catch (error) {
-    throw new Error('Error searching doctors');
+    throw new Error("Error searching doctors");
   }
 };
-
 
 export const getDoctorList = async () => {
   return axios.get("/doctors");

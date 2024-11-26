@@ -71,3 +71,82 @@ export const bookAppointmentRequest = async (data) => {
     throw error;
   }
 };
+
+export const getAppointmentRequests = async (doctorId) => {
+  try {
+    const response = await axios.get(
+      `/appointments/requests?doctorId=${doctorId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching appointment requests:", error);
+    throw error;
+  }
+};
+
+export const updateAppointmentStatus = async ({
+  doctorId,
+  appointmentId,
+  slotId,
+  status,
+}) => {
+  try {
+    const response = await axios.patch(`/appointments/status`, {
+      doctorId,
+      appointmentId,
+      slotId,
+      status,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    throw error;
+  }
+};
+
+// API call for accepted appointments for doctor
+export const getAcceptedAppointments = async (doctorId) => {
+  try {
+    const response = await axios.get(
+      `/appointments/accepted?doctorId=${doctorId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching accepted appointments:", error);
+    throw error;
+  }
+};
+
+// API call for accepted appointments details for doctor
+export const getAppointmentDetails = async (appointmentId, slotId) => {
+  try {
+    const response = await axios.get(
+      `/appointments/details?appointmentId=${appointmentId}&slotId=${slotId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching appointment details:", error);
+    throw error;
+  }
+};
+
+// Api call for doctor update prescription for user
+export const updateAppointmentDetails = async ({
+  appointmentId,
+  slotId,
+  status,
+  prescription,
+}) => {
+  try {
+    const response = await axios.patch(`/appointments/details`, {
+      appointmentId,
+      slotId,
+      status,
+      prescription,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating appointment details:", error);
+    throw error;
+  }
+};

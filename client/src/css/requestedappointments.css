@@ -1,0 +1,126 @@
+/* Wrapper for the entire page */
+.page-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Content styling */
+.appointment-details {
+    flex-grow: 1;
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+/* Heading styling */
+.heading {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Error message styling */
+.error {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 15px;
+    font-size: 1.1em;
+}
+
+/* Appointment request list */
+.appointment-list {
+    list-style: none;  /* No bullets */
+    padding: 0;  /* Remove padding */
+    margin: 0;  /* Remove margin */
+}
+
+/* Card styling for appointments */
+.appointment-card {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-card:hover {
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Patient information styling */
+.patient-info p {
+    margin: 10px 0;
+    font-size: 1em;
+    color: #7f8c8d;
+}
+
+/* Button styling */
+.appointment-actions button {
+    padding: 12px 18px;
+    margin: 8px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Confirm button styles */
+.btn-confirm {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #27ae60;
+}
+
+/* Reject button styles */
+.btn-reject {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c0392b;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .page-container {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .appointment-details {
+        padding: 20px;
+        margin: 0;
+    }
+}
+
+/* Mobile-first styling */
+@media (max-width: 768px) {
+    .page-container {
+        flex-direction: column;
+    }
+
+    .appointment-details {
+        padding: 15px;
+    }
+
+    .appointment-card {
+        padding: 12px;
+    }
+
+    .appointment-actions button {
+        font-size: 0.9em;
+        padding: 10px 14px;
+    }
+}

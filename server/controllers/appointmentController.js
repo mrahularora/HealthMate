@@ -1,227 +1,424 @@
-const Appointment = require('../models/Appointments');
-
+const Appointment = require("../models/Appointments");
 
 // API to create timeslots for doctors
-
 exports.createAppointmentSlots = async (req, res) => {
-    const { doctorId, appointments } = req.body;
+  const { doctorId, appointments } = req.body;
 
-    // Ensure appointments is an array
-    if (!Array.isArray(appointments)) {
-        return res.status(400).json({ message: "Appointments must be an array" });
+  // Validate that appointments is an array
+  if (!Array.isArray(appointments)) {
+    return res.status(400).json({ message: "Appointments must be an array." });
+  }
+
+  try {
+    let allDuplicateSlots = []; // To track duplicate slots
+
+    // Loop through each appointment and check for duplicates
+    for (let appointment of appointments) {
+      const { date, timeSlots } = appointment;
+
+      if (!date || !timeSlots || timeSlots.length === 0) {
+        return res.status(400).json({
+          message: "Each appointment must have a valid date and time slots.",
+        });
+      }
+
+      const existingAppointment = await Appointment.findOne({ doctorId, date });
+
+      if (existingAppointment) {
+        const existingTimeSlots = existingAppointment.timeSlots;
+
+        // Check each new slot against existing slots
+        const duplicateSlots = timeSlots.filter((newSlot) =>
+          existingTimeSlots.some(
+            (existingSlot) =>
+              existingSlot.startTime === newSlot.startTime &&
+              existingSlot.endTime === newSlot.endTime
+          )
+        );
+
+        if (duplicateSlots.length > 0) {
+          allDuplicateSlots.push(...duplicateSlots);
+        }
+      }
     }
 
-    try {
-        // Initialize an array to collect all duplicate time slots
-        let allDuplicateSlots = [];
-
-        // Loop through each appointment and check for time slot duplicates
-        for (let appointment of appointments) {
-            const { date, timeSlots } = appointment;
-
-            if (!date || !timeSlots || timeSlots.length === 0) {
-                return res.status(400).json({ message: "Each appointment must have a valid date and time slots" });
-            }
-
-            // Check if an appointment already exists for the doctor on the given date
-            const existingAppointment = await Appointment.findOne({ doctorId, date });
-
-            if (existingAppointment) {
-                const existingTimeSlots = existingAppointment.timeSlots;
-
-                // Track duplicate time slots
-                const duplicateSlots = [];
-
-                // Check each new time slot against the existing time slots
-                for (const newSlot of timeSlots) {
-                    const isDuplicate = existingTimeSlots.some(existingSlot => 
-                        existingSlot.startTime === newSlot.startTime && 
-                        existingSlot.endTime === newSlot.endTime
-                    );
-
-                    if (isDuplicate) {
-                        // Add duplicate slot along with the date to the list
-                        duplicateSlots.push({ date, ...newSlot });
-                    }
-                }
-
-                // If there are any duplicates, collect them and stop further processing
-                if (duplicateSlots.length > 0) {
-                    allDuplicateSlots = [...allDuplicateSlots, ...duplicateSlots];
-                }
-            }
-        }
-
-        // If there are any duplicate slots, return an error response immediately
-        if (allDuplicateSlots.length > 0) {
-            return res.status(400).json({
-                message: 'The following time slots already exist for this date:',
-                duplicateSlots: allDuplicateSlots
-            });
-        }
-
-        // If no duplicates were found, proceed to save the new time slots
-        for (let appointment of appointments) {
-            const { date, timeSlots } = appointment;
-
-            // Check if the appointment already exists for the doctor on the given date
-            const existingAppointment = await Appointment.findOne({ doctorId, date });
-
-            if (existingAppointment) {
-                // If appointment exists, add the new time slots to the existing ones
-                existingAppointment.timeSlots.push(...timeSlots);
-                await existingAppointment.save();
-            } else {
-                // If no appointment exists for the date, create a new appointment entry
-                await Appointment.create({
-                    doctorId,
-                    date,
-                    timeSlots
-                });
-            }
-        }
-
-        // Return a success response if everything is saved correctly
-        res.status(200).json({ message: 'Appointment slots created successfully!' });
-    } catch (err) {
-        console.error('Error Details:', err);  // Log the error for debugging
-        res.status(500).json({ message: 'Error creating appointment slots', error: err.message || err });
+    // Return error if duplicates exist
+    if (allDuplicateSlots.length > 0) {
+      return res.status(400).json({
+        message: "Duplicate slots found.",
+        duplicateSlots: allDuplicateSlots,
+      });
     }
+
+    // Add or update slots
+    for (let appointment of appointments) {
+      const { date, timeSlots } = appointment;
+
+      let existingAppointment = await Appointment.findOne({ doctorId, date });
+
+      if (existingAppointment) {
+        // Add new slots to existing appointment
+        existingAppointment.timeSlots.push(...timeSlots);
+        await existingAppointment.save();
+      } else {
+        // Create a new appointment
+        await Appointment.create({ doctorId, date, timeSlots });
+      }
+    }
+
+    res
+      .status(200)
+      .json({ message: "Appointment slots created successfully!" });
+  } catch (err) {
+    console.error("Error creating appointment slots:", err);
+    res.status(500).json({
+      message: "Error creating appointment slots.",
+      error: err.message,
+    });
+  }
 };
 
-// Controller to get available slots for a doctor on a specific date
+// API to fetch available slots for a doctor and date
 exports.getAvailableSlots = async (req, res) => {
-    const { doctorId, date } = req.body;  // Get doctorId and date from the request body
+  const { doctorId, date } = req.body;
 
-    if (!doctorId || !date) {
-        return res.status(400).json({ message: "Doctor ID and date are required." });
+  if (!doctorId || !date) {
+    return res
+      .status(400)
+      .json({ message: "Doctor ID and date are required." });
+  }
+
+  try {
+    const appointment = await Appointment.findOne({ doctorId, date });
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ message: "No appointments found for the selected date." });
     }
 
-    try {
-        // Fetch appointment with time slots for the given doctorId and date
-        const appointment = await Appointment.findOne({ doctorId, date });
+    const availableSlots = appointment.timeSlots.filter(
+      (slot) => slot.status === "Available"
+    );
 
-        if (!appointment) {
-            return res.status(404).json({ message: "No appointments found for this doctor on the selected date." });
-        }
-
-        // Filter out booked slots and return only available ones
-        const availableSlots = appointment.timeSlots.filter(slot => !slot.isBooked);
-
-        if (availableSlots.length === 0) {
-            return res.status(404).json({ message: "No available slots for this doctor on the selected date." });
-        }
-
-        res.status(200).json({ availableSlots });
-    } catch (err) {
-        console.error("Error Details:", err);
-        res.status(500).json({ message: "Error retrieving available slots", error: err.message || err });
+    if (availableSlots.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No available slots for the selected date." });
     }
+
+    res.status(200).json({ availableSlots });
+  } catch (err) {
+    console.error("Error fetching available slots:", err);
+    res
+      .status(500)
+      .json({ message: "Error fetching available slots.", error: err.message });
+  }
 };
 
-// In the appointment controller (controller/appointmentController.js)
+// API to handle booking requests
+exports.bookAppointmentRequest = async (req, res) => {
+  const { doctorId, date, startTime, endTime, userDetails } = req.body;
 
-exports.bookAppointment = async (req, res) => {
-    const { slotId, userId } = req.body;
-  
-    if (!slotId || !userId) {
-      return res.status(400).json({ message: 'Slot ID and User ID are required.' });
+  if (!doctorId || !date || !startTime || !endTime || !userDetails) {
+    return res.status(400).json({ message: "All fields are required." });
+  }
+
+  try {
+    const appointment = await Appointment.findOne({ doctorId, date });
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ message: "No appointments found for the selected date." });
     }
-  
-    try {
-      // Find the appointment with the given slotId
-      const appointment = await Appointment.findOne({ 'timeSlots._id': slotId });
-  
-      if (!appointment) {
-        return res.status(404).json({ message: 'Appointment slot not found.' });
-      }
-  
-      // Find the specific slot within the appointment
-      const slot = appointment.timeSlots.find((slot) => slot._id.toString() === slotId);
-  
-      if (slot.isBooked) {
-        return res.status(400).json({ message: 'This slot is already booked.' });
-      }
-  
-      // Mark the slot as booked and associate it with the user
-      slot.isBooked = true;
-      slot.bookedBy = userId;
-      slot.status = 'Requested';  // You can update this as per your requirements
-  
-      await appointment.save();
-  
-      res.status(200).json({ message: 'Appointment booked successfully.' });
-    } catch (err) {
-      console.error('Booking error:', err);
-      res.status(500).json({ message: 'Error booking appointment', error: err.message || err });
+
+    const timeSlot = appointment.timeSlots.find(
+      (slot) => slot.startTime === startTime && slot.endTime === endTime
+    );
+
+    if (!timeSlot || timeSlot.status !== "Available") {
+      return res
+        .status(400)
+        .json({ message: "Time slot is not available for booking." });
     }
+
+    // Update the slot's details
+    timeSlot.status = "Requested";
+    timeSlot.isBooked = true;
+    timeSlot.bookedBy = userDetails.userId;
+    timeSlot.userDetails = userDetails;
+
+    await appointment.save();
+
+    res.status(200).json({ message: "Appointment request sent successfully." });
+  } catch (err) {
+    console.error("Error booking appointment request:", err);
+    res.status(500).json({
+      message: "Error booking appointment request.",
+      error: err.message,
+    });
+  }
 };
 
-// Method to view appointments for the logged-in user
-exports.viewAppointments = async (req, res) => {
-    const userId = req.user.id; // User ID from the authentication middleware
+// API to fetch all appointments for a doctor
+exports.getDoctorAppointments = async (req, res) => {
+  const { doctorId } = req.query;
 
-    try {
-        // Fetch appointments where the logged-in user has booked a time slot
-        const appointments = await Appointment.find({
-            'timeSlots.bookedBy': userId // Match time slots where bookedBy is the user
-        })
-        .populate('doctorId', 'name specialty') // Populate doctor's name and specialty
-        .sort({ date: 1 }); // Sort appointments by date in ascending order
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required." });
+  }
 
-        if (!appointments || appointments.length === 0) {
-            return res.status(404).json({ message: 'No appointments found.' });
-        }
+  try {
+    const appointments = await Appointment.find({ doctorId }).populate(
+      "timeSlots.bookedBy"
+    );
 
-        // Filter time slots for each appointment to only include those booked by the user
-        appointments.forEach(appointment => {
-            // Filter out time slots where bookedBy is null or does not match the userId
-            appointment.timeSlots = appointment.timeSlots.filter(slot => slot.bookedBy && slot.bookedBy.toString() === userId);
-        });
-
-        res.status(200).json({
-            message: 'Appointments retrieved successfully.',
-            appointments
-        });
-    } catch (err) {
-        res.status(500).json({ message: 'Error fetching appointments', error: err.message || err });
+    if (appointments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No appointments found for the doctor." });
     }
+
+    res.status(200).json(appointments);
+  } catch (err) {
+    console.error("Error fetching doctor appointments:", err);
+    res.status(500).json({
+      message: "Error fetching doctor appointments.",
+      error: err.message,
+    });
+  }
 };
 
-// Controller method to cancel appointment
-exports.cancelAppointment = async (req, res) => {
-    const { appointmentId, slotId } = req.body;
-  
-    if (!appointmentId || !slotId) {
-      return res.status(400).json({ message: 'Appointment ID and Slot ID are required.' });
-    }
-  
-    try {
-      // Find the appointment by appointmentId and update the slot's status
-      const appointment = await Appointment.findById(appointmentId);
-  
-      if (!appointment) {
-        return res.status(404).json({ message: 'Appointment not found.' });
-      }
-  
-      // Find the specific time slot
-      const slot = appointment.timeSlots.id(slotId);
-  
-      if (!slot || !slot.isBooked) {
-        return res.status(400).json({ message: 'Slot is not booked or does not exist.' });
-      }
-  
-      // Cancel the appointment by setting isBooked to false
-      slot.isBooked = false;
-      slot.bookedBy = null;
-      slot.status = 'Cancelled';
-  
-      await appointment.save();
-  
-      res.status(200).json({ message: 'Appointment cancelled successfully.' });
-    } catch (err) {
-      console.error('Cancellation error:', err);
-      res.status(500).json({ message: 'Error canceling appointment', error: err.message || err });
-    }
+exports.getAppointmentRequests = async (req, res) => {
+  const { doctorId } = req.query;
+
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required." });
+  }
+
+  try {
+    const appointments = await Appointment.find({ doctorId }).lean();
+
+    // Extract only requested slots
+    const requestedSlots = appointments.flatMap((appointment) =>
+      appointment.timeSlots
+        .filter((slot) => slot.status === "Requested")
+        .map((slot) => ({
+          ...slot,
+          date: appointment.date,
+          appointmentId: appointment._id,
+        }))
+    );
+
+    res.status(200).json(requestedSlots);
+  } catch (err) {
+    console.error("Error fetching appointment requests:", err);
+    res.status(500).json({
+      message: "Error fetching appointment requests.",
+      error: err.message,
+    });
+  }
 };
-  
+
+// API to update the status of an appointment slot
+exports.updateAppointmentStatus = async (req, res) => {
+  const { doctorId, appointmentId, slotId, status } = req.body;
+
+  // Validate required fields
+  if (!doctorId || !appointmentId || !slotId || !status) {
+    return res.status(400).json({ message: "All fields are required." });
+  }
+
+  try {
+    // Find the appointment by ID
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    // Find the timeslot by slotId
+    const timeSlot = appointment.timeSlots.id(slotId);
+
+    if (!timeSlot) {
+      return res.status(404).json({ message: "Time slot not found." });
+    }
+
+    // Update the timeslot status
+    if (status === "Confirmed") {
+      timeSlot.status = "Confirmed";
+      timeSlot.isBooked = true;
+    } else if (status === "Rejected") {
+      timeSlot.status = "Available";
+      timeSlot.isBooked = false;
+      timeSlot.userDetails = null; // Clear user details
+    }
+
+    // Save the updated appointment
+    await appointment.save();
+
+    res
+      .status(200)
+      .json({ message: `Appointment status updated to ${status}.` });
+  } catch (err) {
+    console.error("Error updating appointment status:", err);
+    res.status(500).json({
+      message: "Error updating appointment status.",
+      error: err.message,
+    });
+  }
+};
+
+exports.getDoctorAppointments = async (req, res) => {
+  const { doctorId } = req.query;
+
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required." });
+  }
+
+  try {
+    const appointments = await Appointment.find({ doctorId }).lean();
+
+    // Filter only confirmed appointments
+    const confirmedAppointments = appointments.flatMap((appointment) =>
+      appointment.timeSlots
+        .filter((slot) => slot.status === "Confirmed")
+        .map((slot) => ({
+          ...slot,
+          date: appointment.date,
+          appointmentId: appointment._id,
+        }))
+    );
+
+    res.status(200).json(confirmedAppointments);
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    res.status(500).json({
+      message: "Error fetching appointments.",
+      error: err.message,
+    });
+  }
+};
+
+// Get all the accepted appointments for the logged-in Doctor
+exports.getAcceptedAppointments = async (req, res) => {
+  const { doctorId } = req.query;
+
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required." });
+  }
+
+  try {
+    const appointments = await Appointment.find({ doctorId })
+      .populate("timeSlots.bookedBy", "firstName lastName email phone")
+      .lean();
+
+    // Filter slots with specific statuses
+    const acceptedAppointments = appointments.flatMap((appointment) =>
+      appointment.timeSlots
+        .filter((slot) =>
+          ["Confirmed", "Completed", "InProgress"].includes(slot.status)
+        )
+        .map((slot) => ({
+          ...slot,
+          date: appointment.date,
+          appointmentId: appointment._id,
+        }))
+    );
+
+    res.status(200).json(acceptedAppointments);
+  } catch (err) {
+    console.error("Error fetching accepted appointments:", err);
+    res.status(500).json({
+      message: "Error fetching accepted appointments.",
+      error: err.message,
+    });
+  }
+};
+
+// Get Appointment Details
+
+exports.getAppointmentDetails = async (req, res) => {
+  const { appointmentId, slotId } = req.query;
+
+  if (!appointmentId || !slotId) {
+    return res
+      .status(400)
+      .json({ message: "Appointment ID and Slot ID are required." });
+  }
+
+  try {
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    const timeSlot = appointment.timeSlots.id(slotId);
+
+    if (!timeSlot) {
+      return res.status(404).json({ message: "Time slot not found." });
+    }
+
+    res.status(200).json({
+      userDetails: timeSlot.userDetails,
+      prescription: timeSlot.prescription,
+      status: timeSlot.status,
+    });
+  } catch (err) {
+    console.error("Error fetching appointment details:", err);
+    res.status(500).json({
+      message: "Error fetching appointment details.",
+      error: err.message,
+    });
+  }
+};
+
+// Update Prescrition by Doctor
+exports.updateAppointmentDetails = async (req, res) => {
+  const { appointmentId, slotId, status, prescription } = req.body;
+
+  if (!appointmentId || !slotId) {
+    return res
+      .status(400)
+      .json({ message: "Appointment ID and Slot ID are required." });
+  }
+
+  try {
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    const timeSlot = appointment.timeSlots.id(slotId);
+
+    if (!timeSlot) {
+      return res.status(404).json({ message: "Time slot not found." });
+    }
+
+    // Update the status if provided
+    if (status) {
+      timeSlot.status = status;
+      if (status === "Completed") {
+        timeSlot.isBooked = true; // Ensure it remains booked
+      }
+    }
+
+    // Update the prescription if provided
+    if (prescription) {
+      timeSlot.prescription = prescription;
+    }
+
+    await appointment.save();
+
+    res.status(200).json({ message: "Appointment updated successfully." });
+  } catch (err) {
+    console.error("Error updating appointment:", err);
+    res.status(500).json({
+      message: "Error updating appointment.",
+      error: err.message,
+    });
+  }
+};
