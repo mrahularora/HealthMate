@@ -25,6 +25,7 @@ import BookAppointment from './components/user/BookAppointment';
 import UserAppointments from './components/user/UserAppointments';
 import NotFoundPage from './pages/NotFoundPage';
 import FontSizeControl from './components/common/FontSizeControl'; // Import FontSizeControl
+import ManageUsers from './components/admin/ManageUsers';
 
 function App() {
   const navigate = useNavigate();
@@ -132,6 +133,13 @@ function App() {
             path="/UserAppointments"
             element={
               <ProtectedRoute component={UserAppointments} allowedRoles={['User', 'Admin']} />
+            }
+          />
+
+          <Route
+            path="/Admin/ManageUsers"
+            element={
+              <ProtectedRoute component={ManageUsers} allowedRoles={['Admin']} />
             }
           />
 
