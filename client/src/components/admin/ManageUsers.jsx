@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/common/Sidebar';
+import '../../css/sidebar.css';
 import { getUsers, updateUserRole, deleteUser } from '../../services/adminService'; // Ensure these services are correct
 
 const ManageUsers = () => {
@@ -55,8 +57,10 @@ const ManageUsers = () => {
   };
 
   return (
-    <div>
-      <h1>Manage Users</h1>
+    <div className="page-container">
+      <Sidebar />
+    <div className="appointment-details">
+       <h2 className="greeting">Manage Users</h2>
       
       {/* Role filter dropdown */}
       <select onChange={(e) => setFilter(e.target.value)} value={filter}>
@@ -136,6 +140,7 @@ const ManageUsers = () => {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 };

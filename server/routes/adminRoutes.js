@@ -1,7 +1,7 @@
 // routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
+const adminController = require('../controllers/AdminController');
 
 // Fetch users with role-specific details
 router.get('/users', adminController.getUsers);
