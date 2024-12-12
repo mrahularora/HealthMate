@@ -89,3 +89,113 @@
     color: #333;
   }
   
+
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  padding: 20px;
+  width: 90%;
+  min-height: 700px;
+  margin:auto;
+}
+
+/* Statistics Section */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 10px;
+}
+
+.stats div {
+  padding: 45px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.stats div img{
+  width: 50%;
+  text-align: center;
+}
+
+.stats div:hover {
+  background-color: #f0f8ff;
+  transform: translateY(-3px);
+}
+
+.stats div:active {
+  background-color: #e6f3ff;
+  transform: translateY(0);
+}
+
+.stats div span {
+  font-weight: bold;
+}
+
+/* Details Section */
+.details {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.details h2 {
+  font-size: 1.5rem;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+/* Table Styles */
+.details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.details table thead th {
+  text-align: left;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 1rem;
+  border-bottom: 2px solid #ddd;
+}
+
+.details table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.details table tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+
+.details table tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+.details table th,
+.details table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.details table td {
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .details table th,
+  .details table td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+}

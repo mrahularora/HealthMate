@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  getAvailableSlots,
-  bookAppointmentRequest,
-} from "../../services/appointmentService";
-import '../../css/bookappointment.css';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { getAvailableSlots, bookAppointmentRequest } from "../../services/appointmentService";
+import Sidebar from "../common/Sidebar";
+import "../../css/bookappointment.css";
 
 const BookAppointmentComponent = () => {
-  const { doctorId } = useParams(); // Doctor ID from URL params
-  const [selectedDate, setSelectedDate] = useState(""); // Selected date
-  const [availableSlots, setAvailableSlots] = useState([]); // Time slots for the selected date
-  const [selectedSlot, setSelectedSlot] = useState(""); // Selected time slot
+  const { doctorId } = useParams();
+  const [selectedDate, setSelectedDate] = useState("");
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -23,41 +22,91 @@ const BookAppointmentComponent = () => {
     illness: "",
     notes: "",
   });
-  const [error, setError] = useState(null); // Error message state
-  const [successMessage, setSuccessMessage] = useState(null); // Success message state
 
-  // Fetch available slots when a date is selected
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [showPayPal, setShowPayPal] = useState(false);
+  const [isBookingComplete, setIsBookingComplete] = useState(false);
+
   const handleDateChange = async (e) => {
     const date = e.target.value;
     setSelectedDate(date);
     setAvailableSlots([]);
-    setError(null); // Clear previous errors
+    setErrors((prevErrors) => ({ ...prevErrors, selectedDate: "", selectedSlot: "" }));
 
     try {
-      const response = await getAvailableSlots(doctorId, date); // Fix: Pass doctorId and date as separate arguments
-      setAvailableSlots(response.availableSlots);
+      const response = await getAvailableSlots(doctorId, date);
+      if (response.availableSlots.length === 0) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          selectedDate: "No appointments found for the selected date.",
+        }));
+      } else {
+        setAvailableSlots(response.availableSlots);
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Error fetching available slots."
-      );
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        selectedDate: err.response?.data?.message || "Error fetching available slots.",
+      }));
     }
   };
 
-  // Update form data dynamically
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    validateField(name, value);
   };
 
-  // Handle booking request submission
-  const handleBookAppointment = async () => {
-    if (!selectedSlot) {
-      setError("Please select a time slot.");
-      return;
+  const validateField = (name, value) => {
+    let error = "";
+    switch (name) {
+      case "firstName":
+        error = value ? "" : "First name is required.";
+        break;
+      case "lastName":
+        error = value ? "" : "Last name is required.";
+        break;
+      case "gender":
+        error = value ? "" : "Gender is required.";
+        break;
+      case "age":
+        error = value && !isNaN(value) ? "" : "Please enter a valid age.";
+        break;
+      case "illness":
+        error = value ? "" : "Illness details are required.";
+        break;
+      case "email":
+        error = value && /\S+@\S+\.\S+/.test(value) ? "" : "Please enter a valid email.";
+        break;
+      default:
+        break;
     }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
 
+  const validateForm = () => {
+    const formErrors = {};
+    if (!formData.firstName) formErrors.firstName = "First name is required.";
+    if (!formData.lastName) formErrors.lastName = "Last name is required.";
+    if (!formData.gender) formErrors.gender = "Gender is required.";
+    if (!formData.age || isNaN(formData.age)) formErrors.age = "Please enter a valid age.";
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) formErrors.email = "Please enter a valid email.";
+    if (!formData.illness) formErrors.illness = "Illness details are required.";
+    if (!selectedSlot) formErrors.selectedSlot = "Please select a time slot.";
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  const handleProceedToPayment = () => {
+    if (validateForm()) {
+      setShowPayPal(true);
+    }
+  };
+
+  const handlePaymentSuccess = async () => {
     const [startTime, endTime] = selectedSlot.split("-");
-
     try {
       await bookAppointmentRequest({
         doctorId,
@@ -66,154 +115,117 @@ const BookAppointmentComponent = () => {
         endTime,
         userDetails: { ...formData },
       });
-      setSuccessMessage("Appointment request sent successfully.");
-      setError(null); // Clear any errors
+      setSuccessMessage("Appointment booking successful.");
+      setIsBookingComplete(true);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Error sending appointment request."
-      );
-      setSuccessMessage(null); // Clear success message on error
+      setErrors({
+        selectedSlot: err.response?.data?.message || "Error booking appointment.",
+      });
     }
   };
 
-  return (
-    <div className="book-appointment">
-      <h1>Book Appointment</h1>
-
-      {/* Date Selection */}
-      <div>
-        <label>Select Date:</label>
-        <input
-          type="date"
-          value={selectedDate}
-          onChange={handleDateChange}
-          min={new Date().toISOString().split("T")[0]} // Disable past dates
-        />
+  if (isBookingComplete) {
+    return (
+      <div className="user-page">
+        <Sidebar />
+        <div className="book-appointment-container">
+          <h2 className="success-message">{successMessage}</h2>
+        </div>
       </div>
+    );
+  }
 
-      {/* Time Slot Selection */}
-      {selectedDate && (
-        <div>
-          <label>Select Time Slot:</label>
-          <select
-            value={selectedSlot}
-            onChange={(e) => setSelectedSlot(e.target.value)}
-          >
-            <option value="">Select a time slot</option>
-            {availableSlots.length > 0 ? (
-              availableSlots.map((slot, idx) => (
+  return (
+    <div className="user-page">
+      <Sidebar />
+      <div className="book-appointment-container">
+        <h2 className="greeting">Book Your Appointment</h2>
+
+        {/* Date Selection */}
+        <div className="form-group">
+          <label>Select Date:</label>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={handleDateChange}
+            min={new Date().toISOString().split("T")[0]}
+            className="input-field"
+          />
+        </div>
+
+        {/* Time Slot Selection */}
+        {selectedDate && (
+          <div className="form-group">
+            <label>Select Time Slot:</label>
+            <select
+              value={selectedSlot}
+              onChange={(e) => setSelectedSlot(e.target.value)}
+              className="input-field"
+            >
+              <option value="">Select a time slot</option>
+              {availableSlots.map((slot, idx) => (
                 <option key={idx} value={`${slot.startTime}-${slot.endTime}`}>
                   {slot.startTime} - {slot.endTime}
                 </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                No available slots
-              </option>
-            )}
-          </select>
-        </div>
-      )}
+              ))}
+            </select>
+            {errors.selectedSlot && <p className="error-message">{errors.selectedSlot}</p>}
+          </div>
+        )}
 
-      {/* Form Fields */}
-      <div>
-        <label>First Name:</label>
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Last Name:</label>
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Gender:</label>
-        <input
-          type="text"
-          name="gender"
-          value={formData.gender}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Age:</label>
-        <input
-          type="number"
-          name="age"
-          value={formData.age}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Phone:</label>
-        <input
-          type="text"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Address:</label>
-        <input
-          type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Blood Group:</label>
-        <input
-          type="text"
-          name="bloodGroup"
-          value={formData.bloodGroup}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Illness:</label>
-        <textarea
-          name="illness"
-          value={formData.illness}
-          onChange={handleInputChange}
-        ></textarea>
-      </div>
-      <div>
-        <label>Notes:</label>
-        <textarea
-          name="notes"
-          value={formData.notes}
-          onChange={handleInputChange}
-        ></textarea>
-      </div>
+        {/* Patient Info Form */}
+        {["firstName", "lastName", "gender", "age", "phone", "email", "address", "bloodGroup", "illness", "notes"].map(
+          (field) => (
+            <div className="form-group" key={field}>
+              <label>{field.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}:</label>
+              <input
+                type={field === "email" ? "email" : field === "age" ? "number" : "text"}
+                name={field}
+                value={formData[field]}
+                onChange={handleInputChange}
+                className="input-field"
+              />
+              {errors[field] && <p className="error-message">{errors[field]}</p>}
+            </div>
+          )
+        )}
 
-      {/* Error and Success Messages */}
-      {error && <p className="error">{error}</p>}
-      {successMessage && <p className="success">{successMessage}</p>}
+        {/* Proceed to Payment */}
+        {!showPayPal && (
+          <button onClick={handleProceedToPayment} className="submit-button">
+            Proceed to Payment
+          </button>
+        )}
 
-      {/* Submit Button */}
-      <button onClick={handleBookAppointment}>Book Appointment</button>
+        {/* PayPal Buttons */}
+        {showPayPal && (
+          <PayPalScriptProvider
+            options={{ "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,currency: "CAD", }}
+          >
+            <PayPalButtons
+              style={{ layout: "vertical" }}
+              createOrder={(data, actions) => {
+                return actions.order.create({
+                  purchase_units: [
+                    {
+                      amount: { value: "50.00" },                      
+                    },
+                  ],
+                });
+              }}
+              onApprove={(data, actions) => {
+                return actions.order.capture().then(() => handlePaymentSuccess());
+              }}
+              onError={(err) => {
+                console.error("PayPal Checkout Error: ", err);
+                setShowPayPal(false);
+              }}
+            />
+          </PayPalScriptProvider>
+        )}
+      </div>
     </div>
   );
 };
 
 export default BookAppointmentComponent;
-

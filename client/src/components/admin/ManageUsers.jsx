@@ -1,146 +1,252 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/common/Sidebar';
 import '../../css/sidebar.css';
-import { getUsers, updateUserRole, deleteUser } from '../../services/adminService'; // Ensure these services are correct
+import { getUsers, updateUserRole, deleteUser } from '../../services/adminService';
+import useAuth from '../../context/useAuth'; // Use the custom hook to access AuthContext
+import { Modal } from 'react-bootstrap'; // Import Modal component from React-Bootstrap
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]); // Default to an empty array
-  const [totalUsers, setTotalUsers] = useState(0); // Track total users
-  const [currentPage, setCurrentPage] = useState(1); // Current page
-  const [totalPages, setTotalPages] = useState(1); // Total pages for pagination
-  const [filter, setFilter] = useState(''); // Role filter
-  const [loading, setLoading] = useState(true); // Loading state
+  const { user: loggedInUser } = useAuth(); // Get logged-in user details from AuthContext
+  const [users, setUsers] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filter, setFilter] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for the modal
+  const [showRoleChangeModal, setShowRoleChangeModal] = useState(false); // Modal for role change confirmation
+  const [userToDelete, setUserToDelete] = useState(null); // Store the user to be deleted
+  const [userToChangeRole, setUserToChangeRole] = useState(null); // Store the user for role change
+  const [newRole, setNewRole] = useState(''); // Store the new role to be updated
 
+  // Fetch users with pagination and filtering
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        setLoading(true); // Set loading to true
-        const response = await getUsers(filter, currentPage, 10); // Assuming 10 users per page
+        setLoading(true);
+        const response = await getUsers(filter, currentPage, 10);
         if (response.users) {
-          setUsers(response.users); // Set users
-          setTotalUsers(response.totalUsers); // Set total users
-          setTotalPages(response.totalPages); // Set total pages
+          setUsers(response.users);
+          setTotalUsers(response.totalUsers);
+          setTotalPages(response.totalPages);
         }
-        setLoading(false); // Set loading to false
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setUsers([]); // If there's an error, ensure users is set to an empty array
-        setLoading(false); // Set loading to false even if there's an error
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+        setError('Failed to fetch users.');
+        setLoading(false);
       }
     };
 
-    fetchUsers(); // Fetch users whenever the filter or page changes
+    fetchUsers();
   }, [filter, currentPage]);
 
-  const handleRoleChange = async (userId, newRole) => {
+  // Handle role change (Open the confirmation modal first)
+  const handleRoleChange = (userId, currentRole) => {
+    if (loggedInUser.id === userId) {
+      alert('You cannot change your own role.');
+      return;
+    }
+
+    // Find the user whose role is being changed
+    const userToChange = users.find(user => user._id === userId);
+    setUserToChangeRole(userToChange); // Store the user whose role is being changed
+    setNewRole(currentRole); // Store the current role
+    setShowRoleChangeModal(true); // Show the role change confirmation modal
+
+    // Optimistically update the role in the UI immediately
+    setUsers(users.map(user =>
+      user._id === userId ? { ...user, role: currentRole } : user
+    ));
+  };
+
+  // Confirm role change
+  const confirmRoleChange = async () => {
     try {
-      const response = await updateUserRole(userId, newRole); // Call the API to update role
-      setUsers(users.map(user => (user._id === userId ? response.user : user))); // Update user in the list
-    } catch (error) {
-      console.error('Error updating user role:', error);
+      const response = await updateUserRole(userToChangeRole._id, newRole);
+      if (response && response.user) {
+        // Role successfully updated in the backend
+        // No further UI update needed as it's already done optimistically
+      }
+      setShowRoleChangeModal(false); // Close the modal
+      setUserToChangeRole(null); // Clear user state
+      setNewRole(''); // Clear role state
+    } catch (err) {
+      console.error('Error updating user role:', err);
+      setError('Failed to update user role.');
+      setShowRoleChangeModal(false);
+      setUserToChangeRole(null);
     }
   };
 
-  const handleDelete = async (userId) => {
-    const user = users.find(u => u._id === userId); // Find the user to be deleted
-    if (user && user.role === 'Admin') {
-      alert("You cannot delete an Admin user.");
-      return; // If user is an Admin, prevent deletion
+  // Handle user deletion (Open the confirmation modal first)
+  const handleDelete = (userId) => {
+    if (loggedInUser.id === userId) {
+      alert('You cannot delete your own account.');
+      return;
     }
 
+    const userToDelete = users.find(user => user._id === userId);
+    setUserToDelete(userToDelete);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm deletion
+  const confirmDelete = async () => {
     try {
-      await deleteUser(userId); // Delete user API call
-      setUsers(users.filter(user => user._id !== userId)); // Remove deleted user from the list
-    } catch (error) {
-      console.error('Error deleting user:', error);
+      await deleteUser(userToDelete._id);
+      // Optimistically remove the deleted user from the UI
+      setUsers(users.filter(user => user._id !== userToDelete._id));
+      setShowDeleteModal(false);
+      setUserToDelete(null);
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      setError('Failed to delete user.');
+      setShowDeleteModal(false);
+      setUserToDelete(null);
     }
+  };
+
+  // Cancel deletion
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setUserToDelete(null);
+  };
+
+  // Cancel role change
+  const cancelRoleChange = () => {
+    setShowRoleChangeModal(false);
+    setUserToChangeRole(null);
+    setNewRole('');
+    // Revert the role change if the modal is canceled
+    setUsers(users.map(user =>
+      user._id === userToChangeRole._id ? { ...user, role: userToChangeRole.role } : user
+    ));
   };
 
   return (
     <div className="page-container">
       <Sidebar />
-    <div className="appointment-details">
-       <h2 className="greeting">Manage Users</h2>
-      
-      {/* Role filter dropdown */}
-      <select onChange={(e) => setFilter(e.target.value)} value={filter}>
-        <option value="">All Users</option>
-        <option value="User">User</option>
-        <option value="Doctor">Doctor</option>
-        <option value="Admin">Admin</option>
-      </select>
+      <div className="appointment-details">
+        <h2 className="greeting">Manage Users</h2>
 
-      {/* Loading state */}
-      {loading ? (
-        <p>Loading users...</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length > 0 ? (
-              users.map(user => (
-                <tr key={user._id}>
-                  <td>{user.firstName} {user.lastName}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    {/* Disable the select dropdown for Admin users */}
-                    <select
-                      value={user.role}
-                      onChange={(e) => {
-                        if (user.role !== 'Admin') {
-                          handleRoleChange(user._id, e.target.value);
-                        }
-                      }}
-                      disabled={user.role === 'Admin'} // Disable if the role is Admin
-                    >
-                      <option value="User">User</option>
-                      <option value="Doctor">Doctor</option>
-                      <option value="Admin">Admin</option>
-                    </select>
-                  </td>
-                  <td>
-                    {/* Disable delete button for Admin users */}
-                    <button onClick={() => handleDelete(user._id)} disabled={user.role === 'Admin'}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+        {/* Role filter dropdown */}
+        <select className="form-select" onChange={(e) => setFilter(e.target.value)} value={filter}>
+          <option value="">All Users</option>
+          <option value="User">User</option>
+          <option value="Doctor">Doctor</option>
+          <option value="Admin">Admin</option>
+        </select>
+
+        {/* Display error if any */}
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
+
+        {/* Loading and user table */}
+        {loading ? (
+          <p>Loading users...</p>
+        ) : (
+          <table className="table mt-3">
+            <thead>
               <tr>
-                <td colSpan="4">No users found</td>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {users.length > 0 ? (
+                users.map(user => {
+                  if (!user) return null; // Skip rendering undefined users
+                  return (
+                    <tr key={user._id}>
+                      <td>{user.firstName || 'N/A'} {user.lastName || 'N/A'}</td> {/* Added fallback */}
+                      <td>{user.email || 'N/A'}</td>
+                      <td>
+                        <select
+                          className="form-select"
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                          disabled={user.role === 'Admin' || user._id === loggedInUser.id} // Disable for Admins and logged-in user
+                        >
+                          <option value="User">User</option>
+                          <option value="Doctor">Doctor</option>
+                          <option value="Admin">Admin</option>
+                        </select>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDelete(user._id)}
+                          disabled={user.role === 'Admin' || user._id === loggedInUser.id} // Disable for Admins and logged-in user
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="4">No users found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div>
-          <button 
-            onClick={() => setCurrentPage(prevPage => Math.max(prevPage - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span> Page {currentPage} of {totalPages} </span>
-          <button 
-            onClick={() => setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      )}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-4">
+            <button
+              className="btn btn-primary me-2"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="btn btn-primary ms-2"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Confirmation Modal for Deletion */}
+      <Modal show={showDeleteModal} onHide={cancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete user <strong>{userToDelete?.firstName} {userToDelete?.lastName}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={cancelDelete}>Cancel</button>
+          <button className="btn btn-danger" onClick={confirmDelete}>Delete</button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirmation Modal for Role Change */}
+      <Modal show={showRoleChangeModal} onHide={cancelRoleChange}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Role Change</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to change the role of user <strong>{userToChangeRole?.firstName} {userToChangeRole?.lastName}</strong> to {newRole}?
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={cancelRoleChange}>Cancel</button>
+          <button className="btn btn-primary" onClick={confirmRoleChange}>Confirm</button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

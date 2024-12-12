@@ -1,68 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import '../../css/doctorpage.css'; // Using same style as DoctorPage
+import React, { useState, useEffect, useContext } from "react";
+import { getAcceptedAppointments } from "../../services/appointmentService";
+import { AuthContext } from "../../context/AuthContext";
+import Sidebar from "../../components/common/Sidebar";
 
 const Patients = () => {
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(''); // For search functionality
+  const { user } = useContext(AuthContext);
+  const [completedAppointments, setCompletedAppointments] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchCompletedAppointments = async () => {
+    try {
+      if (user.role !== "Doctor") {
+        setError("You are not authorized to view this page.");
+        return;
+      }
+
+      const response = await getAcceptedAppointments(user.id);
+      const completed = response.filter((app) => app.status === "Completed");
+      setCompletedAppointments(completed);
+    } catch (err) {
+      console.error("Error fetching completed appointments:", err);
+      setError("Failed to fetch completed appointments.");
+    }
+  };
 
   useEffect(() => {
-    // Function to fetch the patients list
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/patients');
-        console.log("Fetched patients:", response.data);
-        setPatients(response.data);
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPatients();
+    fetchCompletedAppointments();
   }, []);
-
-  // Filter patients based on the search query
-  const filteredPatients = patients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="doctor-page">
+      <Sidebar />
       <div className="doctor-appointments-container">
-        <div className="header-container">
-          <h2 className="greeting">Patient List</h2>
-          <div className="search-bar-container">
-            <input
-              type="text"
-              className="search-bar"
-              placeholder="Search patient by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        <h5 className="records-title">All Patient Records</h5>
-        <div className="patient-records">
-          {loading ? (
-            <p>Loading patients...</p>
-          ) : filteredPatients.length === 0 ? (
-            <p className="no-results">No patients found</p>
-          ) : (
-            filteredPatients.map((patient) => (
-              <div key={patient._id} className="patient-card">
-                <h6 className="patient-id"><strong>ID:</strong> {patient._id}</h6>
-                <p className="patient-name"><strong>Name:</strong> {patient.name}</p>
-                <p className="patient-age"><strong>Age:</strong> {patient.age}</p>
-                <p className="patient-condition"><strong>Condition:</strong> {patient.condition}</p>
-                <p className="patient-last-visit"><strong>Last Visit:</strong> {patient.lastVisit}</p>
-                <p className="patient-email"><strong>Email:</strong> {patient.email}</p>
-              </div>
-            ))
-          )}
-        </div>
+        <div className="greeting">Patients List</div>
+        <p>
+          All the patient details are provided on this page to help you review
+          the patients you have treated!
+        </p>
+        {error && <div className="alert alert-danger">{error}</div>}
+        {completedAppointments.length > 0 ? (
+          <table className="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedAppointments.map((appointment, index) => (
+                <tr key={appointment._id}>
+                  <td>{index + 1}</td>
+                  <td>
+                    {`${appointment.userDetails?.firstName} ${appointment.userDetails?.lastName}`}
+                  </td>
+                  <td>{appointment.userDetails?.email || "N/A"}</td>
+                  <td>{appointment.userDetails?.phone || "N/A"}</td>
+                  <td>{appointment.userDetails?.address || "N/A"}</td>
+                  <td>{new Date(appointment.date).toLocaleDateString()}</td>
+                  <td>
+                    {`${appointment.startTime} - ${appointment.endTime}`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="text-muted">No completed appointments available.</p>
+        )}
       </div>
     </div>
   );

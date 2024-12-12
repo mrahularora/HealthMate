@@ -1,6 +1,11 @@
 const express = require("express");
 const appointmentController = require("../controllers/appointmentController");
 const { protect } = require("../middlewares/authMiddleware");
+const {
+    getAllTimeSlots,
+    deleteAvailableSlot,
+    getAppointments,
+  } = require("../controllers/appointmentController");
 const router = express.Router();
 
 // Route to create appointment slots
@@ -26,6 +31,18 @@ router.get("/details", appointmentController.getAppointmentDetails);
 
 // Update Prescription
 router.patch("/details", appointmentController.updateAppointmentDetails);
+
+// Fetch all slots for a doctor
+router.get("/slots/:doctorId", getAllTimeSlots);
+
+// Delete an available slot
+router.delete("/slot", deleteAvailableSlot);
+
+// // // Route to get appointments for the logged-in user
+router.get("/", protect, appointmentController.getAppointments);
+
+// Route to cancel an appointment
+router.patch('/cancel', protect, appointmentController.cancelAppointment);
 
 // // Route to get appointments for the logged-in user
 // router.get('/', protect, appointmentController.viewAppointments);

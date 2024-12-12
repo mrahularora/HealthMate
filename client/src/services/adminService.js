@@ -36,3 +36,63 @@ export const deleteUser = (userId) => {
       throw error;
     });
 };
+
+
+// Fetch stats for the admin dashboard
+export const fetchStats = async () => {
+  try {
+    const response = await axios.get('/admin/stats');
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    throw error;
+  }
+};
+
+// Fetch details based on type
+export const fetchDetails = async (type) => {
+  try {
+    const response = await axios.get(`/admin/details/${type}`);
+    return response.data.data;
+  } catch (error) {
+    console.error(`Error fetching details for type: ${type}`, error);
+    throw error;
+  }
+};
+
+
+export const getAllContactDetails = async () => {
+  try {
+    const response = await axios.get("/admin/contacts", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching contact details:", error);
+    throw error.response?.data || { message: "Failed to fetch contact details" };
+  }
+};
+
+// Fetch all appointments grouped by doctor
+export const getAllAppointments = async () => {
+  try {
+    const response = await axios.get("/admin/appointments");
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    throw error.response?.data || { message: "Failed to fetch appointments" };
+  }
+};
+
+// Fetch details of a single appointment
+export const getAppointmentDetails = async (id) => {
+  try {
+    const response = await axios.get(`/admin/appointments/${id}`);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching appointment details:", error);
+    throw error.response?.data || { message: "Failed to fetch appointment details" };
+  }
+};

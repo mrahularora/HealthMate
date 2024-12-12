@@ -7,8 +7,10 @@ const patientRoutes = require("./routes/patientRoutes");
 const contactRoutes = require('./routes/contactRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes'); 
 const adminRoutes = require("./routes/adminRoutes")
+const reportRoutes = require("./routes/reportRoutes")
 const dotenv = require("dotenv");
 const cors = require("cors");
+const path = require("path");
 const cookieParser = require("cookie-parser");
 
 
@@ -36,6 +38,9 @@ app.use("/api/patients", patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', reportRoutes);
+// Serve the reports directory as static files
+app.use('/reports', express.static(path.join(__dirname, 'reports')));
 
 
 // Start the server

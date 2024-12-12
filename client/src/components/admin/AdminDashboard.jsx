@@ -1,55 +1,102 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { fetchStats, fetchDetails } from '../../services/adminService';
 
 const AdminDashboard = () => {
+  const [stats, setStats] = useState({});
+  const [details, setDetails] = useState([]);
+  const [activeType, setActiveType] = useState('');
 
-const [searchQuery, setSearchQuery] = useState('');
-  const patientRecords = [
-    { id: 1, name: 'Rahul Arora', age: 25, lastVisit: '2024-10-20' },
-    { id: 2, name: 'Tarun Arora', age: 32, lastVisit: '2024-09-15' },
-    { id: 3, name: 'Sainath', age: 27, lastVisit: '2024-08-10' },
-    { id: 4, name: 'Snehith', age: 55, lastVisit: '2024-07-22' },
-    { id: 5, name: 'Rahul', age: 40,  lastVisit: '2024-06-30' },
+  // Load statistics on component mount
+  useEffect(() => {
+    loadStats();
+  }, []);
 
-  ];
-
-  const filteredRecords = patientRecords.filter((record) =>
-    record.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-    return (
-        <div className="admin-appointments-container">
-        <div className="header-container">
-          <h2 className="greeting">Welcome, Admin!</h2>
-          <div className="search-bar-container">
-            <input
-              type="text"
-              className="search-bar"
-              placeholder="Search patient by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        <h5 className="records-title">All Doctors Records</h5>
-        <div className="patient-records">
-          {filteredRecords.length > 0 ? (
-            filteredRecords.map((record) => (
-              <div key={record.id} className="patient-card">
-                <h6 className="patient-id">ID: {record.id}</h6>
-                <p className="patient-name"><strong>Name:</strong> {record.name}</p>
-                <p className="patient-age"><strong>Age:</strong> {record.age}</p>
-                <p className="patient-condition"><strong>Condition:</strong> {record.condition}</p>
-                <p className="patient-last-visit"><strong>Last Visit:</strong> {record.lastVisit}</p>
-              </div>
-            ))
-          ) : (
-            <p className="no-results">No records found</p>
-          )}
-        </div>
-        </div>
-    );
+  // Fetch statistics
+  const loadStats = async () => {
+    try {
+      const statsData = await fetchStats();
+      setStats(statsData);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
   };
-  
-  export default AdminDashboard;
-  
+
+  // Fetch details for a specific type
+  const loadDetails = async (type) => {
+    try {
+      const detailsData = await fetchDetails(type);
+      setDetails(detailsData);
+      setActiveType(type);
+    } catch (error) {
+      console.error(`Error loading details for type: ${type}`, error);
+    }
+  };
+
+  return (
+    <div className="admin-dashboard">
+     <h1 className="greeting">Admin Dashboard</h1>
+     <p>Welcome to Admin Dashboard, in which a summary view is provided of all key metrics and actionable insights concerning the system.
+       This page allows for efficient monitoring and management of user data, appointments, and system activity.</p>
+
+      {/* Statistics Section */}
+      <div className="stats">
+        <div onClick={() => loadDetails('totalUsers')}><img src="/assets/images/icons/users.png" /><br />Total Users: {stats.totalUsers || 0}</div>
+        <div onClick={() => loadDetails('users')}><img src="/assets/images/icons/patient.png" /><br />Normal Users: {stats.totalNormalUsers || 0}</div>
+        <div onClick={() => loadDetails('doctors')}><img src="/assets/images/icons/doctor.png" /><br />Total Doctors: {stats.totalDoctors || 0}</div>
+        <div onClick={() => loadDetails('admins')}><img src="/assets/images/icons/admin-portal.png" /><br />Total Admins: {stats.totalAdmins || 0}</div>
+        <div onClick={() => loadDetails('appointments')}><img src="/assets/images/icons/doctor-portal.png" /><br />Total Appointments: {stats.totalAppointments || 0}</div>
+      </div>
+
+      {/* Details Section */}
+      {activeType && (
+        <div className="details">
+          <h2>
+            Details: {activeType === 'totalUsers' ? 'All Users' : activeType.charAt(0).toUpperCase() + activeType.slice(1)}
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                {activeType === 'appointments' ? (
+                  <>
+                    <th>Doctor Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </>
+                ) : (
+                  <>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {details.map((item, index) => (
+                <tr key={index}>
+                  {activeType === 'appointments' ? (
+                    <>
+                      <td>{item.doctorName || 'Unknown Doctor'}</td>
+                      <td>{item.date ? new Date(item.date).toLocaleDateString() : 'N/A'}</td>
+                      <td>{item.status || 'N/A'}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td>{item.firstName || 'N/A'}</td>
+                      <td>{item.lastName || 'N/A'}</td>
+                      <td>{item.email || 'N/A'}</td>
+                      <td>{item.role || 'N/A'}</td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminDashboard;

@@ -9,7 +9,7 @@ const doctorSchema = new mongoose.Schema({
   experience: { type: Number, required: true },
   description: { type: String, required: true },
   imageUrl: { type: String },
-  doctorId: { type: Number, unique: true } // Field for auto-incrementing ID
+  doctorId: { type: String }
 });
 
 // Pre-save hook to auto-increment doctorId

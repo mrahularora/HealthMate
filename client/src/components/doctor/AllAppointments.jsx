@@ -49,12 +49,17 @@ const AcceptedAppointments = () => {
     <div className="page-container">
       <Sidebar />
       <div className="content">
-      <h2 className="mb-4">All Appointments</h2>
+      <h5 className="greeting mb-4">All Appointments</h5>
+      <p>The All Appointments section gives a detailed look at all appointments sorted by their status. 
+        It helps you to manage and follow meetings easily, making things clear and organized.</p>
       {error && <div className="alert alert-danger">{error}</div>}
 
       {/* Confirmed Appointments */}
-      <div className="mb-5">
+      <div className="mb-5 mt-5">
         <h4 className="heading">Accepted Appointments</h4>
+        <p>This section shows appointments that have been accepted and are scheduled for consultation. 
+        This section will help you keep track of upcoming visits from patients and prepare in time for each session.</p>
+
         <div className="row">
           {confirmedAppointments.length > 0 ? (
             confirmedAppointments.map((appointment) => (
@@ -101,6 +106,8 @@ const AcceptedAppointments = () => {
       {/* In-Progress Appointments */}
       <div className="mb-5">
         <h4 className="heading">In-Progress Appointments</h4>
+        <p>View appointments currently in progress. This section shows live updates of ongoing consultations, 
+        allowing you to be informed and manage interactions with patients effectively.</p>
         <div className="row">
           {inProgressAppointments.length > 0 ? (
             inProgressAppointments.map((appointment) => (
@@ -147,6 +154,7 @@ const AcceptedAppointments = () => {
       {/* Completed Appointments */}
       <div className="mb-5">
         <h4 className="heading">Completed Appointments</h4>
+        <p>View the list of all completed appointments. Use this section for viewing patient histories and making final notes, as well as updating follow-up as needed.</p>
         <div className="row">
           {completedAppointments.length > 0 ? (
             completedAppointments.map((appointment) => (
