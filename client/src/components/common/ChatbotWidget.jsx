@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useEffect } from "react";
+import React, { useContext, useMemo, useState, useEffect, useCallback } from "react";
 import ChatBot from "react-simple-chatbot";
 import { ThemeProvider } from "styled-components";
 import { AuthContext } from "../../context/AuthContext";
@@ -17,10 +17,8 @@ const NavigationComponent = ({ to, navigate }) => {
 };
 
 // A custom main menu component
-// This component will show a short message and three buttons.
-// On button click, it triggers the next step using triggerNextStep().
 const MainMenu = (props) => {
-  const { steps, triggerNextStep } = props;
+  const { triggerNextStep } = props;
 
   const handleClick = (trigger) => {
     triggerNextStep({ trigger });
@@ -41,7 +39,7 @@ const ChatbotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const toggleChat = () => setIsOpen(!isOpen);
+  const toggleChat = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const theme = {
     background: "#f5f8fb",
@@ -55,10 +53,13 @@ const ChatbotWidget = () => {
     userFontColor: "#4a4a4a",
   };
 
-  const handleNavigation = (path) => {
-    toggleChat();
-    navigate(path);
-  };
+  const handleNavigation = useCallback(
+    (path) => {
+      toggleChat();
+      navigate(path);
+    },
+    [navigate, toggleChat]
+  );
 
   const role = user?.role || "Guest";
 
@@ -74,7 +75,7 @@ const ChatbotWidget = () => {
         replace: true,
         component: <MainMenu />,
         asMessage: true,
-        waitAction: true // Wait until user clicks an option
+        waitAction: true,
       },
       {
         id: "support",
@@ -341,9 +342,9 @@ const ChatbotWidget = () => {
     };
 
     return [...commonSteps, ...(roleSpecificSteps[role] || [])];
-  }, [user, navigate, role]);
+  }, [user, role, handleNavigation]);
 
-  return (
+return (
     <div className="chatbot-widget">
       <button className="chatbot-toggle-btn" onClick={toggleChat}>
         {isOpen ? "Close Chat" : "Chat with us"}

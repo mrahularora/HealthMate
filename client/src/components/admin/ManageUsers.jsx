@@ -8,17 +8,17 @@ import { Modal } from 'react-bootstrap'; // Import Modal component from React-Bo
 const ManageUsers = () => {
   const { user: loggedInUser } = useAuth(); // Get logged-in user details from AuthContext
   const [users, setUsers] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(0);
+  const [, setTotalUsers] = useState(0); // Remove unused `totalUsers`
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // State for the modal
-  const [showRoleChangeModal, setShowRoleChangeModal] = useState(false); // Modal for role change confirmation
-  const [userToDelete, setUserToDelete] = useState(null); // Store the user to be deleted
-  const [userToChangeRole, setUserToChangeRole] = useState(null); // Store the user for role change
-  const [newRole, setNewRole] = useState(''); // Store the new role to be updated
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showRoleChangeModal, setShowRoleChangeModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [userToChangeRole, setUserToChangeRole] = useState(null);
+  const [newRole, setNewRole] = useState('');
 
   // Fetch users with pagination and filtering
   useEffect(() => {
@@ -40,7 +40,8 @@ const ManageUsers = () => {
     };
 
     fetchUsers();
-  }, [filter, currentPage]);
+  }, [filter, currentPage, setTotalUsers]);
+
 
   // Handle role change (Open the confirmation modal first)
   const handleRoleChange = (userId, currentRole) => {

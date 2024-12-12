@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { getAcceptedAppointments } from "../../services/appointmentService";
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 import "../../css/doctorpage.css";
@@ -13,7 +13,7 @@ const DoctorDashboard = () => {
   const [error, setError] = useState(null); // State for errors
 
   // Fetch appointment data for the logged-in doctor
-  const fetchAppointmentsData = async () => {
+  const fetchAppointmentsData = useCallback(async () => {
     try {
       if (!user || user.role !== "Doctor") {
         setError("You are not authorized to view this page.");
@@ -34,19 +34,18 @@ const DoctorDashboard = () => {
       console.error("Error fetching appointment data:", err);
       setError("Failed to fetch appointment data.");
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchAppointmentsData(); // Fetch data on component load
-  }, [user]);
+  }, [fetchAppointmentsData]);
 
   return (
     <div className="doctor-page">
       <div className="doctor-appointments-container">
-      <div className="greeting">Welcome, Doctor !</div>
-      <p>Naviagte and see the statistics of the patients currently want to seek appointment with you !</p>
-        <div className="header-container">
-        </div>
+        <div className="greeting">Welcome, Doctor!</div>
+        <p>Navigate and see the statistics of the patients currently wanting to seek appointments with you!</p>
+        <div className="header-container"></div>
         {error && <p className="error">{error}</p>}
         <div className="doctor-stats-cards">
           <div className="doctor-card">
