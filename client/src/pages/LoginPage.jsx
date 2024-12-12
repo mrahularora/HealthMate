@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { login } from '../services/authService'; 
 import { useNavigate } from 'react-router-dom'; 
 import { AuthContext } from '../context/AuthContext'; 
+import VoiceInput from "../components/common/VoiceInput";
 import '../css/login.css';
 
 function LoginPage() {
@@ -65,7 +66,7 @@ function LoginPage() {
       <form onSubmit={handleSubmit}>
         <div className="login-form-group">
           <label htmlFor="email">Email Address<span className="red">*</span>:</label>
-          <input
+          <VoiceInput
             type="email"
             id="email"
             value={email}

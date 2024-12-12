@@ -1,10 +1,9 @@
 .font-size-control {
     position: fixed;
-    bottom: 10px;  /* Position it at the bottom */
-    right: 10px;   /* Keep it on the right side */
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 5px;
+    bottom: 20px;  /* Position it at the bottom */
+    right: 160px;   /* Keep it on the right side */
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2px;
     color: white;
     z-index: 9999;  /* Ensure it stays on top of other elements */
   }

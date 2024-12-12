@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../css/contact.css';
 import submitContactForm from '../services/contactService';
 import { AuthContext } from '../context/AuthContext'; // Import the context
+import VoiceInput from '../components/common/VoiceInput';
 
 const ContactPage = () => {
   const { user } = useContext(AuthContext); // Access the user from context
@@ -148,7 +149,7 @@ const ContactPage = () => {
           
           <div className="form-group">
             <label htmlFor="name">Full Name<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="text"
               id="name"
               name="name"
@@ -162,7 +163,7 @@ const ContactPage = () => {
           
           <div className="form-group">
             <label htmlFor="email">Email Address<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="email"
               id="email"
               name="email"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from "react";
 import { editUser, updateUser } from '../../services/userService';
+import VoiceInput from "./VoiceInput";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -76,7 +77,7 @@ const UserProfile = () => {
           <>
             <div>
               <label>First Name:</label>
-              <input
+              <VoiceInput
                 type="text"
                 name="firstName"
                 value={formData.firstName}
@@ -87,7 +88,7 @@ const UserProfile = () => {
             </div>
             <div>
               <label>Last Name:</label>
-              <input
+              <VoiceInput
                 type="text"
                 name="lastName"
                 value={formData.lastName}
@@ -98,7 +99,7 @@ const UserProfile = () => {
             </div>
             <div>
               <label>Email:</label>
-              <input
+              <VoiceInput
                 type="email"
                 name="email"
                 value={formData.email}
@@ -127,7 +128,7 @@ const UserProfile = () => {
               <label>Role:</label>
               <input type="text" name="role" value={formData.role} disabled />
             </div>
-            <button onClick={handleSaveChanges}>Save Changes</button>
+            <button className="profile-btn" onClick={handleSaveChanges}>Save Changes</button>
           </>
         ) : (
           <>
@@ -136,7 +137,7 @@ const UserProfile = () => {
             <p><strong>Email:</strong> {formData.email}</p>
             <p><strong>Gender:</strong> {formData.gender}</p>
             <p><strong>Role:</strong> {formData.role}</p>
-            <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+            <button className="profile-btn" onClick={() => setIsEditing(true)}>Edit Profile</button>
           </>
         )}
       </div>

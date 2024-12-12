@@ -1,4 +1,6 @@
 const Appointment = require("../models/Appointments");
+const Doctor = require("../models/Doctor");
+const User = require('../models/User');
 
 // API to create timeslots for doctors
 exports.createAppointmentSlots = async (req, res) => {
@@ -115,6 +117,77 @@ exports.getAvailableSlots = async (req, res) => {
       .json({ message: "Error fetching available slots.", error: err.message });
   }
 };
+
+// API to fetch all time slots for a doctor
+exports.getAllTimeSlots = async (req, res) => {
+  const { doctorId } = req.params;
+
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required." });
+  }
+
+  try {
+    const appointments = await Appointment.find({ doctorId });
+
+    if (!appointments || appointments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No appointments found for the doctor." });
+    }
+
+    const allTimeSlots = appointments.flatMap((appointment) => {
+      return appointment.timeSlots.map((slot) => ({
+        date: appointment.date,
+        ...slot._doc,
+      }));
+    });
+
+    res.status(200).json({ timeSlots: allTimeSlots });
+  } catch (err) {
+    console.error("Error fetching time slots:", err);
+    res.status(500).json({ message: "Error fetching time slots.", error: err.message });
+  }
+};
+
+// API to delete an available slot
+exports.deleteAvailableSlot = async (req, res) => {
+  const { doctorId, date, startTime, endTime } = req.body;
+
+  if (!doctorId || !date || !startTime || !endTime) {
+    return res.status(400).json({
+      message: "Doctor ID, date, startTime, and endTime are required.",
+    });
+  }
+
+  try {
+    const appointment = await Appointment.findOne({ doctorId, date });
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found for the given date." });
+    }
+
+    const slotIndex = appointment.timeSlots.findIndex(
+      (slot) =>
+        slot.startTime === startTime &&
+        slot.endTime === endTime &&
+        slot.status === "Available"
+    );
+
+    if (slotIndex === -1) {
+      return res.status(400).json({ message: "Slot is not available or does not exist." });
+    }
+
+    // Remove the slot
+    appointment.timeSlots.splice(slotIndex, 1);
+    await appointment.save();
+
+    res.status(200).json({ message: "Slot deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting time slot:", err);
+    res.status(500).json({ message: "Error deleting time slot.", error: err.message });
+  }
+};
+
 
 // API to handle booking requests
 exports.bookAppointmentRequest = async (req, res) => {
@@ -419,6 +492,93 @@ exports.updateAppointmentDetails = async (req, res) => {
     res.status(500).json({
       message: "Error updating appointment.",
       error: err.message,
+    });
+  }
+};
+
+// Controller to cancel appointment
+exports.cancelAppointment = async (req, res) => {
+  const { appointmentId, slotId } = req.body;
+  console.log(req.body)
+
+  if (!appointmentId || !slotId) {
+      return res.status(400).json({ message: 'Appointment ID and Slot ID are required.' });
+  }
+
+  try {
+      const appointment = await Appointment.findById(appointmentId);
+
+      if (!appointment) {
+          return res.status(404).json({ message: 'Appointment not found.' });
+      }
+
+      const slot = appointment.timeSlots.id(slotId);
+
+      if (!slot || !slot.isBooked) {
+          return res.status(400).json({ message: 'Slot is not booked or does not exist.' });
+      }
+
+      slot.isBooked = false;
+      slot.status = 'Cancelled';
+
+      await appointment.save();
+
+      res.status(200).json({ message: 'Appointment cancelled successfully.' });
+  } catch (err) {
+      console.error('Cancellation error:', err);
+      res.status(500).json({ message: 'Error canceling appointment', error: err.message || err });
+  }
+};
+
+exports.getAppointments = async (req, res) => {
+  const userEmail = req.user.email; // Logged-in user's email
+
+  try {
+    // Find appointments where at least one time slot has the user's email
+    const appointments = await Appointment.find({
+      "timeSlots.userDetails.email": userEmail,
+    }).sort({ date: 1 }); // Sort by date (ascending)
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found." });
+    }
+
+    // Filter time slots to include only those that match the user's email
+    const appointmentsWithUserSlots = appointments.map((appointment) => {
+      // Filter time slots based on the user's email
+      const userTimeSlots = appointment.timeSlots.filter(
+        (slot) => slot.userDetails.email === userEmail
+      );
+      return {
+        ...appointment.toObject(),
+        timeSlots: userTimeSlots, // Only include relevant time slots
+      };
+    });
+
+    // Fetch the doctor details for each appointment
+    const doctorIds = appointmentsWithUserSlots.map((appointment) => appointment.doctorId.toString());
+    const doctors = await Doctor.find({ doctorId: { $in: doctorIds } });
+
+    // Attach doctor details to appointments
+    const appointmentsWithDoctorDetails = appointmentsWithUserSlots.map((appointment) => {
+      const doctor = doctors.find(
+        (doc) => doc.doctorId.toString() === appointment.doctorId.toString()
+      );
+      return {
+        ...appointment,
+        doctorDetails: doctor || null, // Attach doctor details or null if not found
+      };
+    });
+
+    res.status(200).json({
+      message: "Appointments retrieved successfully.",
+      appointments: appointmentsWithDoctorDetails,
+    });
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    res.status(500).json({
+      message: "Error fetching appointments",
+      error: err.message || err,
     });
   }
 };

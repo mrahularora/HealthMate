@@ -1,19 +1,10 @@
 /* Global Styles */
-body {
-  font-family: "Arial", sans-serif;
-  background-color: #f4f7fa;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
-
-.book-appointment {
-  max-width: 600px;
-  margin: 30px auto;
+.book-appointment-container {
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  margin:auto;
+  width: 75%;
+  background-color: #f4f7fa;
+  margin-bottom: 10px;
 }
 
 h2.title {

@@ -1,5 +1,27 @@
 import axios from "./api";
 
+// Fetch all time slots for a doctor
+export const getAllTimeSlots = async (doctorId) => {
+  const response = await axios.get(`/appointments/slots/${doctorId}`);
+  return response.data.timeSlots;
+};
+
+// Delete an available time slot
+export const deleteAvailableSlot = async (data) => {
+  return axios.delete("/appointments/slot", { data });
+};
+
+
+export const generateReport = async (appointmentId, slotId) => {
+  try {
+    const response = await axios.post(`/appointments/${appointmentId}/slots/${slotId}/report`);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+
 // Function to create appointment slots for a doctor
 export const createAppointmentSlots = async (appointmentData) => {
   try {
@@ -129,6 +151,8 @@ export const getAppointmentDetails = async (appointmentId, slotId) => {
     throw error;
   }
 };
+
+
 
 // Api call for doctor update prescription for user
 export const updateAppointmentDetails = async ({

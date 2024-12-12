@@ -1,7 +1,3 @@
-// FILTER PENDING, COMPLETED, UPCOMING APPOINTMENTS
-
-// show all patients - all treated
-
 import React, { useState, useEffect, useContext } from "react";
 import { getAppointmentRequests, updateAppointmentStatus } from "../../services/appointmentService";
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
@@ -61,7 +57,7 @@ const AppointmentRequest = () => {
     <div className="page-container">
       <Sidebar />
       <div className="appointment-details">
-        <h3 className="heading">Appointment Requests</h3>
+        <h5 className="greeting">Appointment Requests</h5>
         {error && <p className="error">{error}</p>}
         {requests.length > 0 ? (
           <ul className="appointment-list">

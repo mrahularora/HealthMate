@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { createAppointmentSlots } from '../../services/appointmentService'; // Import API calls
 import { AuthContext } from '../../context/AuthContext'; // Import AuthContext
+import EditAppointment from './EditAppointment';
 
 const CreateAppointmentComponent = () => {
   const { user } = useContext(AuthContext);
@@ -8,7 +9,6 @@ const CreateAppointmentComponent = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [error, setError] = useState(null);
-  const [existingTimeSlots] = useState([]); // Store existing time slots for the selected date
 
   // Only allow doctors to create appointment slots
   if (user?.role !== 'Doctor') {
@@ -18,17 +18,11 @@ const CreateAppointmentComponent = () => {
   // Generate time slots between 7 AM and 5 PM
   const generateTimeSlots = () => {
     const timeSlots = [];
-    let startTime = 7;
-    let endTime = startTime + 1;
-
-    while (startTime < 17) {
-      const start = `${startTime < 10 ? '0' : ''}${startTime}:00`;
-      const end = `${endTime < 10 ? '0' : ''}${endTime}:00`;
+    for (let hour = 7; hour < 17; hour++) {
+      const start = `${hour.toString().padStart(2, '0')}:00`;
+      const end = `${(hour + 1).toString().padStart(2, '0')}:00`;
       timeSlots.push({ label: `${start} - ${end}`, value: `${start}-${end}` });
-      startTime++;
-      endTime++;
     }
-
     return timeSlots;
   };
 
@@ -50,44 +44,29 @@ const CreateAppointmentComponent = () => {
     try {
       await createAppointmentSlots(appointmentData);
       alert('Appointment slots created successfully');
-      setDates([]); // Reset the form after successful submission
-      setError(null); // Clear any errors after successful submission
+      setDates([]);
+      setError(null);
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.duplicateSlots) {
-        const duplicateSlotMessages = error.response.data.duplicateSlots.map(
+      if (error.response?.data?.duplicateSlots) {
+        const duplicateMessages = error.response.data.duplicateSlots.map(
           (slot) => `Date: ${slot.date}, Time Slot: ${slot.startTime} - ${slot.endTime}`
         );
-        setError(`The following time slots already exist: ${duplicateSlotMessages.join(', ')}`);
+        setError(`The following time slots already exist: ${duplicateMessages.join(', ')}`);
       } else {
-        setError('Error creating appointment slots');
+        setError('Error creating appointment slots. Please try again.');
       }
     }
   };
 
-  const handleTimeSlotChange = (e) => {
-    setSelectedSlot(e.target.value);
-    setError(null);
-  };
-
   const addTimeSlot = () => {
-    if (!selectedDate) {
-      setError('Please select a date before adding a time slot.');
-      return;
-    }
-
-    if (!selectedSlot) {
-      setError('Please select a valid time slot.');
-      return;
-    }
-
-    if (existingTimeSlots.includes(selectedSlot)) {
-      setError('This time slot has already been taken for this date.');
+    if (!selectedDate || !selectedSlot) {
+      setError('Please select both a date and a time slot.');
       return;
     }
 
     const dateIndex = dates.findIndex((dateObj) => dateObj.date === selectedDate);
     if (dateIndex !== -1 && dates[dateIndex].timeSlots.includes(selectedSlot)) {
-      setError('This time slot has already been added for this date.');
+      setError('This time slot is already added.');
       return;
     }
 
@@ -105,92 +84,82 @@ const CreateAppointmentComponent = () => {
 
   const removeTimeSlot = (date, slot) => {
     const updatedDates = dates
-      .map((dateObj) => {
-        if (dateObj.date === date) {
-          const updatedTimeSlots = dateObj.timeSlots.filter((timeSlot) => timeSlot !== slot);
-
-          if (updatedTimeSlots.length === 0) {
-            return null;
-          }
-
-          return {
-            ...dateObj,
-            timeSlots: updatedTimeSlots,
-          };
-        }
-        return dateObj;
-      })
-      .filter((dateObj) => dateObj !== null);
+      .map((dateObj) =>
+        dateObj.date === date
+          ? { ...dateObj, timeSlots: dateObj.timeSlots.filter((timeSlot) => timeSlot !== slot) }
+          : dateObj
+      )
+      .filter((dateObj) => dateObj.timeSlots.length > 0);
 
     setDates(updatedDates);
   };
 
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="create-appointment">
-      <div className="form-group">
-        
-        <h1>Create Appointments</h1>
-        <p className="w70">Handle your availability with ease and let patients book an appointment with you at any time that suits them. 
-          Have your schedule organized in real-time, allowing modifications of time slots for a seamless booking experience for both parties.</p>
-        <label htmlFor="date">Select Date: </label>
-        <input
-          id="date"
-          type="date"
-          value={selectedDate}
-          onChange={handleDateChange}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Time Slot: </label>
-        <select value={selectedSlot} onChange={handleTimeSlotChange} required>
-          <option value="">Select Time</option>
-          {generateTimeSlots().map((time, idx) => (
-            <option key={idx} value={time.value}>
-              {time.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {error && <p className="error-text">{error}</p>}
-
-      <button type="button" onClick={addTimeSlot}>
-        Add Time Slot
-      </button>
-
-      <div className="added-slots">
-        <h3>Selected Time Slots:</h3>
-        {dates.length > 0 ? (
-          <ul>
-            {dates.map((dateObj, idx) => (
-              <li key={idx}>
-                <strong>{dateObj.date}</strong>
-                <ul>
-                  {dateObj.timeSlots.map((slot, index) => (
-                    <li key={index}>
-                      {slot}{' '}
-                      <button type="button" onClick={() => removeTimeSlot(dateObj.date, slot)}>
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+    <div className="create-appointment">
+      <h1>Create Appointments</h1>
+      <p>
+        Handle your availability with ease. Let patients book appointments at convenient times.
+        Manage your schedule in real-time with easy modifications.
+      </p>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group mb-4">
+          <label htmlFor="date">Select Date:</label>
+          <input
+            id="date"
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="time-slot">Time Slot:</label>
+          <select
+            id="time-slot"
+            value={selectedSlot}
+            onChange={(e) => setSelectedSlot(e.target.value)}
+            required
+          >
+            <option value="">Select Time</option>
+            {generateTimeSlots().map((time, idx) => (
+              <option key={idx} value={time.value}>
+                {time.label}
+              </option>
             ))}
-          </ul>
-        ) : (
-          <p>No time slots added yet.</p>
-        )}
-      </div>
-
-      <button type="submit">Create Appointment Slots</button>
-    </form>
+          </select>
+        </div>
+        {error && <p className="error-text">{error}</p>}
+        <button type="button" onClick={addTimeSlot}>
+          Add Time Slot
+        </button>
+        <div className="added-slots">
+          <h3>Selected Time Slots:</h3>
+          {dates.length > 0 ? (
+            <ul>
+              {dates.map((dateObj, idx) => (
+                <li key={idx}>
+                  <strong>{dateObj.date}</strong>
+                  <ul>
+                    {dateObj.timeSlots.map((slot, index) => (
+                      <li key={index}>
+                        {slot}{' '}
+                        <button type="button" onClick={() => removeTimeSlot(dateObj.date, slot)}>
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No time slots added yet.</p>
+          )}
+        </div>
+        <button type="submit">Create Appointment Slots</button>
+      </form>
+      <EditAppointment />
+    </div>
   );
 };
 

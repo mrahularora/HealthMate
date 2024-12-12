@@ -1,14 +1,12 @@
 import React from 'react';
-import Sidebar from '../components/common/Sidebar';
 import '../css/userpage.css';
 import '../css/sidebar.css';
-import UserDashboard from '../components/user/UserDashboard';
+import DoctorListComponent from '../components/user/UserDoctorsList';
 
 const UserPage = () => {
   return (
     <div className="user-page">
-      <Sidebar />
-      <UserDashboard />
+      <DoctorListComponent />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { signup } from '../services/authService'; 
+import VoiceInput from '../components/common/VoiceInput';
 import '../css/signup.css'; 
 
 function SignupPage() {
@@ -87,7 +88,7 @@ function SignupPage() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="firstName">First Name<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="text"
               id="firstName"
               name="firstName"
@@ -99,7 +100,7 @@ function SignupPage() {
           </div>
           <div className="form-group">
             <label htmlFor="lastName">Last Name<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="text"
               id="lastName"
               name="lastName"
@@ -113,7 +114,7 @@ function SignupPage() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="email">Email Address<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="email"
               id="email"
               name="email"
@@ -125,7 +126,7 @@ function SignupPage() {
           </div>
           <div className="form-group">
             <label htmlFor="confirmEmail">Confirm Email Address<span className="red">* </span>:</label>
-            <input
+            <VoiceInput
               type="email"
               id="confirmEmail"
               name="confirmEmail"

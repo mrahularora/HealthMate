@@ -1,5 +1,5 @@
 const express = require('express');
-const Patient = require('../models/Patient'); // Adjust path as needed
+// const Patient = require('../models/Patient'); // Adjust path as needed
 const router = express.Router();
 
 // Get all patients route

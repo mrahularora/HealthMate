@@ -57,7 +57,7 @@
     color: #444; 
   }
   
-  .profile-info button {
+  .profile-btn{
     padding: 10px 15px;
     background-color: #007bff;
     color: white;
@@ -69,12 +69,12 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
   
-  .profile-info button:hover {
+  .profile-btn:hover {
     background-color: #0056b3;
     transform: translateY(-1px); 
   }
   
-  .profile-info button:active {
+  .profile-btn:active {
     transform: translateY(0); 
   }
   
