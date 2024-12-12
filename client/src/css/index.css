@@ -18,6 +18,8 @@ body, h1, h2, h3, h4, h5, h6 {
 }
 
 .width25 {width: 250px;}
+.wid25 {width: 25px;}
+.wid35 {width: 35px;}
 .header {width: 98%; margin:auto;}
 .right{ text-decoration: right;}
 .clear{display: table; clear: both;}

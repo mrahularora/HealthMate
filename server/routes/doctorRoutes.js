@@ -1,15 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Doctor = require('../models/Doctor');
+const {
+  getDoctors,
+  getDoctorsList,
+  searchDoctors,
+} = require("../controllers/doctorController");
 
-// Route to get all doctors
-router.get('/', async (req, res) => {
-  try {
-    const doctors = await Doctor.find();
-    res.json(doctors);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Route to get all doctors from the User schema
+router.get("/", getDoctors);
+
+// Route to get all doctors from the Doctor schema
+router.get("/list", getDoctorsList);
+
+// Search for doctors by name or specialty
+router.get("/search", searchDoctors);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';  // Add this import to use useState
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
@@ -6,24 +7,43 @@ import LoginPage from './pages/LoginPage';
 import DoctorPage from './pages/DoctorPage';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
-import Profile from './pages/Profile'
+import Profile from './pages/Profile';
 import SignupPage from './pages/SignupPage';
 import AppointmentPage from './pages/AppointmentPage';
+import CreateAppointments from './pages/CreateAppointment';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './context/ProtectedRoute';
 import Unauthorized from './components/Unauthorized';
 import RedirectIfAuthenticated from './context/RedirectIfAuthenticated';
-import UserDoctorsList from './components/user/UserDoctorsList';
-import Patients from './components/doctor/Patients';
+import DoctorList from "./components/user/UserDoctorsList";
+import AppointmentDetails from "./components/doctor/AppointmentDetails";
+import Patients from "./components/doctor/Patients";
+import AppointmentRequest from "./components/doctor/RequestedAppointments";
+import AcceptedAppointments from "./components/doctor/AllAppointments";
+import BookAppointment from './components/user/BookAppointment';
+import UserAppointments from './components/user/UserAppointments';
+import NotFoundPage from './pages/NotFoundPage';
+import FontSizeControl from './components/common/FontSizeControl'; // Import FontSizeControl
+import ManageUsers from './components/admin/ManageUsers';
 
 function App() {
   const navigate = useNavigate();
 
+  const [fontSize, setFontSize] = useState(16); // Default font size
+
+  // Dynamically apply font size to the entire page
+  const pageStyle = {
+    fontSize: `${fontSize}px`,
+  };
+
   return (
-    <div className="App d-flex flex-column min-vh-100">
+    <div className="App d-flex flex-column min-vh-100" style={pageStyle}>
       <Header />
       <div className="flex-grow-1">
+        {/* Font size control component */}
+        <FontSizeControl setFontSize={setFontSize} />
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           
@@ -82,7 +102,7 @@ function App() {
           <Route
             path="/doctorslist"
             element={
-              <ProtectedRoute component={UserDoctorsList} allowedRoles={['User', 'Admin']} />
+              <ProtectedRoute component={DoctorList} allowedRoles={['User', 'Admin']} />
             }
           />
           <Route
@@ -92,8 +112,72 @@ function App() {
             }
           />
 
+          <Route
+            path="/book-appointment/:doctorId"
+            element={
+              <ProtectedRoute
+                component={BookAppointment}
+                allowedRoles={["User", "Admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/CreateAppointment"
+            element={
+              <ProtectedRoute component={CreateAppointments} allowedRoles={['Doctor', 'Admin']} />
+            }
+          />
+
+          <Route
+            path="/UserAppointments"
+            element={
+              <ProtectedRoute component={UserAppointments} allowedRoles={['User', 'Admin']} />
+            }
+          />
+
+          <Route
+            path="/Admin/ManageUsers"
+            element={
+              <ProtectedRoute component={ManageUsers} allowedRoles={['Admin']} />
+            }
+          />
+
+          <Route
+            path="/RequestedAppointments"
+            element={
+              <ProtectedRoute
+                component={AppointmentRequest}
+                allowedRoles={["Doctor", "Admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/AcceptedAppointments"
+            element={
+              <ProtectedRoute
+                component={AcceptedAppointments}
+                allowedRoles={["Doctor", "Admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/appointment-details/:appointmentId/:slotId"
+            element={
+              <ProtectedRoute
+                component={AppointmentDetails}
+                allowedRoles={["Doctor", "Admin"]}
+              />
+            }
+          />
+
           {/* Unauthorized Route */}
           <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* Catch-all route for undefined paths */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
       <Footer />

@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   min-height: 600px;
-  background-image: url("../../public/assets/images/hero.jpg");
+  background-image: url("../../public/assets/images/login.jpg");
   background-size: cover;
   background-position: center;
 }

@@ -130,9 +130,12 @@ const CreateAppointmentComponent = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="create-appointment">
       <div className="form-group">
+        
         <h1>Create Appointments</h1>
+        <p className="w70">Handle your availability with ease and let patients book an appointment with you at any time that suits them. 
+          Have your schedule organized in real-time, allowing modifications of time slots for a seamless booking experience for both parties.</p>
         <label htmlFor="date">Select Date: </label>
         <input
           id="date"

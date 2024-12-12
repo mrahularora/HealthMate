@@ -4,7 +4,9 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes"); 
 const patientRoutes = require("./routes/patientRoutes"); 
+const contactRoutes = require('./routes/contactRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes'); 
+const adminRoutes = require("./routes/adminRoutes")
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -32,6 +34,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/patients", patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 // Start the server

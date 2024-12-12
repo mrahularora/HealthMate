@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../css/contact.css';
+import submitContactForm from '../services/contactService';
+import { AuthContext } from '../context/AuthContext'; // Import the context
 
 const ContactPage = () => {
+  const { user } = useContext(AuthContext); // Access the user from context
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,6 +13,62 @@ const ContactPage = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+
+  // UseEffect hook to track login status and pre-fill name and email if logged in
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true);
+      setFormData((prevState) => ({
+        ...prevState,
+        name: user.name,  // Set the logged-in user's name
+        email: user.email, // Set the logged-in user's email
+      }));
+    } else {
+      setIsLoggedIn(false); // User is not logged in
+    }
+  }, [user]); // Dependency array includes user to run effect when user changes
+
+  const validateForm = () => {
+    const { name, email, message } = formData;
+
+    // Name validation
+    if (!name.trim()) {
+      setErrorMessage('Name is required.');
+      return false;
+    }
+    if (!/^[A-Za-z\s]+$/.test(name)) {
+      setErrorMessage('Name must contain only alphabets and spaces.');
+      return false;
+    }
+    if (name.length < 3 || name.length > 50) {
+      setErrorMessage('Name must be between 3 and 50 characters.');
+      return false;
+    }
+
+    // Email validation
+    if (!email.trim()) {
+      setErrorMessage('Email is required.');
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErrorMessage('Invalid email format.');
+      return false;
+    }
+
+    // Message validation
+    if (!message.trim()) {
+      setErrorMessage('Message is required.');
+      return false;
+    }
+    if (message.length < 10) {
+      setErrorMessage('Message must be at least 10 characters long.');
+      return false;
+    }
+
+    setErrorMessage('');
+    return true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,47 +78,47 @@ const ContactPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, message } = formData;
 
-    // Validate form inputs
-    if (!name || !email || !message) {
-      setErrorMessage('All fields are required.');
+    if (!validateForm()) {
       return;
     }
 
-    // TODO: Add logic to send the message, e.g., via an API request
-
-    setErrorMessage('');
-    setSuccessMessage('Your message has been sent successfully!');
-
-    setFormData({
-      name: '',
-      email: '',
-      message: '',
-    });
+    try {
+      const result = await submitContactForm(formData);
+      setErrorMessage('');
+      setSuccessMessage(result.message);
+      // Retain name and email if logged in when resetting form data
+      setFormData((prevState) => ({
+        name: isLoggedIn ? prevState.name : '',
+        email: isLoggedIn ? prevState.email : '',
+        message: '',
+      }));
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to submit the form.');
+    }
   };
 
   return (
     <div className="contact-page">
-       <div className="contact-hero-section mb-4">
-            <div className="contact-hero-content">
-                <h1>Contact HealthMate</h1>
-            </div>
+      <div className="contact-hero-section mb-4">
+        <div className="contact-hero-content">
+          <h1>Contact HealthMate</h1>
         </div>
+      </div>
 
       <div className="contact-info">
         <div className="address">
-          <h2 className="mb-4">Our Main Office</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/pin.png" className="wid35" alt="map" /> Our Main Office</h2>
           <p>299 Doon Valley Drive</p>
           <p>Kitchener, ON. N2R 0N6</p>
           <p>Email: info@healthmate.com</p>
           <p>Phone: +1(548) 333-3418</p>
 
-            <hr />
+          <hr />
 
-          <h2 className="mb-4">Our Branch</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/pin.png" className="wid35" alt="pin" /> Our Branch</h2>
           <p>299 Doon Valley Drive</p>
           <p>Kitchener, ON. N2R 0N6</p>
           <p>Email: info@healthmate.com</p>
@@ -82,10 +141,11 @@ const ContactPage = () => {
 
       <div className="contact-form-section mb-4">
         <form onSubmit={handleSubmit} className="contact-form">
-          <h2 className="mb-4">Get in Touch</h2>
+          <h2 className="mb-4"><img src="./assets/images/icons/getintouch.png" className="wid35" alt="getintouch" /> Get in Touch</h2>
           <p>Fill the following form to get in touch with our team. We'll contact you shortly.</p>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}
+          
           <div className="form-group">
             <label htmlFor="name">Full Name<span className="red">* </span>:</label>
             <input
@@ -95,9 +155,11 @@ const ContactPage = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Full Name"
+              disabled={isLoggedIn}
               required
             />
           </div>
+          
           <div className="form-group">
             <label htmlFor="email">Email Address<span className="red">* </span>:</label>
             <input
@@ -108,8 +170,10 @@ const ContactPage = () => {
               onChange={handleChange}
               placeholder="Email Address"
               required
+              disabled={isLoggedIn}
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="message">Message<span className="red">* </span>:</label>
             <textarea
@@ -122,6 +186,7 @@ const ContactPage = () => {
               required
             />
           </div>
+          
           <button type="submit" className="submit-button">Send Message</button>
         </form>
       </div>

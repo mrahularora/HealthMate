@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '../components/common/Sidebar';
-import DoctorDashboard from '../components/doctor/DoctorDashboard';
-import CreateAppointment from '../components/doctor/CreateAppointment';
+import Pateints from '../components/doctor/Patients';
+
 import '../css/doctorpage.css';
 import '../css/sidebar.css';
 
@@ -9,8 +9,7 @@ const DoctorPage = () => {
   return (
     <div className="doctor-page">
       <Sidebar />
-      <DoctorDashboard />
-      <CreateAppointment />
+      <Pateints />
     </div>
   );
 };

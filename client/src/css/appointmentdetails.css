@@ -1,0 +1,111 @@
+/* General styles */
+.appointment-details {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .loading {
+    font-size: 18px;
+    color: gray;
+  }
+  
+  /* User info section */
+  .user-info {
+    margin-bottom: 20px;
+  }
+  
+  .user-info p {
+    font-size: 16px;
+  }
+  
+  .user-info strong {
+    font-weight: bold;
+  }
+  
+  /* Prescription section */
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  
+  .notes-input {
+    height: 120px;
+  }
+  
+  .advice-input {
+    height: 80px;
+  }
+  
+  /* Medicine form */
+  .medicine-form {
+    margin-top: 20px;
+  }
+  
+  .medicine-input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .add-medicine-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .add-medicine-btn:hover {
+    background-color: #45a049;
+  }
+  
+  /* Medicine list */
+  .medicine-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .medicine-item {
+    padding: 8px 0;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  /* Status section */
+  .status-select {
+    margin-top: 20px;
+  }
+  
+  .status-dropdown {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Save button */
+  .save-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .save-btn:hover {
+    background-color: #0056b3;
+  }
+  

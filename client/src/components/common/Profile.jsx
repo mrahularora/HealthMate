@@ -66,7 +66,8 @@ const UserProfile = () => {
 
   return (
     <div className="user-profile">
-      <h2 className="title">User Profile</h2>
+      <h2 className="title">View & Edit Profile</h2>
+      <p className="w70">View and manage your personal information with ease in one single place. Keep your information updated with ease by updating the details in your profile.</p>
       {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 

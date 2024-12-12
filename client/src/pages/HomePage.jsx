@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchDoctorsFromSchema } from '../services/doctorService';
 
 const HomePage = () => {
   const [doctors, setDoctors] = useState([]);
@@ -7,9 +7,9 @@ const HomePage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/doctors');
-        console.log("Fetched doctors:", response.data);
-        setDoctors(response.data);
+        const doctorsData = await fetchDoctorsFromSchema();
+        console.log("Fetched doctors from Doctor schema:", doctorsData);
+        setDoctors(doctorsData);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -23,8 +23,8 @@ const HomePage = () => {
       <div className="hero-section mb-4">
         <div className="hero-content">
           <h1>Welcome to HealthMate</h1>
-          <p>Your journey begins here.</p>
-          <a href="#get-started" className="btn">Get Started</a>
+          <p>Connecting You to Better Health.</p>
+          <a href="/signup" className="btn">Get Started</a>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const HomePage = () => {
           remote health management, and medication fidelity, which characterize a digitizing healthcare environment.</p>
       </div>
       <div class="d-flex justify-content-center align-items-center mb-4">
-          <a href="#consult" class="btn">Consult Now</a>
+          <a href="/login" class="btn">Consult Now</a>
       </div>
       <hr class="my-4 w-50 mx-auto"></hr>
 
