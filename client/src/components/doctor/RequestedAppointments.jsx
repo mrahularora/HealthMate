@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { getAppointmentRequests, updateAppointmentStatus } from "../../services/appointmentService";
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 import "../../css/requestedappointments.css";
@@ -10,7 +10,7 @@ const AppointmentRequest = () => {
   const [error, setError] = useState(null); // Holds error messages
 
   // Fetch appointment requests for the logged-in doctor
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       if (!user || user.role !== "Doctor") {
         setError("You are not authorized to view this page.");
@@ -23,11 +23,11 @@ const AppointmentRequest = () => {
       console.error("Error fetching appointment requests:", err);
       setError("Failed to fetch appointment requests.");
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchRequests(); // Fetch requests when the component loads
-  }, [user]);
+  }, [fetchRequests]);
 
   // Handle acceptance or rejection of a request
   const handleUpdateStatus = async (appointmentId, slotId, status) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { getAllTimeSlots, deleteAvailableSlot } from "../../services/appointmentService"; // Import API calls
 import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 
@@ -7,14 +7,8 @@ const EditAppointments = () => {
   const [allSlots, setAllSlots] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch all time slots after component loads
-  useEffect(() => {
-    if (user?.role === "Doctor") {
-      fetchAllSlots();
-    }
-  }, [user]);
-
-  const fetchAllSlots = async () => {
+  // Fetch all time slots
+  const fetchAllSlots = useCallback(async () => {
     try {
       const response = await getAllTimeSlots(user.id);
       setAllSlots(response);
@@ -22,7 +16,14 @@ const EditAppointments = () => {
       console.error("Error fetching slots:", err);
       setError("Failed to fetch slots.");
     }
-  };
+  }, [user]);
+
+  // Fetch slots on component load
+  useEffect(() => {
+    if (user?.role === "Doctor") {
+      fetchAllSlots();
+    }
+  }, [user, fetchAllSlots]);
 
   const handleDeleteSlot = async (slot) => {
     try {
@@ -43,8 +44,10 @@ const EditAppointments = () => {
   return (
     <div className="view-slots mt-4">
       <h5 className="greeting">View and Manage Slots</h5>
-      <p>Efficiently manage your appointment slots with ease. Under this section, you can view all available, 
-        booked, and past slots to make sure that you are organized and in control. Update timings easily, manage availability.</p>
+      <p>
+        Efficiently manage your appointment slots with ease. Under this section, you can view all available, 
+        booked, and past slots to make sure that you are organized and in control. Update timings easily, manage availability.
+      </p>
 
       {error && <p className="error-text">{error}</p>}
 
