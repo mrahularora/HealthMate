@@ -531,10 +531,14 @@ exports.cancelAppointment = async (req, res) => {
 };
 
 exports.getAppointments = async (req, res) => {
-  const userEmail = req.user.email; // Logged-in user's email
-
   try {
-    // Find appointments where at least one time slot has the user's email
+    const userEmail = req.user?.email; // Ensure `req.user` exists and has `email`
+
+    if (!userEmail) {
+      return res.status(400).json({ message: "User email is required." });
+    }
+
+    // Fetch appointments with time slots containing the user's email
     const appointments = await Appointment.find({
       "timeSlots.userDetails.email": userEmail,
     }).sort({ date: 1 }); // Sort by date (ascending)
@@ -543,23 +547,28 @@ exports.getAppointments = async (req, res) => {
       return res.status(404).json({ message: "No appointments found." });
     }
 
-    // Filter time slots to include only those that match the user's email
+    // Process appointments to filter time slots specific to the user
     const appointmentsWithUserSlots = appointments.map((appointment) => {
-      // Filter time slots based on the user's email
       const userTimeSlots = appointment.timeSlots.filter(
-        (slot) => slot.userDetails.email === userEmail
+        (slot) => slot.userDetails?.email === userEmail // Safely check userDetails and email
       );
       return {
         ...appointment.toObject(),
-        timeSlots: userTimeSlots, // Only include relevant time slots
+        timeSlots: userTimeSlots, // Include only the relevant time slots
       };
     });
 
-    // Fetch the doctor details for each appointment
-    const doctorIds = appointmentsWithUserSlots.map((appointment) => appointment.doctorId.toString());
+    // Extract unique doctor IDs from filtered appointments
+    const doctorIds = [
+      ...new Set(
+        appointmentsWithUserSlots.map((appointment) => appointment.doctorId.toString())
+      ),
+    ];
+
+    // Fetch doctor details for the associated doctor IDs
     const doctors = await Doctor.find({ doctorId: { $in: doctorIds } });
 
-    // Attach doctor details to appointments
+    // Attach doctor details to the filtered appointments
     const appointmentsWithDoctorDetails = appointmentsWithUserSlots.map((appointment) => {
       const doctor = doctors.find(
         (doc) => doc.doctorId.toString() === appointment.doctorId.toString()
@@ -576,8 +585,23 @@ exports.getAppointments = async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching appointments:", err);
+
+    // Handle specific error cases (e.g., database errors)
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        message: "Invalid data format.",
+        error: err.message,
+      });
+    } else if (err.name === "CastError") {
+      return res.status(400).json({
+        message: "Invalid ID format.",
+        error: err.message,
+      });
+    }
+
+    // Generic error response
     res.status(500).json({
-      message: "Error fetching appointments",
+      message: "An error occurred while fetching appointments.",
       error: err.message || err,
     });
   }
