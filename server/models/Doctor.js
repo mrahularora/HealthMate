@@ -1,6 +1,13 @@
 // models/Doctor.js
 const mongoose = require('mongoose');
 
+const counterSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  seq: { type: Number, default: 0 },
+});
+
+const Counter = mongoose.models.Counter || mongoose.model('Counter', counterSchema);
+
 const doctorSchema = new mongoose.Schema({
   id: { type: String, required: true },
   seq: { type: Number, default: 0 },
@@ -14,7 +21,7 @@ const doctorSchema = new mongoose.Schema({
 
 // Pre-save hook to auto-increment doctorId
 doctorSchema.pre('save', async function (next) {
-  if (this.isNew) {
+  if (this.isNew && !this.doctorId) {
     try {
       // Find the counter document or create one if it doesn’t exist
       const counter = await Counter.findOneAndUpdate(

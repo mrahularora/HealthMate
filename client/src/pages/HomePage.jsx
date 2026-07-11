@@ -55,7 +55,7 @@ const HomePage = () => {
                 <p><strong>Experience:</strong> {doctor.experience} years</p>
                 <p>{doctor.description}</p>
                 <Link
-                  to={`/book-appointment/${doctor._id}`}
+                  to={`/book-appointment/${doctor.doctorId || doctor._id}`}
                   className="btn doctor-book-button"
                 >
                   Book Appointment

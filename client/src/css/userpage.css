@@ -1,60 +1,273 @@
 .user-page {
   display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
 }
 
-.greeting {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 10px;
-}
-
-.records-title {
-  font-size: 1.2em;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.appointments-container {
+.patient-dashboard {
   flex: 1;
+  padding: 28px;
+}
+
+.patient-dashboard__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(44, 66, 81, 0.94), rgba(237, 13, 99, 0.82)),
+    url("../../public/assets/images/steth.jpg") center / cover;
+  color: #fff;
+}
+
+.patient-dashboard__eyebrow {
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.patient-dashboard__hero h1 {
+  margin-bottom: 10px;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.patient-dashboard__hero p {
+  max-width: 560px;
+  margin: 0;
+}
+
+.patient-dashboard__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.patient-dashboard__primary-btn,
+.patient-dashboard__ghost-btn,
+.patient-dashboard__empty a,
+.patient-dashboard__doctor a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.patient-dashboard__primary-btn {
+  background: #fff;
+  color: #ed0d63;
+}
+
+.patient-dashboard__ghost-btn {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #fff;
+}
+
+.patient-dashboard__error {
+  margin: 18px 0 0;
+  padding: 12px 16px;
+  border-left: 4px solid #ed0d63;
+  background: #fff;
+  color: #a20b43;
+}
+
+.patient-dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 22px 0;
+}
+
+.patient-dashboard__stat,
+.patient-dashboard__panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(44, 66, 81, 0.08);
+}
+
+.patient-dashboard__stat {
+  padding: 18px;
+}
+
+.patient-dashboard__stat span {
+  display: block;
+  color: #2c4251;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.patient-dashboard__stat p,
+.patient-dashboard__muted,
+.patient-dashboard__label {
+  margin: 0;
+  color: #667085;
+}
+
+.patient-dashboard__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.patient-dashboard__panel {
+  padding: 22px;
+}
+
+.patient-dashboard__panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.patient-dashboard__panel-heading h2 {
+  color: #2c4251;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.patient-dashboard__panel-heading a {
+  color: #ed0d63;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.patient-dashboard__next-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.patient-dashboard__next-card h3,
+.patient-dashboard__empty h3,
+.patient-dashboard__doctor h3 {
+  margin: 0;
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.patient-dashboard__next-meta {
+  display: grid;
+  gap: 6px;
+  color: #475467;
+  text-align: right;
+}
+
+.patient-dashboard__next-meta strong {
+  color: #ed0d63;
+}
+
+.patient-dashboard__empty {
   padding: 20px;
-  background-color: #f9f9f9;
-  display: flex;
-  flex-direction: column; 
-  gap: 20px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
 }
 
-.appointments-list {
-  display: flex;
-  flex-direction: row;
-  gap: 15px;
-  flex-wrap: wrap; 
+.patient-dashboard__empty p {
+  margin: 8px 0 14px;
+  color: #667085;
+}
+
+.patient-dashboard__empty a,
+.patient-dashboard__doctor a {
+  background: #ed0d63;
+  color: #fff;
+}
+
+.patient-dashboard__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.patient-dashboard__actions a {
+  padding: 13px 14px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #2c4251;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.patient-dashboard__doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.patient-dashboard__doctor {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  min-height: 100%;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.patient-dashboard__doctor img {
   width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  object-fit: cover;
 }
 
-.appointment-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  width: calc(33.33% - 10px); 
-  background-color: #fff;
-  box-sizing: border-box;
+.patient-dashboard__doctor p {
+  margin: 6px 0 4px;
+  color: #ed0d63;
+  font-weight: 700;
 }
 
-.reschedule-button,
-.cancel-button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
+.patient-dashboard__doctor span {
+  color: #667085;
+  font-size: 0.9rem;
 }
 
-.reschedule-button {
-  background-color: #00adef;
-  color: white;
+@media (max-width: 1050px) {
+  .patient-dashboard__content,
+  .patient-dashboard__doctor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.cancel-button {
-  background-color: #ed0d63;
-  color: white;
-  margin-left: 10px;
+@media (max-width: 760px) {
+  .user-page {
+    flex-direction: column;
+  }
+
+  .patient-dashboard {
+    padding: 18px;
+  }
+
+  .patient-dashboard__hero,
+  .patient-dashboard__next-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .patient-dashboard__stats,
+  .patient-dashboard__content,
+  .patient-dashboard__doctor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-dashboard__next-meta {
+    text-align: left;
+  }
 }

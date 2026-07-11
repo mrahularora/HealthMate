@@ -7,8 +7,8 @@ const getDoctors = async (req, res) => {
     // Fetch all users with role 'Doctor' and select required fields
     const doctors = await User.find(
       { role: "Doctor" },
-      "firstName lastName email gender"
-    );
+      "firstName lastName email gender specialization experience bio imageUrl"
+    ).sort({ firstName: 1, lastName: 1 });
     res.status(200).json(doctors);
   } catch (err) {
     console.error("Error fetching doctor list:", err);
@@ -21,7 +21,7 @@ const getDoctors = async (req, res) => {
 // Controller to get all doctors
 const getDoctorsList = async (req, res) => {
   try {
-    const doctors = await Doctor.find(); // Fetch all doctors from the database
+    const doctors = await Doctor.find().sort({ name: 1 }); // Fetch all doctors from the database
     res.status(200).json(doctors);
   } catch (error) {
     console.error("Error fetching doctors from Doctor schema:", error);

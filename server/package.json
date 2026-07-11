@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "node --check server.js"
+    "build": "node --check server.js",
+    "seed:doctors": "node data/seedDoctors.js"
   },
   "keywords": [],
   "author": "",
