@@ -1,147 +1,316 @@
-import React, { useState, useEffect} from "react";
-import { editUser, updateUser } from '../../services/userService';
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { editUser, updateUser } from "../../services/userService";
 import VoiceInput from "./VoiceInput";
 
+const emptyProfile = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  gender: "",
+  role: "",
+  specialization: "",
+  experience: "",
+  bio: "",
+  phone: "",
+};
+
+const roleAccent = {
+  User: "Patient",
+  Doctor: "Doctor",
+  Admin: "Administrator",
+};
+
+const roleAction = {
+  User: { label: "View appointments", path: "/UserAppointments" },
+  Doctor: { label: "View requests", path: "/RequestedAppointments" },
+  Admin: { label: "Manage users", path: "/admin/ManageUsers" },
+};
+
+const getInitials = (profile) =>
+  `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() ||
+  "HM";
+
+const validateName = (name) => /^[A-Za-z\s.'-]+$/.test(name);
+
 const UserProfile = () => {
+  const { user, login } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    gender: "",
-    role: "",
-  });
+  const [formData, setFormData] = useState(emptyProfile);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const userData = await editUser();
-        setFormData(userData);
+        setFormData({ ...emptyProfile, ...userData });
       } catch (error) {
         setErrors({ general: error.message });
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
-  const validateName = (name) => /^[A-Za-z\s.'-]+$/.test(name);
-
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((currentData) => ({
+      ...currentData,
+      [name]: value,
+    }));
+    setErrors((currentErrors) => ({ ...currentErrors, [name]: "" }));
+    setSuccessMessage("");
   };
 
-  const handleSaveChanges = async () => {
-    let formErrors = {};
+  const validateForm = () => {
+    const formErrors = {};
 
-    if (!validateName(formData.firstName)) {
-      formErrors.firstNameError = "First name may only contain letters and spaces.";
+    if (!formData.firstName || !validateName(formData.firstName)) {
+      formErrors.firstName = "First name may only contain letters and spaces.";
     }
 
-    if (!validateName(formData.lastName)) {
-      formErrors.lastNameError = "Last name may only contain letters and spaces.";
+    if (!formData.lastName || !validateName(formData.lastName)) {
+      formErrors.lastName = "Last name may only contain letters and spaces.";
     }
 
     if (!formData.gender) {
-      formErrors.genderError = "Please select a gender.";
+      formErrors.gender = "Please select a gender.";
     }
 
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  const handleSaveChanges = async () => {
+    if (!validateForm()) {
       return;
     }
 
     try {
-      await updateUser(formData);
-      setSuccessMessage("Profile updated successfully!");
+      setSaving(true);
+      const updatedUser = await updateUser(formData);
+      const nextProfile = { ...formData, ...updatedUser };
+      setFormData(nextProfile);
+
+      if (user) {
+        login({ ...user, ...nextProfile });
+      }
+
+      setSuccessMessage("Profile updated successfully.");
+      setErrors({});
       setIsEditing(false);
     } catch (error) {
       setErrors({ general: error.message });
       setSuccessMessage("");
+    } finally {
+      setSaving(false);
     }
   };
 
-  return (
-    <div className="user-profile">
-      <h2 className="title">View & Edit Profile</h2>
-      <p className="w70">View and manage your personal information with ease in one single place. Keep your information updated with ease by updating the details in your profile.</p>
-      {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+  const fullName =
+    `${formData.firstName || ""} ${formData.lastName || ""}`.trim() ||
+    "HealthMate member";
+  const roleLabel = roleAccent[formData.role] || formData.role || "Member";
+  const action = roleAction[formData.role] || roleAction.User;
 
-      <div className="profile-info">
-        {isEditing ? (
-          <>
+  if (loading) {
+    return (
+      <main className="profile-page">
+        <section className="profile-loading-card">
+          <div className="profile-avatar is-loading" />
+          <p>Loading your profile...</p>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="profile-page">
+      <section className="profile-hero">
+        <div className="profile-avatar" aria-hidden="true">
+          {getInitials(formData)}
+        </div>
+        <div className="profile-hero__content">
+          <p className="profile-eyebrow">{roleLabel} Profile</p>
+          <h1>{fullName}</h1>
+          <p>
+            Keep your identity, contact details, and account information current
+            for smoother healthcare coordination.
+          </p>
+        </div>
+        <div className="profile-hero__actions">
+          <button
+            type="button"
+            className="profile-primary-button"
+            onClick={() => setIsEditing((current) => !current)}
+          >
+            {isEditing ? "Cancel Edit" : "Edit Profile"}
+          </button>
+          <Link to={action.path} className="profile-secondary-button">
+            {action.label}
+          </Link>
+        </div>
+      </section>
+
+      {errors.general && <p className="profile-alert is-error">{errors.general}</p>}
+      {successMessage && <p className="profile-alert is-success">{successMessage}</p>}
+
+      <section className="profile-grid">
+        <article className="profile-panel profile-panel--wide">
+          <div className="profile-panel__heading">
             <div>
-              <label>First Name:</label>
-              <VoiceInput
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                required
-              />
-              {errors.firstNameError && <p style={{ color: "red" }}>{errors.firstNameError}</p>}
+              <p className="profile-eyebrow">Personal Information</p>
+              <h2>{isEditing ? "Update your details" : "Account details"}</h2>
             </div>
-            <div>
-              <label>Last Name:</label>
-              <VoiceInput
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                required
-              />
-              {errors.lastNameError && <p style={{ color: "red" }}>{errors.lastNameError}</p>}
-            </div>
-            <div>
-              <label>Email:</label>
-              <VoiceInput
-                type="email"
-                name="email"
-                value={formData.email}
-                disabled
-              />
-            </div>
-            <div>
-              {errors.genderError && <p style={{ color: "red" }}>{errors.genderError}</p>}
-              <label>Gender:</label>
-              <div className="gender-options">
-                {["Male", "Female", "Other"].map((gender) => (
-                  <label key={gender}>
-                    <input
-                      type="radio"
-                      name="gender"
-                      value={gender}
-                      checked={formData.gender === gender}
-                      onChange={handleInputChange}
-                    />
-                    {gender}
-                  </label>
-                ))}
+            <span className="profile-role-pill">{formData.role || "Member"}</span>
+          </div>
+
+          {isEditing ? (
+            <div className="profile-form">
+              <label className="profile-field">
+                <span>First name</span>
+                <VoiceInput
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
+                {errors.firstName && <small>{errors.firstName}</small>}
+              </label>
+
+              <label className="profile-field">
+                <span>Last name</span>
+                <VoiceInput
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
+                {errors.lastName && <small>{errors.lastName}</small>}
+              </label>
+
+              <label className="profile-field">
+                <span>Email</span>
+                <input type="email" name="email" value={formData.email} disabled />
+              </label>
+
+              <label className="profile-field">
+                <span>Role</span>
+                <input type="text" name="role" value={formData.role} disabled />
+              </label>
+
+              <div className="profile-field profile-field--wide">
+                <span>Gender</span>
+                <div className="profile-gender-options">
+                  {["Male", "Female", "Other"].map((gender) => (
+                    <label key={gender}>
+                      <input
+                        type="radio"
+                        name="gender"
+                        value={gender}
+                        checked={formData.gender === gender}
+                        onChange={handleInputChange}
+                      />
+                      {gender}
+                    </label>
+                  ))}
+                </div>
+                {errors.gender && <small>{errors.gender}</small>}
+              </div>
+
+              <div className="profile-form__actions">
+                <button
+                  type="button"
+                  className="profile-primary-button"
+                  onClick={handleSaveChanges}
+                  disabled={saving}
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+                <button
+                  type="button"
+                  className="profile-text-button"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setErrors({});
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
-            <div>
-              <label>Role:</label>
-              <input type="text" name="role" value={formData.role} disabled />
+          ) : (
+            <div className="profile-detail-list">
+              <div>
+                <span>First name</span>
+                <strong>{formData.firstName || "Not provided"}</strong>
+              </div>
+              <div>
+                <span>Last name</span>
+                <strong>{formData.lastName || "Not provided"}</strong>
+              </div>
+              <div>
+                <span>Email</span>
+                <strong>{formData.email || "Not provided"}</strong>
+              </div>
+              <div>
+                <span>Gender</span>
+                <strong>{formData.gender || "Not provided"}</strong>
+              </div>
             </div>
-            <button className="profile-btn" onClick={handleSaveChanges}>Save Changes</button>
-          </>
-        ) : (
-          <>
-            <p><strong>First Name:</strong> {formData.firstName}</p>
-            <p><strong>Last Name:</strong> {formData.lastName}</p>
-            <p><strong>Email:</strong> {formData.email}</p>
-            <p><strong>Gender:</strong> {formData.gender}</p>
-            <p><strong>Role:</strong> {formData.role}</p>
-            <button className="profile-btn" onClick={() => setIsEditing(true)}>Edit Profile</button>
-          </>
+          )}
+        </article>
+
+        <aside className="profile-panel">
+          <p className="profile-eyebrow">Account Snapshot</p>
+          <div className="profile-snapshot">
+            <div>
+              <span>Status</span>
+              <strong>Active</strong>
+            </div>
+            <div>
+              <span>Role</span>
+              <strong>{roleLabel}</strong>
+            </div>
+            <div>
+              <span>Profile email</span>
+              <strong>{formData.email || "Not provided"}</strong>
+            </div>
+          </div>
+        </aside>
+
+        {formData.role === "Doctor" && (
+          <article className="profile-panel profile-panel--wide">
+            <p className="profile-eyebrow">Clinical Profile</p>
+            <div className="profile-detail-list">
+              <div>
+                <span>Specialization</span>
+                <strong>{formData.specialization || "Not provided"}</strong>
+              </div>
+              <div>
+                <span>Experience</span>
+                <strong>
+                  {formData.experience ? `${formData.experience} years` : "Not provided"}
+                </strong>
+              </div>
+              <div className="profile-detail-list__wide">
+                <span>Bio</span>
+                <strong>{formData.bio || "Not provided"}</strong>
+              </div>
+            </div>
+          </article>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
