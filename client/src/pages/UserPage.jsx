@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Sidebar from "../components/common/Sidebar";
 import { getAppointments } from "../services/appointmentService";
-import { getDoctorList } from "../services/doctorService";
+import { fetchDoctorsFromSchema } from "../services/doctorService";
 import "../css/userpage.css";
 import "../css/sidebar.css";
 
@@ -26,6 +26,8 @@ const formatDate = (date) =>
     year: "numeric",
   });
 
+const getBookableDoctorId = (doctor) => doctor.doctorId || doctor._id;
+
 const UserPage = () => {
   const { user } = useContext(AuthContext);
   const [appointments, setAppointments] = useState([]);
@@ -41,13 +43,13 @@ const UserPage = () => {
 
         const [appointmentsData, doctorsResponse] = await Promise.all([
           getAppointments(),
-          getDoctorList(),
+          fetchDoctorsFromSchema(),
         ]);
 
         setAppointments(
           flattenAppointments(appointmentsData?.appointments || [])
         );
-        setDoctors(doctorsResponse.data || []);
+        setDoctors(doctorsResponse || []);
       } catch (err) {
         console.error("Error loading patient dashboard:", err);
         setError("We could not load your dashboard right now.");
@@ -179,16 +181,20 @@ const UserPage = () => {
                 <article key={doctor._id} className="patient-dashboard__doctor">
                   <img
                     src={doctor.imageUrl || "/assets/images/icons/doctor.png"}
-                    alt={`${doctor.firstName} ${doctor.lastName}`}
+                    alt={doctor.name || "Doctor"}
                   />
                   <div>
-                    <h3>
-                      Dr. {doctor.firstName} {doctor.lastName}
-                    </h3>
-                    <p>{doctor.specialization || "General Medicine"}</p>
+                    <h3>{doctor.name || "Doctor unavailable"}</h3>
+                    <p>{doctor.specialty || "General Medicine"}</p>
+                    <small>
+                      {doctor.description ||
+                        "Available for patient consultations and follow-up care."}
+                    </small>
                     <span>{doctor.experience || "5+"} years experience</span>
                   </div>
-                  <Link to={`/book-appointment/${doctor._id}`}>Book</Link>
+                  <Link to={`/book-appointment/${getBookableDoctorId(doctor)}`}>
+                    Book
+                  </Link>
                 </article>
               ))}
             </div>

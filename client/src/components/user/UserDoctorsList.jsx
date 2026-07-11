@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getDoctorList } from "../../services/doctorService";
+import { fetchDoctorsFromSchema } from "../../services/doctorService";
 import "../../css/userdoctorlist.css";
 import Sidebar from "../common/Sidebar";
 
 const fallbackSpecialty = "General Medicine";
 
-const getDoctorName = (doctor) =>
-  `Dr. ${doctor.firstName || ""} ${doctor.lastName || ""}`.trim();
+const getDoctorName = (doctor) => doctor.name || "Doctor unavailable";
+
+const getBookableDoctorId = (doctor) => doctor.doctorId || doctor._id;
 
 const DoctorListComponent = () => {
   const [doctors, setDoctors] = useState([]);
@@ -22,8 +23,8 @@ const DoctorListComponent = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await getDoctorList();
-        setDoctors(response.data || []);
+        const doctorsData = await fetchDoctorsFromSchema();
+        setDoctors(doctorsData || []);
       } catch (err) {
         console.error("Error fetching doctors:", err);
         setError("Failed to fetch doctors.");
@@ -39,19 +40,17 @@ const DoctorListComponent = () => {
     "All",
     ...Array.from(
       new Set(
-        doctors.map((doctor) => doctor.specialization || fallbackSpecialty)
+        doctors.map((doctor) => doctor.specialty || fallbackSpecialty)
       )
     ).sort(),
   ];
 
   const filteredDoctors = doctors.filter((doctor) => {
-    const specialty = doctor.specialization || fallbackSpecialty;
+    const specialty = doctor.specialty || fallbackSpecialty;
     const searchableText = [
-      doctor.firstName,
-      doctor.lastName,
-      doctor.email,
+      doctor.name,
       specialty,
-      doctor.bio,
+      doctor.description,
     ]
       .filter(Boolean)
       .join(" ")
@@ -135,7 +134,7 @@ const DoctorListComponent = () => {
         ) : filteredDoctors.length > 0 ? (
           <section className="doctor-directory-grid">
             {filteredDoctors.map((doctor) => {
-              const specialty = doctor.specialization || fallbackSpecialty;
+              const specialty = doctor.specialty || fallbackSpecialty;
 
               return (
                 <article className="doctor-directory-card" key={doctor._id}>
@@ -148,18 +147,20 @@ const DoctorListComponent = () => {
                     <span className="doctor-directory-specialty">{specialty}</span>
                     <h2>{getDoctorName(doctor)}</h2>
                     <p>
-                      {doctor.bio ||
+                      {doctor.description ||
                         "Available for patient consultations and follow-up care."}
                     </p>
                     <div className="doctor-directory-meta">
                       <span>{doctor.experience || "5+"} years experience</span>
-                      <span>{doctor.gender || "Provider"}</span>
+                      <span>Bookable care provider</span>
                     </div>
                     <div className="doctor-directory-card__footer">
-                      <span>{doctor.email}</span>
+                      <span>{specialty}</span>
                       <button
                         type="button"
-                        onClick={() => handleBookAppointment(doctor._id)}
+                        onClick={() =>
+                          handleBookAppointment(getBookableDoctorId(doctor))
+                        }
                       >
                         Book Appointment
                       </button>
