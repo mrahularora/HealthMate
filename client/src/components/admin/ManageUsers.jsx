@@ -1,251 +1,360 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/common/Sidebar';
-import '../../css/sidebar.css';
-import { getUsers, updateUserRole, deleteUser } from '../../services/adminService';
-import useAuth from '../../context/useAuth'; // Use the custom hook to access AuthContext
-import { Modal } from 'react-bootstrap'; // Import Modal component from React-Bootstrap
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import useAuth from "../../context/useAuth";
+import Sidebar from "../../components/common/Sidebar";
+import "../../css/sidebar.css";
+import "../../css/adminpage.css";
+import { deleteUser, getUsers, updateUserRole } from "../../services/adminService";
+
+const roleFilters = [
+  { label: "All Users", value: "" },
+  { label: "Patients", value: "User" },
+  { label: "Doctors", value: "Doctor" },
+  { label: "Admins", value: "Admin" },
+];
+
+const roleOptions = ["User", "Doctor", "Admin"];
+
+const getFullName = (user) =>
+  `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "Unnamed user";
 
 const ManageUsers = () => {
-  const { user: loggedInUser } = useAuth(); // Get logged-in user details from AuthContext
+  const { user: loggedInUser } = useAuth();
   const [users, setUsers] = useState([]);
-  const [, setTotalUsers] = useState(0); // Remove unused `totalUsers`
+  const [totalUsers, setTotalUsers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showRoleChangeModal, setShowRoleChangeModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [userToChangeRole, setUserToChangeRole] = useState(null);
-  const [newRole, setNewRole] = useState('');
+  const [newRole, setNewRole] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Fetch users with pagination and filtering
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
+        setError(null);
         const response = await getUsers(filter, currentPage, 10);
-        if (response.users) {
-          setUsers(response.users);
-          setTotalUsers(response.totalUsers);
-          setTotalPages(response.totalPages);
-        }
-        setLoading(false);
+
+        setUsers(response.users || []);
+        setTotalUsers(response.totalUsers || 0);
+        setTotalPages(response.totalPages || 1);
       } catch (err) {
-        console.error('Error fetching users:', err);
-        setError('Failed to fetch users.');
+        console.error("Error fetching users:", err);
+        setError("Failed to fetch users.");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, [filter, currentPage, setTotalUsers]);
+  }, [filter, currentPage]);
 
+  const handleFilterChange = (role) => {
+    setFilter(role);
+    setCurrentPage(1);
+  };
 
-  // Handle role change (Open the confirmation modal first)
-  const handleRoleChange = (userId, currentRole) => {
-    if (loggedInUser.id === userId) {
-      alert('You cannot change your own role.');
+  const openRoleChange = (selectedUser, selectedRole) => {
+    if (loggedInUser?.id === selectedUser._id) {
+      setError("You cannot change your own role.");
       return;
     }
 
-    // Find the user whose role is being changed
-    const userToChange = users.find(user => user._id === userId);
-    setUserToChangeRole(userToChange); // Store the user whose role is being changed
-    setNewRole(currentRole); // Store the current role
-    setShowRoleChangeModal(true); // Show the role change confirmation modal
-
-    // Optimistically update the role in the UI immediately
-    setUsers(users.map(user =>
-      user._id === userId ? { ...user, role: currentRole } : user
-    ));
+    setUserToChangeRole(selectedUser);
+    setNewRole(selectedRole);
+    setShowRoleChangeModal(true);
   };
 
-  // Confirm role change
   const confirmRoleChange = async () => {
+    if (!userToChangeRole || !newRole) return;
+
     try {
-      const response = await updateUserRole(userToChangeRole._id, newRole);
-      if (response && response.user) {
-        // Role successfully updated in the backend
-        // No further UI update needed as it's already done optimistically
-      }
-      setShowRoleChangeModal(false); // Close the modal
-      setUserToChangeRole(null); // Clear user state
-      setNewRole(''); // Clear role state
-    } catch (err) {
-      console.error('Error updating user role:', err);
-      setError('Failed to update user role.');
+      setActionLoading(true);
+      const updatedUser = await updateUserRole(userToChangeRole._id, newRole);
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user._id === userToChangeRole._id ? { ...user, ...updatedUser } : user
+        )
+      );
       setShowRoleChangeModal(false);
       setUserToChangeRole(null);
+      setNewRole("");
+    } catch (err) {
+      console.error("Error updating user role:", err);
+      setError("Failed to update user role.");
+      setShowRoleChangeModal(false);
+      setUserToChangeRole(null);
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  // Handle user deletion (Open the confirmation modal first)
-  const handleDelete = (userId) => {
-    if (loggedInUser.id === userId) {
-      alert('You cannot delete your own account.');
+  const openDelete = (selectedUser) => {
+    if (loggedInUser?.id === selectedUser._id) {
+      setError("You cannot delete your own account.");
       return;
     }
 
-    const userToDelete = users.find(user => user._id === userId);
-    setUserToDelete(userToDelete);
+    setUserToDelete(selectedUser);
     setShowDeleteModal(true);
   };
 
-  // Confirm deletion
   const confirmDelete = async () => {
+    if (!userToDelete) return;
+
     try {
+      setActionLoading(true);
       await deleteUser(userToDelete._id);
-      // Optimistically remove the deleted user from the UI
-      setUsers(users.filter(user => user._id !== userToDelete._id));
+      setUsers((currentUsers) =>
+        currentUsers.filter((user) => user._id !== userToDelete._id)
+      );
+      setTotalUsers((currentTotal) => Math.max(currentTotal - 1, 0));
       setShowDeleteModal(false);
       setUserToDelete(null);
     } catch (err) {
-      console.error('Error deleting user:', err);
-      setError('Failed to delete user.');
+      console.error("Error deleting user:", err);
+      setError("Failed to delete user.");
       setShowDeleteModal(false);
       setUserToDelete(null);
+    } finally {
+      setActionLoading(false);
     }
   };
 
-  // Cancel deletion
-  const cancelDelete = () => {
+  const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setUserToDelete(null);
   };
 
-  // Cancel role change
-  const cancelRoleChange = () => {
+  const closeRoleChangeModal = () => {
     setShowRoleChangeModal(false);
     setUserToChangeRole(null);
-    setNewRole('');
-    // Revert the role change if the modal is canceled
-    setUsers(users.map(user =>
-      user._id === userToChangeRole._id ? { ...user, role: userToChangeRole.role } : user
-    ));
+    setNewRole("");
   };
 
+  const selectedFilterLabel =
+    roleFilters.find((role) => role.value === filter)?.label || "All Users";
+
   return (
-    <div className="page-container">
+    <div className="manage-users-page">
       <Sidebar />
-      <div className="appointment-details">
-        <h2 className="greeting">Manage Users</h2>
+      <main className="manage-users">
+        <section className="manage-users-hero">
+          <div>
+            <p className="manage-users-eyebrow">Admin Tools</p>
+            <h1>Manage platform users</h1>
+            <p>
+              Review accounts, adjust roles, and keep user access aligned with
+              the way HealthMate is being used.
+            </p>
+          </div>
+          <div className="manage-users-summary">
+            <span>{selectedFilterLabel}</span>
+            <strong>{loading ? "--" : totalUsers}</strong>
+          </div>
+        </section>
 
-        {/* Role filter dropdown */}
-        <select className="form-select" onChange={(e) => setFilter(e.target.value)} value={filter}>
-          <option value="">All Users</option>
-          <option value="User">User</option>
-          <option value="Doctor">Doctor</option>
-          <option value="Admin">Admin</option>
-        </select>
-
-        {/* Display error if any */}
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-
-        {/* Loading and user table */}
-        {loading ? (
-          <p>Loading users...</p>
-        ) : (
-          <table className="table mt-3">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.length > 0 ? (
-                users.map(user => {
-                  if (!user) return null; // Skip rendering undefined users
-                  return (
-                    <tr key={user._id}>
-                      <td>{user.firstName || 'N/A'} {user.lastName || 'N/A'}</td> {/* Added fallback */}
-                      <td>{user.email || 'N/A'}</td>
-                      <td>
-                        <select
-                          className="form-select"
-                          value={user.role}
-                          onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                          disabled={user.role === 'Admin' || user._id === loggedInUser.id} // Disable for Admins and logged-in user
-                        >
-                          <option value="User">User</option>
-                          <option value="Doctor">Doctor</option>
-                          <option value="Admin">Admin</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDelete(user._id)}
-                          disabled={user.role === 'Admin' || user._id === loggedInUser.id} // Disable for Admins and logged-in user
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="4">No users found.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-4">
-            <button
-              className="btn btn-primary me-2"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              className="btn btn-primary ms-2"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
+        {error && (
+          <div className="manage-users-alert">
+            <span>{error}</span>
+            <button type="button" onClick={() => setError(null)}>
+              Dismiss
             </button>
           </div>
         )}
-      </div>
 
-      {/* Confirmation Modal for Deletion */}
-      <Modal show={showDeleteModal} onHide={cancelDelete}>
+        <section className="manage-users-toolbar">
+          <div>
+            <p className="manage-users-eyebrow">Directory Filter</p>
+            <h2>{selectedFilterLabel}</h2>
+          </div>
+          <div className="manage-users-filters" aria-label="Filter users by role">
+            {roleFilters.map((role) => (
+              <button
+                type="button"
+                key={role.label}
+                className={
+                  filter === role.value
+                    ? "manage-users-filter is-active"
+                    : "manage-users-filter"
+                }
+                onClick={() => handleFilterChange(role.value)}
+              >
+                {role.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="manage-users-panel">
+          <div className="manage-users-panel__heading">
+            <div>
+              <p className="manage-users-eyebrow">Users</p>
+              <h2>Account Directory</h2>
+            </div>
+            <span className="manage-users-pill">
+              Page {currentPage} of {totalPages}
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="manage-users-loading">
+              <span />
+              <span />
+              <span />
+            </div>
+          ) : users.length > 0 ? (
+            <div className="manage-users-table-wrap">
+              <table className="manage-users-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => {
+                    const protectedUser =
+                      user.role === "Admin" || user._id === loggedInUser?.id;
+
+                    return (
+                      <tr key={user._id}>
+                        <td>
+                          <div className="manage-users-person">
+                            <span aria-hidden="true">
+                              {(user.firstName?.[0] || "U").toUpperCase()}
+                            </span>
+                            <div>
+                              <strong>{getFullName(user)}</strong>
+                              <small>{user._id}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{user.email || "N/A"}</td>
+                        <td>
+                          <select
+                            className="manage-users-role-select"
+                            value={user.role}
+                            onChange={(event) =>
+                              openRoleChange(user, event.target.value)
+                            }
+                            disabled={protectedUser}
+                          >
+                            {roleOptions.map((role) => (
+                              <option value={role} key={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="manage-users-delete"
+                            onClick={() => openDelete(user)}
+                            disabled={protectedUser}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="manage-users-empty">
+              <h3>No users found</h3>
+              <p>Try another role filter or refresh after new signups.</p>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="manage-users-pagination">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((page) => Math.min(page + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </section>
+      </main>
+
+      <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete user <strong>{userToDelete?.firstName} {userToDelete?.lastName}</strong>?
+          Are you sure you want to delete{" "}
+          <strong>{getFullName(userToDelete)}</strong>?
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-secondary" onClick={cancelDelete}>Cancel</button>
-          <button className="btn btn-danger" onClick={confirmDelete}>Delete</button>
+          <button
+            className="manage-users-modal-button is-secondary"
+            onClick={closeDeleteModal}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="manage-users-modal-button is-danger"
+            onClick={confirmDelete}
+            disabled={actionLoading}
+            type="button"
+          >
+            {actionLoading ? "Deleting..." : "Delete"}
+          </button>
         </Modal.Footer>
       </Modal>
 
-      {/* Confirmation Modal for Role Change */}
-      <Modal show={showRoleChangeModal} onHide={cancelRoleChange}>
+      <Modal show={showRoleChangeModal} onHide={closeRoleChangeModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Role Change</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to change the role of user <strong>{userToChangeRole?.firstName} {userToChangeRole?.lastName}</strong> to {newRole}?
+          Change <strong>{getFullName(userToChangeRole)}</strong> to{" "}
+          <strong>{newRole}</strong>?
         </Modal.Body>
         <Modal.Footer>
-          <button className="btn btn-secondary" onClick={cancelRoleChange}>Cancel</button>
-          <button className="btn btn-primary" onClick={confirmRoleChange}>Confirm</button>
+          <button
+            className="manage-users-modal-button is-secondary"
+            onClick={closeRoleChangeModal}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="manage-users-modal-button is-primary"
+            onClick={confirmRoleChange}
+            disabled={actionLoading}
+            type="button"
+          >
+            {actionLoading ? "Saving..." : "Confirm"}
+          </button>
         </Modal.Footer>
       </Modal>
     </div>
