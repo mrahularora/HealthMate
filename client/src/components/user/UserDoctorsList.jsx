@@ -28,7 +28,7 @@ const DoctorListComponent = () => {
   };
 
   return (
-    <div class="doctor-list-container">
+    <div className="doctor-list-container">
       <Sidebar /> 
     <div className="page-content">
       <h1 className="doctor-list-title">See a Doctor</h1>

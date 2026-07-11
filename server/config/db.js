@@ -1,12 +1,21 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 const connectDB = async () => {
+  const mongoUri = process.env.MONGO_URI;
+
+  if (!mongoUri) {
+    console.error('MONGO_URI is missing. Add it to server/.env before starting the backend.');
+    process.exit(1);
+  }
+
   try {
-    await mongoose.connect(process.env.MONGO_URI, {});
-    console.log('MongoDB connected');
+    const connection = await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+    });
+
+    console.log(`MongoDB connected: ${connection.connection.host}/${connection.connection.name}`);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`MongoDB connection error: ${error.message}`);
     process.exit(1);
   }
 };

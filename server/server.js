@@ -1,23 +1,29 @@
+const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config({ path: path.join(__dirname, ".env") });
+
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const doctorRoutes = require("./routes/doctorRoutes"); 
-const patientRoutes = require("./routes/patientRoutes"); 
+const doctorRoutes = require("./routes/doctorRoutes");
+const patientRoutes = require("./routes/patientRoutes");
 const contactRoutes = require('./routes/contactRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes'); 
+const appointmentRoutes = require('./routes/appointmentRoutes');
 const adminRoutes = require("./routes/adminRoutes")
 const reportRoutes = require("./routes/reportRoutes")
-const dotenv = require("dotenv");
 const cors = require("cors"); // Keep this only here
-const path = require("path");
 const cookieParser = require("cookie-parser");
 
-dotenv.config();
+const requiredEnv = ["MONGO_URI", "JWT_SECRET"];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length > 0) {
+  console.error(`Missing required environment variables: ${missingEnv.join(", ")}`);
+  process.exit(1);
+}
 
 const app = express();
-
-// Connect to MongoDB
-connectDB();
 
 const allowedOrigins = ["http://localhost:3000", "https://capable-halva-678bcb.netlify.app"];
 const corsOptions = {
@@ -70,6 +76,12 @@ app.use((err, req, res, next) => {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer();

@@ -62,7 +62,6 @@ exports.deleteUser = async (req, res) => {
 
 // Controller to fetch statistics
 exports.getStats = async (req, res) => {
-  console.log('Stats route accessed'); // Debug log
   try {
     const totalUsers = await User.countDocuments();
     const totalDoctors = await User.countDocuments({ role: 'Doctor' });

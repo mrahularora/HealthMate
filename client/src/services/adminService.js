@@ -63,11 +63,7 @@ export const fetchDetails = async (type) => {
 
 export const getAllContactDetails = async () => {
   try {
-    const response = await axios.get("/admin/contacts", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    const response = await axios.get("/admin/contacts");
     return response.data.data;
   } catch (error) {
     console.error("Error fetching contact details:", error);

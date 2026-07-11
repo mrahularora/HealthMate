@@ -9,7 +9,10 @@ const {
   getAllAppointmentsByDoctor,
   getAppointmentDetails
 } = require('../controllers/AdminController');
+const { protect, authorizeRoles } = require('../middlewares/authMiddleware');
 const router = express.Router();
+
+router.use(protect, authorizeRoles('Admin'));
 
 // Fetch users with optional role and pagination
 router.get('/users', getUsers);

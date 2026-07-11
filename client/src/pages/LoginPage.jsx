@@ -24,7 +24,6 @@ function LoginPage() {
 
     try {
       const response = await login({ email, password });
-      console.log('Login successful:', response.message);
 
       setUser(response.user); // Pass the user object from the response
 
@@ -59,7 +58,7 @@ function LoginPage() {
   return (
     <div className="login-main">
       <section className="login-section">
-        <div class="login-container">
+        <div className="login-container">
       <h2 className="mb-4"><img src="./assets/images/icons/user.png" className="wid35" alt="login" /> Login</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       {successMessage && <p className="success-message">{successMessage}</p>}

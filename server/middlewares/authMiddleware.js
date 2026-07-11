@@ -1,5 +1,13 @@
 const jwt = require('jsonwebtoken');
 
+exports.authorizeRoles = (...roles) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return res.status(403).json({ message: 'Not authorized for this resource' });
+  }
+
+  next();
+};
+
 // Middleware to protect routes
 exports.protect = (req, res, next) => {
   let token;
@@ -20,6 +28,10 @@ exports.protect = (req, res, next) => {
   }
 
   try {
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET is missing. Add it to server/.env before using protected routes.');
+    }
+
     // Verify token and decode it
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // Attach decoded user data to request

@@ -2,8 +2,19 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Secret for JWT signing
-const JWT_SECRET = process.env.JWT_SECRET;
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is missing. Add it to server/.env before using auth routes.');
+  }
+
+  return process.env.JWT_SECRET;
+};
+
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+});
 
 // Signup Controller
 const signup = async (req, res) => {
@@ -36,15 +47,13 @@ const signup = async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email, role: newUser.role },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '1h' }
     );
 
     // Send token in a cookie
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      ...getCookieOptions(),
       maxAge: 3600000, // 1 hour
     });
 
@@ -76,15 +85,13 @@ const login = async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '1h' }
     );
 
     // Send token in a cookie
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      ...getCookieOptions(),
       maxAge: 3600000, // 1 hour
     });
 
@@ -102,7 +109,7 @@ const login = async (req, res) => {
 // Logout Controller
 const logout = (req, res) => {
   // Clear the token cookie
-  res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+  res.clearCookie('token', getCookieOptions());
   res.status(200).json({ message: 'Logged out successfully' });
 };
 

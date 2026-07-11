@@ -14,7 +14,6 @@ export const signup = async (userData) => {
 export const login = async (credentials) => {
   try {
     const response = await axios.post('/auth/login', credentials);
-    console.log('Login response:', response); 
     loggedInUser = response.data.user; // Save logged-in user data
     return response.data;
   } catch (error) {
@@ -25,6 +24,7 @@ export const login = async (credentials) => {
 export const logout = async () => {
   try {
     await axios.post('/auth/logout');
+    loggedInUser = null;
   } catch (error) {
     console.error('Logout failed:', error);
   }

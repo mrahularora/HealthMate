@@ -499,7 +499,6 @@ exports.updateAppointmentDetails = async (req, res) => {
 // Controller to cancel appointment
 exports.cancelAppointment = async (req, res) => {
   const { appointmentId, slotId } = req.body;
-  console.log(req.body)
 
   if (!appointmentId || !slotId) {
       return res.status(400).json({ message: 'Appointment ID and Slot ID are required.' });

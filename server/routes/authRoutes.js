@@ -12,6 +12,7 @@ router.post('/login', login);
 
 // Protected routes
 router.get('/logout', protect, logout); // Use the protect middleware
+router.post('/logout', protect, logout);
 
 // Protected route to get user profile
 router.get('/profile', protect, getuserprofile);  // Fetch user profile after authentication

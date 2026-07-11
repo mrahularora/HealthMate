@@ -2,7 +2,7 @@ import axios from './api';
 
 export const editUser = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/api/auth/profile", { withCredentials: true });
+    const response = await axios.get('/auth/profile');
     return response.data.user;
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -12,7 +12,7 @@ export const editUser = async () => {
 
 export const updateUser = async (formData) => {
   try {
-    const response = await axios.put("http://localhost:5000/api/auth/profile", formData, { withCredentials: true });
+    const response = await axios.put('/auth/profile', formData);
     return response.data;
   } catch (error) {
     console.error("Error updating profile:", error);
