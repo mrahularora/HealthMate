@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchDoctorsFromSchema } from '../services/doctorService';
 
 const HomePage = () => {
@@ -53,6 +54,12 @@ const HomePage = () => {
                 <p><strong>Specialty:</strong> {doctor.specialty}</p>
                 <p><strong>Experience:</strong> {doctor.experience} years</p>
                 <p>{doctor.description}</p>
+                <Link
+                  to={`/book-appointment/${doctor._id}`}
+                  className="btn doctor-book-button"
+                >
+                  Book Appointment
+                </Link>
               </div>
             </div>
           ))
