@@ -15,7 +15,7 @@ router.post("/create", appointmentController.createAppointmentSlots);
 router.post("/available", appointmentController.getAvailableSlots);
 
 // Route to book an appointment slot
-router.post("/book-request", appointmentController.bookAppointmentRequest);
+router.post("/book-request", protect, appointmentController.bookAppointmentRequest);
 
 // Route to get requested Appointments
 router.get("/requests", appointmentController.getAppointmentRequests);

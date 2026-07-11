@@ -1,194 +1,265 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { getAppointments, cancelAppointment } from "../../services/appointmentService";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  cancelAppointment,
+  getAppointments,
+} from "../../services/appointmentService";
 import Sidebar from "../common/Sidebar";
+import "../../css/sidebar.css";
 import "../../css/userappointments.css";
 
+const CANCELLABLE_STATUSES = ["Requested", "Confirmed"];
+const HISTORY_STATUSES = ["Completed", "Cancelled"];
+
+const getAppointmentTime = (date, time) => {
+  const [year, month, day] = String(date).slice(0, 10).split("-").map(Number);
+  const [hours = 0, minutes = 0] = String(time || "00:00")
+    .split(":")
+    .map(Number);
+
+  return new Date(year, month - 1, day, hours, minutes);
+};
+
+const formatDate = (date) => {
+  const [year, month, day] = String(date).slice(0, 10).split("-").map(Number);
+
+  return new Date(year, month - 1, day).toLocaleDateString("en-CA", {
+    weekday: "short",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
+const formatTime = (time) => {
+  const [hours = 0, minutes = 0] = String(time || "00:00")
+    .split(":")
+    .map(Number);
+
+  return new Date(1970, 0, 1, hours, minutes).toLocaleTimeString("en-CA", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+const formatStatus = (status) =>
+  status === "InProgress" ? "In progress" : status || "Unknown";
+
 const UserAppointments = () => {
-  const [appointments, setAppointments] = useState({ upcoming: [], past: [] });
+  const [appointmentSlots, setAppointmentSlots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [cancellingSlotId, setCancellingSlotId] = useState(null);
 
-  const getUserEmail = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    return user?.email || "";
-  };
+  const fetchAppointments = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-  const categorizeAppointments = useCallback((appointments) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    try {
+      const data = await getAppointments();
+      const appointments = Array.isArray(data?.appointments)
+        ? data.appointments
+        : [];
 
-    const upcoming = [];
-    const past = [];
+      const slots = appointments.flatMap((appointment) =>
+        (appointment.timeSlots || []).map((slot) => ({
+          appointmentId: appointment._id,
+          date: appointment.date,
+          doctorDetails: appointment.doctorDetails,
+          slot,
+        }))
+      );
 
-    appointments.forEach((appointment) => {
-      const appointmentDate = new Date(appointment.date);
-
-      if (appointmentDate >= today) {
-        upcoming.push(appointment);
-      } else {
-        past.push(appointment);
-      }
-    });
-
-    upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
-    past.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    return { upcoming, past };
+      setAppointmentSlots(slots);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "We could not load your appointments. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const userEmail = getUserEmail();
-        const data = await getAppointments();
-
-        const userAppointments = data.appointments.filter((appointment) =>
-          appointment.timeSlots.some((slot) => slot.userDetails.email === userEmail)
-        );
-
-        const { upcoming, past } = categorizeAppointments(userAppointments);
-        setAppointments({ upcoming, past });
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch appointments");
-        setLoading(false);
-      }
-    };
-
     fetchAppointments();
-  }, [categorizeAppointments]);
+  }, [fetchAppointments]);
 
-  const formatDate = (date) => {
-    const formattedDate = new Date(date);
-    const localDate = new Date(formattedDate.getTime() + formattedDate.getTimezoneOffset() * 60000);
-    return localDate.toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
+  const appointments = useMemo(() => {
+    const now = new Date();
+    const upcoming = [];
+    const past = [];
 
-  const formatTime = (time) => {
-    return new Date(`1970-01-01T${time}:00`).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
+    appointmentSlots.forEach((appointment) => {
+      const appointmentEnd = getAppointmentTime(
+        appointment.date,
+        appointment.slot.endTime
+      );
+
+      if (
+        HISTORY_STATUSES.includes(appointment.slot.status) ||
+        appointmentEnd < now
+      ) {
+        past.push(appointment);
+      } else {
+        upcoming.push(appointment);
+      }
     });
-  };
+
+    upcoming.sort(
+      (a, b) =>
+        getAppointmentTime(a.date, a.slot.startTime) -
+        getAppointmentTime(b.date, b.slot.startTime)
+    );
+    past.sort(
+      (a, b) =>
+        getAppointmentTime(b.date, b.slot.startTime) -
+        getAppointmentTime(a.date, a.slot.startTime)
+    );
+
+    return { upcoming, past };
+  }, [appointmentSlots]);
 
   const handleCancel = async (appointmentId, slotId) => {
-    const isConfirmed = window.confirm("Are you sure you want to cancel this appointment?");
-    if (isConfirmed) {
-      try {
-        await cancelAppointment(appointmentId, slotId);
-        setAppointments((prevState) => {
-          const updatedUpcoming = prevState.upcoming.map((appointment) => {
-            if (appointment._id === appointmentId) {
-              return {
+    if (!window.confirm("Cancel this appointment?")) {
+      return;
+    }
+
+    setCancellingSlotId(slotId);
+    setError("");
+
+    try {
+      await cancelAppointment(appointmentId, slotId);
+      setAppointmentSlots((currentSlots) =>
+        currentSlots.map((appointment) =>
+          appointment.slot._id === slotId
+            ? {
                 ...appointment,
-                timeSlots: appointment.timeSlots.map((slot) => {
-                  if (slot._id === slotId) {
-                    return { ...slot, status: "Cancelled" };
-                  }
-                  return slot;
-                }),
-              };
-            }
-            return appointment;
-          });
-          return { ...prevState, upcoming: updatedUpcoming };
-        });
-      } catch (error) {
-        setError("Failed to cancel the appointment");
-      }
+                slot: {
+                  ...appointment.slot,
+                  isBooked: false,
+                  status: "Cancelled",
+                },
+              }
+            : appointment
+        )
+      );
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "We could not cancel the appointment. Please try again."
+      );
+    } finally {
+      setCancellingSlotId(null);
     }
   };
 
-  if (loading) return <div className="user-appointments-loading">Loading...</div>;
-  if (error) return <div className="user-appointments-error">{error}</div>;
+  const renderAppointment = (appointment) => {
+    const { appointmentId, date, doctorDetails, slot } = appointment;
+    const canCancel = CANCELLABLE_STATUSES.includes(slot.status);
+    const statusClass = String(slot.status || "unknown").toLowerCase();
+
+    return (
+      <li key={`${appointmentId}-${slot._id}`} className="patient-appointment-card">
+        <div className="patient-appointment-card__header">
+          <div>
+            <p className="patient-appointment-card__label">Doctor</p>
+            <h3>{doctorDetails?.name || "Doctor unavailable"}</h3>
+          </div>
+          <span className={`patient-appointment-status ${statusClass}`}>
+            {formatStatus(slot.status)}
+          </span>
+        </div>
+
+        <dl className="patient-appointment-details">
+          <div>
+            <dt>Date</dt>
+            <dd>{formatDate(date)}</dd>
+          </div>
+          <div>
+            <dt>Time</dt>
+            <dd>
+              {formatTime(slot.startTime)} to {formatTime(slot.endTime)}
+            </dd>
+          </div>
+        </dl>
+
+        {canCancel && (
+          <div className="patient-appointment-card__actions">
+            <button
+              type="button"
+              className="patient-appointment-cancel"
+              disabled={cancellingSlotId === slot._id}
+              onClick={() => handleCancel(appointmentId, slot._id)}
+            >
+              {cancellingSlotId === slot._id ? "Cancelling..." : "Cancel appointment"}
+            </button>
+          </div>
+        )}
+      </li>
+    );
+  };
 
   return (
-    <div className="user-page">
+    <div className="user-appointments-page">
       <Sidebar />
-      <div className="appointments-container">
-        <h2 className="greeting">Welcome, Patient!</h2>
+      <main className="user-appointments-main">
+        <header className="user-appointments-header">
+          <p className="user-appointments-eyebrow">Patient portal</p>
+          <h1>My appointments</h1>
+          <p>Review upcoming visits and your appointment history.</p>
+        </header>
 
-        <h3 className="records-title">Upcoming Appointments</h3>
-        {appointments.upcoming.length > 0 ? (
-          <ul className="appointments-list">
-            {appointments.upcoming.map((appointment) => (
-              <li key={appointment._id} className="appointment-card">
-                <div className={`status ${appointment.timeSlots[0]?.status}`}>
-                  {appointment.timeSlots[0]?.status}
-                </div>
-                <div className="appointment-details">
-                  <div className="appointment-info">
-                    <strong>Doctor:</strong> {appointment.doctorDetails?.name} ({appointment.doctorDetails?.specialty})
-                  </div>
-                  <div className="appointment-info">
-                    <strong>Date:</strong> {formatDate(appointment.date)}
-                  </div>
-                  <div className="appointment-info">
-                    <strong>Time:</strong>
-                    {appointment.timeSlots.map((slot) => (
-                      <div key={slot._id} className="time-slot">
-                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="action-buttons">
-                  <button
-                    className="cancel-button"
-                    disabled={[
-                      "Cancelled",
-                      "Completed",
-                      "InProgress",
-                    ].includes(appointment.timeSlots[0]?.status)}
-                    onClick={() => handleCancel(appointment._id, appointment.timeSlots[0]._id)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No upcoming appointments.</p>
+        {error && (
+          <div className="user-appointments-alert" role="alert">
+            <span>{error}</span>
+            <button type="button" onClick={fetchAppointments}>
+              Try again
+            </button>
+          </div>
         )}
 
-        <h3 className="records-title">Past Appointments</h3>
-        {appointments.past.length > 0 ? (
-          <ul className="appointments-list">
-            {appointments.past.map((appointment) => (
-              <li key={appointment._id} className="appointment-card">
-                <div className={`status ${appointment.timeSlots[0]?.status}`}>
-                  <strong>{appointment.timeSlots[0]?.status}</strong>
-                </div>
-                <div className="appointment-details">
-                  <div className="appointment-info">
-                    <strong>Doctor:</strong> {appointment.doctorDetails?.name} ({appointment.doctorDetails?.specialty})
-                  </div>
-                  <div className="appointment-info">
-                    <strong>Date:</strong> {formatDate(appointment.date)}
-                  </div>
-                  <div className="appointment-info">
-                    <strong>Time:</strong>
-                    {appointment.timeSlots.map((slot) => (
-                      <div key={slot._id} className="time-slot">
-                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+        {loading ? (
+          <div className="user-appointments-state" role="status">
+            Loading appointments...
+          </div>
         ) : (
-          <p>No past appointments.</p>
+          <>
+            <section className="user-appointments-section" aria-labelledby="upcoming-title">
+              <div className="user-appointments-section__heading">
+                <h2 id="upcoming-title">Upcoming</h2>
+                <span>{appointments.upcoming.length}</span>
+              </div>
+              {appointments.upcoming.length > 0 ? (
+                <ul className="patient-appointment-list">
+                  {appointments.upcoming.map(renderAppointment)}
+                </ul>
+              ) : (
+                <div className="user-appointments-empty">
+                  <h3>No upcoming appointments</h3>
+                  <p>Your newly requested or confirmed appointments will appear here.</p>
+                </div>
+              )}
+            </section>
+
+            <section className="user-appointments-section" aria-labelledby="history-title">
+              <div className="user-appointments-section__heading">
+                <h2 id="history-title">History</h2>
+                <span>{appointments.past.length}</span>
+              </div>
+              {appointments.past.length > 0 ? (
+                <ul className="patient-appointment-list">
+                  {appointments.past.map(renderAppointment)}
+                </ul>
+              ) : (
+                <div className="user-appointments-empty">
+                  <h3>No appointment history</h3>
+                  <p>Completed and cancelled appointments will appear here.</p>
+                </div>
+              )}
+            </section>
+          </>
         )}
-      </div>
+      </main>
     </div>
   );
 };

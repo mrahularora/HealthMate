@@ -1,6 +1,4 @@
 const Appointment = require("../models/Appointments");
-const Doctor = require("../models/Doctor");
-const User = require('../models/User');
 
 // API to create timeslots for doctors
 exports.createAppointmentSlots = async (req, res) => {
@@ -219,8 +217,11 @@ exports.bookAppointmentRequest = async (req, res) => {
     // Update the slot's details
     timeSlot.status = "Requested";
     timeSlot.isBooked = true;
-    timeSlot.bookedBy = userDetails.userId;
-    timeSlot.userDetails = userDetails;
+    timeSlot.bookedBy = req.user.id;
+    timeSlot.userDetails = {
+      ...userDetails,
+      email: req.user.email,
+    };
 
     await appointment.save();
 
@@ -517,6 +518,14 @@ exports.cancelAppointment = async (req, res) => {
           return res.status(400).json({ message: 'Slot is not booked or does not exist.' });
       }
 
+      const belongsToUser =
+        slot.bookedBy?.toString() === req.user.id.toString() ||
+        slot.userDetails?.email === req.user.email;
+
+      if (!belongsToUser) {
+          return res.status(403).json({ message: 'You cannot cancel this appointment.' });
+      }
+
       slot.isBooked = false;
       slot.status = 'Cancelled';
 
@@ -530,48 +539,45 @@ exports.cancelAppointment = async (req, res) => {
 };
 
 exports.getAppointments = async (req, res) => {
-  const userEmail = req.user.email; // Logged-in user's email
+  const userEmail = req.user.email;
+  const userId = req.user.id.toString();
 
   try {
-    // Find appointments where at least one time slot has the user's email
     const appointments = await Appointment.find({
-      "timeSlots.userDetails.email": userEmail,
-    }).sort({ date: 1 }); // Sort by date (ascending)
+      $or: [
+        { "timeSlots.bookedBy": req.user.id },
+        { "timeSlots.userDetails.email": userEmail },
+      ],
+    })
+      .populate("doctorId", "firstName lastName email")
+      .sort({ date: 1 });
 
-    if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No appointments found." });
-    }
-
-    // Filter time slots to include only those that match the user's email
     const appointmentsWithUserSlots = appointments.map((appointment) => {
-      // Filter time slots based on the user's email
       const userTimeSlots = appointment.timeSlots.filter(
-        (slot) => slot.userDetails.email === userEmail
+        (slot) =>
+          slot.bookedBy?.toString() === userId ||
+          slot.userDetails?.email === userEmail
       );
-      return {
-        ...appointment.toObject(),
-        timeSlots: userTimeSlots, // Only include relevant time slots
-      };
-    });
 
-    // Fetch the doctor details for each appointment
-    const doctorIds = appointmentsWithUserSlots.map((appointment) => appointment.doctorId.toString());
-    const doctors = await Doctor.find({ doctorId: { $in: doctorIds } });
+      const appointmentData = appointment.toObject();
+      const doctor = appointmentData.doctorId;
 
-    // Attach doctor details to appointments
-    const appointmentsWithDoctorDetails = appointmentsWithUserSlots.map((appointment) => {
-      const doctor = doctors.find(
-        (doc) => doc.doctorId.toString() === appointment.doctorId.toString()
-      );
       return {
-        ...appointment,
-        doctorDetails: doctor || null, // Attach doctor details or null if not found
+        ...appointmentData,
+        doctorId: doctor?._id || doctor,
+        doctorDetails: doctor
+          ? {
+              name: `${doctor.firstName} ${doctor.lastName}`.trim(),
+              email: doctor.email,
+            }
+          : null,
+        timeSlots: userTimeSlots,
       };
     });
 
     res.status(200).json({
       message: "Appointments retrieved successfully.",
-      appointments: appointmentsWithDoctorDetails,
+      appointments: appointmentsWithUserSlots,
     });
   } catch (err) {
     console.error("Error fetching appointments:", err);
