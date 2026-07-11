@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect} from "react";
 import { getAllContactDetails } from "../../services/adminService";
 import Sidebar from "../common/Sidebar";
 

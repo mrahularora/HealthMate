@@ -40,11 +40,11 @@ const AdminDashboard = () => {
 
       {/* Statistics Section */}
       <div className="stats">
-        <div onClick={() => loadDetails('totalUsers')}><img src="/assets/images/icons/users.png" /><br />Total Users: {stats.totalUsers || 0}</div>
-        <div onClick={() => loadDetails('users')}><img src="/assets/images/icons/patient.png" /><br />Normal Users: {stats.totalNormalUsers || 0}</div>
-        <div onClick={() => loadDetails('doctors')}><img src="/assets/images/icons/doctor.png" /><br />Total Doctors: {stats.totalDoctors || 0}</div>
-        <div onClick={() => loadDetails('admins')}><img src="/assets/images/icons/admin-portal.png" /><br />Total Admins: {stats.totalAdmins || 0}</div>
-        <div onClick={() => loadDetails('appointments')}><img src="/assets/images/icons/doctor-portal.png" /><br />Total Appointments: {stats.totalAppointments || 0}</div>
+        <div onClick={() => loadDetails('totalUsers')}><img src="/assets/images/icons/users.png" alt="user" /><br />Total Users: {stats.totalUsers || 0}</div>
+        <div onClick={() => loadDetails('users')}><img src="/assets/images/icons/patient.png" alt="patient" /><br />Normal Users: {stats.totalNormalUsers || 0}</div>
+        <div onClick={() => loadDetails('doctors')}><img src="/assets/images/icons/doctor.png" alt="doctor" /><br />Total Doctors: {stats.totalDoctors || 0}</div>
+        <div onClick={() => loadDetails('admins')}><img src="/assets/images/icons/admin-portal.png" alt="admin-portal" /><br />Total Admins: {stats.totalAdmins || 0}</div>
+        <div onClick={() => loadDetails('appointments')}><img src="/assets/images/icons/doctor-portal.png" alt="doctor-portal" /><br />Total Appointments: {stats.totalAppointments || 0}</div>
       </div>
 
       {/* Details Section */}

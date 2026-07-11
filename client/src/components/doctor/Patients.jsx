@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { getAcceptedAppointments } from "../../services/appointmentService";
 import { AuthContext } from "../../context/AuthContext";
 import Sidebar from "../../components/common/Sidebar";
@@ -8,9 +8,9 @@ const Patients = () => {
   const [completedAppointments, setCompletedAppointments] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchCompletedAppointments = async () => {
+  const fetchCompletedAppointments = useCallback(async () => {
     try {
-      if (user.role !== "Doctor") {
+      if (!user || user.role !== "Doctor") {
         setError("You are not authorized to view this page.");
         return;
       }
@@ -22,11 +22,11 @@ const Patients = () => {
       console.error("Error fetching completed appointments:", err);
       setError("Failed to fetch completed appointments.");
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchCompletedAppointments();
-  }, []);
+  }, [fetchCompletedAppointments]);
 
   return (
     <div className="doctor-page">

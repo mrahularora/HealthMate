@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { getAcceptedAppointments } from "../../services/appointmentService";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ const AcceptedAppointments = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const fetchAcceptedAppointments = async () => {
+  const fetchAcceptedAppointments = useCallback(async () => {
     try {
       if (user.role !== "Doctor") {
         setError("You are not authorized to view this page.");
@@ -24,11 +24,11 @@ const AcceptedAppointments = () => {
       console.error("Error fetching accepted appointments:", err);
       setError("Failed to fetch accepted appointments.");
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchAcceptedAppointments();
-  }, []);
+  }, [fetchAcceptedAppointments]);
 
   // Categorize appointments by status
   const confirmedAppointments = appointments.filter(

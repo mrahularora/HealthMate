@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const { user } = useContext(AuthContext); 
@@ -12,41 +13,46 @@ const Sidebar = () => {
         {/* Role-specific links */}
         {user?.role === 'User' && (
           <>
-          <h5 className="mb-4 fw-bold"><img src="/assets/images/icons/patient-portal.png" className="wid35" alt="patientportal" /> Patient Portal</h5>
-          <hr class="my-4 w-100 mx-auto"></hr>
-          <li><a href="/UserPage">Dashboard</a></li>
-            <li><a href="/Profile">See Profile</a></li>
-            <li><a href="/UserAppointments">All Appointments</a></li>
-            <li><a href="/doctorslist">See a Doctor</a></li>
-            <hr class="my-4 w-100 mx-auto"></hr>
+            <h5 className="mb-4 fw-bold">
+              <img src="/assets/images/icons/patient-portal.png" className="wid35" alt="patientportal" /> Patient Portal
+            </h5>
+            <hr className="my-4 w-100 mx-auto"></hr>
+            <li><Link to="/UserPage">Dashboard</Link></li>
+            <li><Link to="/Profile">See Profile</Link></li>
+            <li><Link to="/UserAppointments">All Appointments</Link></li>
+            <li><Link to="/doctorslist">See a Doctor</Link></li>
+            <hr className="my-4 w-100 mx-auto"></hr>
           </>
         )}
 
         {user?.role === 'Doctor' && (
           <>
-          <h5 className="mb-4 fw-bold"><img src="/assets/images/icons/doctor-portal.png" className="wid35" alt="doctorportal" /> Doctor Portal</h5>
-          <hr class="my-4 w-100 mx-auto"></hr>
-          <li><a href="/DoctorPage">Dashboard</a></li>
-            <li><a href="/Profile">See Profile</a></li>
-            <li><a href="/CreateAppointment">Create Appointments</a></li>
-            <li><a href="/AcceptedAppointments">View All Appointments</a></li>
-            <li><a href="/RequestedAppointments">Requested Appointments</a></li>
-            <li><a href="/Patients">Patients List</a></li>
-            <hr class="my-4 w-100 mx-auto"></hr>
+            <h5 className="mb-4 fw-bold">
+              <img src="/assets/images/icons/doctor-portal.png" className="wid35" alt="doctorportal" /> Doctor Portal
+            </h5>
+            <hr className="my-4 w-100 mx-auto"></hr>
+            <li><Link to="/DoctorPage">Dashboard</Link></li>
+            <li><Link to="/Profile">See Profile</Link></li>
+            <li><Link to="/CreateAppointment">Create Appointments</Link></li>
+            <li><Link to="/AcceptedAppointments">View All Appointments</Link></li>
+            <li><Link to="/RequestedAppointments">Requested Appointments</Link></li>
+            <li><Link to="/Patients">Patients List</Link></li>
+            <hr className="my-4 w-100 mx-auto"></hr>
           </>
         )}
 
         {user?.role === 'Admin' && (
           <>
-          <h5 className="mb-4 fw-bold"><img src="/assets/images/icons/admin-portal.png" className="wid35" alt="adminportal" /> Admin Portal</h5>
-          <hr class="my-4 w-100 mx-auto"></hr>
-          <li><a href="/AdminPage">Dashboard</a></li>
-            <li><a href="/Profile">See Profile</a></li>
-            <li><a href="/admin/ManageUsers">Manage Users</a></li>
-            <li><a href="/admin/appointments">View All Appointments</a></li>
-            <li><a href="/admin/Contact">Contact Details</a></li>
-
-            <hr class="my-4 w-100 mx-auto"></hr>
+            <h5 className="mb-4 fw-bold">
+              <img src="/assets/images/icons/admin-portal.png" className="wid35" alt="adminportal" /> Admin Portal
+            </h5>
+            <hr className="my-4 w-100 mx-auto"></hr>
+            <li><Link to="/AdminPage">Dashboard</Link></li>
+            <li><Link to="/Profile">See Profile</Link></li>
+            <li><Link to="/admin/ManageUsers">Manage Users</Link></li>
+            <li><Link to="/admin/appointments">View All Appointments</Link></li>
+            <li><Link to="/admin/Contact">Contact Details</Link></li>
+            <hr className="my-4 w-100 mx-auto"></hr>
           </>
         )}
       </ul>
@@ -55,4 +61,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
