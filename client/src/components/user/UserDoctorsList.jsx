@@ -1,60 +1,190 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDoctorList } from "../../services/doctorService";
 import "../../css/userdoctorlist.css";
 import Sidebar from "../common/Sidebar";
 
+const fallbackSpecialty = "General Medicine";
+
+const getDoctorName = (doctor) =>
+  `Dr. ${doctor.firstName || ""} ${doctor.lastName || ""}`.trim();
+
 const DoctorListComponent = () => {
   const [doctors, setDoctors] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeSpecialty, setActiveSpecialty] = useState("All");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const response = await getDoctorList();
-        setDoctors(response.data);
+        setDoctors(response.data || []);
       } catch (err) {
         console.error("Error fetching doctors:", err);
         setError("Failed to fetch doctors.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDoctors();
   }, []);
 
+  const specialties = [
+    "All",
+    ...Array.from(
+      new Set(
+        doctors.map((doctor) => doctor.specialization || fallbackSpecialty)
+      )
+    ).sort(),
+  ];
+
+  const filteredDoctors = doctors.filter((doctor) => {
+    const specialty = doctor.specialization || fallbackSpecialty;
+    const searchableText = [
+      doctor.firstName,
+      doctor.lastName,
+      doctor.email,
+      specialty,
+      doctor.bio,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = searchableText.includes(searchTerm.toLowerCase());
+    const matchesSpecialty =
+      activeSpecialty === "All" || specialty === activeSpecialty;
+
+    return matchesSearch && matchesSpecialty;
+  });
+
   const handleBookAppointment = (doctorId) => {
     navigate(`/book-appointment/${doctorId}`);
   };
 
   return (
-    <div className="doctor-list-container">
-      <Sidebar /> 
-    <div className="page-content">
-      <h1 className="doctor-list-title">See a Doctor</h1>
-      {error && <p className="error-message">{error}</p>}
-      <ul className="doctor-list">
-        {doctors.map((doctor) => (
-          <li key={doctor._id} className="doctor-item">
+    <div className="doctor-directory-shell">
+      <Sidebar />
+      <main className="doctor-directory">
+        <section className="doctor-directory-hero">
+          <div>
+            <p className="doctor-directory-eyebrow">Care Team</p>
+            <h1>Find the right doctor for your next visit</h1>
             <p>
-              <strong>Name:</strong> {doctor.firstName} {doctor.lastName}
+              Search by name, specialty, or care focus, then choose an available
+              appointment time.
             </p>
-            <p>
-              <strong>Email:</strong> {doctor.email}
-            </p>
-            <p>
-              <strong>Gender:</strong> {doctor.gender}
-            </p>
+          </div>
+          <div className="doctor-directory-summary">
+            <span>Available doctors</span>
+            <strong>{loading ? "--" : doctors.length}</strong>
+          </div>
+        </section>
+
+        <section className="doctor-directory-toolbar">
+          <label className="doctor-directory-search">
+            <span>Search doctors</span>
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search by name or specialty"
+            />
+          </label>
+
+          <div className="doctor-directory-filters" aria-label="Specialty filters">
+            {specialties.map((specialty) => (
+              <button
+                type="button"
+                key={specialty}
+                className={
+                  activeSpecialty === specialty
+                    ? "doctor-directory-filter is-active"
+                    : "doctor-directory-filter"
+                }
+                onClick={() => setActiveSpecialty(specialty)}
+              >
+                {specialty}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {error && <p className="doctor-directory-alert">{error}</p>}
+
+        {loading ? (
+          <section className="doctor-directory-grid">
+            {[1, 2, 3, 4].map((item) => (
+              <article className="doctor-directory-card is-loading" key={item}>
+                <div className="doctor-directory-card__image" />
+                <div className="doctor-directory-card__body">
+                  <span />
+                  <div className="doctor-directory-card__title-placeholder" />
+                  <p />
+                  <p />
+                </div>
+              </article>
+            ))}
+          </section>
+        ) : filteredDoctors.length > 0 ? (
+          <section className="doctor-directory-grid">
+            {filteredDoctors.map((doctor) => {
+              const specialty = doctor.specialization || fallbackSpecialty;
+
+              return (
+                <article className="doctor-directory-card" key={doctor._id}>
+                  <img
+                    src={doctor.imageUrl || "/assets/images/icons/doctor.png"}
+                    alt={getDoctorName(doctor)}
+                    className="doctor-directory-card__image"
+                  />
+                  <div className="doctor-directory-card__body">
+                    <span className="doctor-directory-specialty">{specialty}</span>
+                    <h2>{getDoctorName(doctor)}</h2>
+                    <p>
+                      {doctor.bio ||
+                        "Available for patient consultations and follow-up care."}
+                    </p>
+                    <div className="doctor-directory-meta">
+                      <span>{doctor.experience || "5+"} years experience</span>
+                      <span>{doctor.gender || "Provider"}</span>
+                    </div>
+                    <div className="doctor-directory-card__footer">
+                      <span>{doctor.email}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleBookAppointment(doctor._id)}
+                      >
+                        Book Appointment
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+        ) : (
+          <section className="doctor-directory-empty">
+            <h2>No doctors found</h2>
+            <p>Try a different name, specialty, or clear the active filter.</p>
             <button
-              className="book-appointment-btn"
-              onClick={() => handleBookAppointment(doctor._id)}
+              type="button"
+              onClick={() => {
+                setSearchTerm("");
+                setActiveSpecialty("All");
+              }}
             >
-              Book Appointment
+              Clear filters
             </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 };

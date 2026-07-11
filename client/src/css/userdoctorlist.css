@@ -1,106 +1,319 @@
-  /* Doctor List Container */
-  .doctor-list-container {
-    display: flex;
-    flex-direction: row;
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    transition: all 0.3s ease-in-out;
-  }
-  
-.page-content {
-    flex-grow: 1;
-    padding: 30px;
-    transition: all 0.3s ease;
+.doctor-directory-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
 }
 
-  /* Heading Styles */
-  .doctor-list-title {
-    font-size: 2rem;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 600;
+.doctor-directory {
+  flex: 1;
+  padding: 28px;
+}
+
+.doctor-directory-hero,
+.doctor-directory-toolbar,
+.doctor-directory-card,
+.doctor-directory-empty {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(44, 66, 81, 0.08);
+}
+
+.doctor-directory-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px;
+  margin-bottom: 18px;
+  background:
+    linear-gradient(135deg, rgba(44, 66, 81, 0.94), rgba(237, 13, 99, 0.82)),
+    url("../../public/assets/images/lady_doc.jpg") center / cover;
+  color: #fff;
+}
+
+.doctor-directory-eyebrow {
+  margin: 0 0 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.doctor-directory-hero h1 {
+  max-width: 760px;
+  margin: 0 0 10px;
+  font-size: 2.25rem;
+  font-weight: 800;
+}
+
+.doctor-directory-hero p {
+  max-width: 650px;
+  margin: 0;
+}
+
+.doctor-directory-summary {
+  min-width: 170px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+  text-align: right;
+}
+
+.doctor-directory-summary span {
+  display: block;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+}
+
+.doctor-directory-summary strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 2rem;
+}
+
+.doctor-directory-toolbar {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.doctor-directory-search {
+  display: grid;
+  gap: 8px;
+}
+
+.doctor-directory-search span {
+  color: #344054;
+  font-weight: 800;
+}
+
+.doctor-directory-search input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.doctor-directory-search input:focus {
+  outline: none;
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
+}
+
+.doctor-directory-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.doctor-directory-filter {
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #2c4251;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.doctor-directory-filter:hover,
+.doctor-directory-filter.is-active {
+  border-color: #ed0d63;
+  background: #ed0d63;
+  color: #fff;
+}
+
+.doctor-directory-alert {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border-left: 4px solid #c5164f;
+  border-radius: 6px;
+  background: #fff1f5;
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.doctor-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.doctor-directory-card {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.doctor-directory-card__image {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.doctor-directory-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+}
+
+.doctor-directory-specialty {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fce7f0;
+  color: #ed0d63;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.doctor-directory-card h2 {
+  margin: 0;
+  color: #2c4251;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.doctor-directory-card p {
+  margin: 0;
+  color: #667085;
+  line-height: 1.55;
+}
+
+.doctor-directory-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.doctor-directory-meta span {
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #344054;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.doctor-directory-card__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.doctor-directory-card__footer span {
+  overflow-wrap: anywhere;
+  color: #667085;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.doctor-directory-card__footer button,
+.doctor-directory-empty button {
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #ed0d63;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.doctor-directory-card__footer button:hover,
+.doctor-directory-empty button:hover {
+  background: #c90851;
+}
+
+.doctor-directory-empty {
+  padding: 28px;
+  text-align: center;
+}
+
+.doctor-directory-empty h2 {
+  margin: 0 0 8px;
+  color: #2c4251;
+  font-weight: 800;
+}
+
+.doctor-directory-empty p {
+  margin: 0 0 16px;
+  color: #667085;
+}
+
+.doctor-directory-card.is-loading {
+  min-height: 260px;
+}
+
+.doctor-directory-card.is-loading .doctor-directory-card__body span,
+.doctor-directory-card.is-loading .doctor-directory-card__title-placeholder,
+.doctor-directory-card.is-loading .doctor-directory-card__body p {
+  min-height: 18px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.doctor-directory-card.is-loading .doctor-directory-card__title-placeholder {
+  width: 70%;
+  min-height: 28px;
+}
+
+.doctor-directory-card.is-loading .doctor-directory-card__body p {
+  width: 100%;
+}
+
+@media (max-width: 1120px) {
+  .doctor-directory-grid {
+    grid-template-columns: 1fr;
   }
-  
-  /* Error Message */
-  .error-message {
-    color: #e74c3c;
-    background-color: #f8d7da;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    font-size: 1rem;
-    text-align: center;
+}
+
+@media (max-width: 760px) {
+  .doctor-directory-shell {
+    flex-direction: column;
   }
-  
-  /* Doctor List Styles */
-  .doctor-list {
-    list-style: none;
-    padding: 0;
+
+  .doctor-directory {
+    padding: 18px;
   }
-  
-  /* Each Doctor Item */
-  .doctor-item {
-    background-color: #fff;
-    border: 1px solid #e1e8f0;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+
+  .doctor-directory-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px;
   }
-  
-  .doctor-item:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
+
+  .doctor-directory-summary {
+    width: 100%;
+    text-align: left;
   }
-  
-  /* Doctor Info */
-  .doctor-item p {
-    margin: 8px 0;
-    color: #34495e;
-    font-size: 1.1rem;
+
+  .doctor-directory-card {
+    grid-template-columns: 1fr;
   }
-  
-  /* Strong Text Styling */
-  .doctor-item p strong {
-    color: #2980b9;
-    font-weight: 600;
+
+  .doctor-directory-card__image {
+    min-height: 220px;
+    aspect-ratio: 4 / 3;
   }
-  
-  /* Book Appointment Button */
-  .book-appointment-btn {
-    background-color: #3498db;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+
+  .doctor-directory-card__footer {
+    align-items: stretch;
+    flex-direction: column;
   }
-  
-  .book-appointment-btn:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-  }
-  
-  .book-appointment-btn:active {
-    transform: translateY(1px);
-  }
-  
-  /* Mobile Responsiveness */
-  @media (max-width: 768px) {
-    .doctor-list-title {
-      font-size: 1.6rem;
-    }
-  
-    .doctor-item {
-      padding: 15px;
-    }
-  
-    .book-appointment-btn {
-      padding: 8px 16px;
-    }
-  }
-  
+}
