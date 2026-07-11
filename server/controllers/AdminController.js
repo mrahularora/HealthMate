@@ -101,7 +101,9 @@ exports.getDetails = async (req, res) => {
           .exec();
 
         details = details.map((appointment) => ({
-          doctorName: `${appointment.doctorId.firstName} ${appointment.doctorId.lastName}`,
+          doctorName: appointment.doctorId
+            ? `${appointment.doctorId.firstName} ${appointment.doctorId.lastName}`
+            : 'Unknown Doctor',
           date: appointment.date,
           status: appointment.timeSlots.length > 0 ? appointment.timeSlots[0].status : 'N/A',
         }));
@@ -156,7 +158,8 @@ exports.getAllAppointmentsByDoctor = async (req, res) => {
   try {
     const appointments = await Appointment.find()
       .populate("doctorId", "firstName lastName email specialization") // Include doctor's details
-      .populate("timeSlots.bookedBy", "firstName lastName email phone"); // Include patient details
+      .populate("timeSlots.bookedBy", "firstName lastName email phone")
+      .sort({ date: -1 }); // Include patient details
 
     res.status(200).json({
       success: true,
