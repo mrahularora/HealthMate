@@ -1,23 +1,39 @@
 .font-size-control {
-    position: fixed;
-    bottom: 20px;  /* Position it at the bottom */
-    right: 160px;   /* Keep it on the right side */
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 2px;
-    color: white;
-    z-index: 9999;  /* Ensure it stays on top of other elements */
+  position: fixed;
+  bottom: 84px;
+  right: 22px;
+  z-index: 1000;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  color: #ffffff;
+  background-color: rgba(17, 24, 39, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+
+.font-size-control button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.font-size-control button:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 560px) {
+  .font-size-control {
+    right: 14px;
+    bottom: 76px;
   }
-  
-  .font-size-control button {
-    background: none;
-    border: 1px solid white;
-    color: white;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .font-size-control button:hover {
-    background-color: #444;
-  }
-  
+}
