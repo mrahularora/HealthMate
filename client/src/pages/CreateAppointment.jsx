@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from '../components/common/Sidebar';
 import CreateAppointment from '../components/doctor/CreateAppointment';
+import '../css/doctorpage.css';
 import '../css/sidebar.css';
 import '../css/createappointment.css';
 
