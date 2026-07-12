@@ -4,7 +4,8 @@
 /node_modules
 /client/node_modules
 /server/node_modules
-/server/reports/
+/server/reports/*
+!/server/reports/.gitkeep
 /.pnp
 .pnp.js
 .env
