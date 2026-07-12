@@ -21,7 +21,7 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  color: #123c69;
+  color: #2c4251;
   background: #eef7fb;
   cursor: pointer;
   transform: translateY(-50%);
@@ -36,8 +36,8 @@
 
 .voice-input-button:hover,
 .voice-input-button:focus-visible {
-  color: #0b7f8f;
-  background: #eaf6f8;
+  color: #ed0d63;
+  background: #fff1f5;
   outline: none;
 }
 

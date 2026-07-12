@@ -8,10 +8,10 @@
 
 .chatbot-toggle-btn {
   align-items: center;
-  background: #123c69;
+  background: #2c4251;
   border: 0;
   border-radius: 999px;
-  box-shadow: 0 16px 34px rgba(18, 60, 105, 0.28);
+  box-shadow: 0 16px 34px rgba(44, 66, 81, 0.28);
   color: #ffffff;
   cursor: pointer;
   display: inline-flex;
@@ -59,7 +59,7 @@
 }
 
 .chatbot-container {
-  background: #f8fbff;
+  background: #f8fafc;
   border: 1px solid #dce8f5;
   border-radius: 8px;
   bottom: 70px;
@@ -76,7 +76,7 @@
 
 .chatbot-header {
   align-items: center;
-  background: linear-gradient(135deg, #123c69 0%, #0b7f8f 100%);
+  background: linear-gradient(135deg, #2c4251 0%, #ed0d63 100%);
   color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -116,7 +116,7 @@
 
 .chatbot-context-strip {
   align-items: center;
-  background: #eaf6f8;
+  background: #fff1f5;
   border-bottom: 1px solid #d6e8ee;
   color: #164e63;
   display: flex;
@@ -134,7 +134,7 @@
   background: #ffffff;
   border: 1px solid #b8dce5;
   border-radius: 6px;
-  color: #0f5d6c;
+  color: #c5164f;
   cursor: pointer;
   font-size: 12px;
   font-weight: 850;
@@ -173,7 +173,7 @@
 
 .chatbot-message-user {
   align-self: flex-end;
-  background: #123c69;
+  background: #2c4251;
   color: #ffffff;
 }
 
@@ -188,7 +188,7 @@
   background: #f7fbff;
   border: 1px solid #cde0f0;
   border-radius: 6px;
-  color: #123c69;
+  color: #2c4251;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -260,7 +260,7 @@
 }
 
 .chatbot-prompt-row button:hover {
-  background: #eaf6f8;
+  background: #fff1f5;
 }
 
 .chatbot-input-row {
@@ -274,7 +274,7 @@
 }
 
 .chatbot-input-row input {
-  border: 1px solid #ccdbea;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
   color: #111827;
   font: inherit;
@@ -284,12 +284,12 @@
 }
 
 .chatbot-input-row input:focus {
-  border-color: #0b7f8f;
-  box-shadow: 0 0 0 3px rgba(11, 127, 143, 0.12);
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
 }
 
 .chatbot-input-row button {
-  background: #0b7f8f;
+  background: #ed0d63;
   border: 0;
   border-radius: 7px;
   color: #ffffff;

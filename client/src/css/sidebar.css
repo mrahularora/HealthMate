@@ -17,11 +17,11 @@
 }
 
 .sidebar ul li a {
-  color: #ed0d63; 
+  color: #ed0d63;
   text-decoration: none; 
   transition: color 0.3s ease;
 }
 
 .sidebar ul li a:hover {
-  color: #007bff; 
+  color: #ed0d63;
 }

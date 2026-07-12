@@ -3,8 +3,8 @@
   min-height: 100vh;
   width: 100%;
   background:
-    radial-gradient(circle at top left, rgba(11, 127, 143, 0.12), transparent 32rem),
-    linear-gradient(180deg, #f7fbfd 0%, #eef5f8 100%);
+    radial-gradient(circle at top left, rgba(237, 13, 99, 0.12), transparent 32rem),
+    linear-gradient(180deg, #f5f7fb 0%, #fff7fb 100%);
 }
 
 .doctor-dashboard {
@@ -19,9 +19,9 @@
 .doctor-dashboard__next-card,
 .doctor-dashboard__alert,
 .doctor-dashboard__empty {
-  border: 1px solid #dce8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 14px 36px rgba(21, 48, 66, 0.08);
+  box-shadow: 0 14px 36px rgba(44, 66, 81, 0.08);
 }
 
 .doctor-dashboard__hero {
@@ -34,7 +34,7 @@
   overflow: hidden;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(18, 60, 105, 0.96), rgba(11, 127, 143, 0.9)),
+    linear-gradient(135deg, rgba(44, 66, 81, 0.96), rgba(237, 13, 99, 0.9)),
     url("../../public/assets/images/steth.jpg") center / cover;
 }
 
@@ -72,7 +72,7 @@
   padding: 10px 14px;
   border: 0;
   border-radius: 6px;
-  color: #123c69;
+  color: #2c4251;
   background: #ffffff;
   font-weight: 850;
   text-decoration: none;
@@ -233,8 +233,8 @@
   min-height: 32px;
   padding: 6px 10px;
   border-radius: 999px;
-  color: #123c69;
-  background: #eaf6f8;
+  color: #2c4251;
+  background: #fff1f5;
   font-size: 0.85rem;
   font-weight: 850;
   text-decoration: none;
@@ -303,7 +303,7 @@
 
 .doctor-dashboard__appointment small,
 .doctor-dashboard__today-list strong {
-  color: #123c69;
+  color: #2c4251;
   font-weight: 850;
 }
 
@@ -311,8 +311,8 @@
   min-width: 96px;
   padding: 7px 9px;
   border-radius: 999px;
-  color: #0f5d6c;
-  background: #eaf6f8;
+  color: #c5164f;
+  background: #fff1f5;
   font-size: 0.78rem;
   font-style: normal;
   font-weight: 900;
@@ -355,7 +355,7 @@
   height: 38px;
   border-radius: 50%;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -363,19 +363,19 @@
 .doctor-dashboard__empty {
   padding: 28px;
   text-align: center;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .doctor-dashboard__empty a {
   margin-top: 14px;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
 }
 
 .doctor-dashboard__hero.is-loading,
 .doctor-dashboard__skeleton-card {
   overflow: hidden;
-  background: linear-gradient(90deg, #e6eef5, #f8fbff, #e6eef5);
+  background: linear-gradient(90deg, #fce7f0, #f8fafc, #fce7f0);
   background-size: 220% 100%;
   animation: doctorDashboardPulse 1.4s infinite linear;
 }
@@ -459,9 +459,9 @@
 .doctor-patients__records,
 .doctor-patients__empty,
 .doctor-patients__alert {
-  border: 1px solid #dce8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 14px 36px rgba(21, 48, 66, 0.08);
+  box-shadow: 0 14px 36px rgba(44, 66, 81, 0.08);
 }
 
 .doctor-patients__hero {
@@ -473,7 +473,7 @@
   padding: 28px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(18, 60, 105, 0.96), rgba(11, 127, 143, 0.9)),
+    linear-gradient(135deg, rgba(44, 66, 81, 0.96), rgba(237, 13, 99, 0.9)),
     url("../../public/assets/images/steth.jpg") center / cover;
 }
 
@@ -554,7 +554,7 @@
   border: 0;
   border-radius: 6px;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   cursor: pointer;
   font-weight: 850;
   white-space: nowrap;
@@ -611,7 +611,7 @@
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
-  border: 1px solid #ccdbea;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
   color: #111827;
   font: inherit;
@@ -619,14 +619,14 @@
 }
 
 .doctor-patients__toolbar input:focus {
-  border-color: #0b7f8f;
-  box-shadow: 0 0 0 3px rgba(11, 127, 143, 0.12);
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
 }
 
 .doctor-patients__toolbar button:hover,
 .doctor-patients__empty button:hover,
 .doctor-patients__table button:hover {
-  background: #0b7f8f;
+  background: #ed0d63;
 }
 
 .doctor-patients__grid {
@@ -654,7 +654,7 @@
   height: 44px;
   border-radius: 50%;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -690,7 +690,7 @@
   min-width: 0;
   padding: 10px;
   border-radius: 7px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .doctor-patients__card dt {
@@ -726,8 +726,8 @@
   min-height: 32px;
   padding: 6px 10px;
   border-radius: 999px;
-  color: #0f5d6c;
-  background: #eaf6f8;
+  color: #c5164f;
+  background: #fff1f5;
   font-size: 0.85rem;
   font-weight: 900;
 }
@@ -752,7 +752,7 @@
 
 .doctor-patients__table th {
   color: #475569;
-  background: #f8fbff;
+  background: #f8fafc;
   font-size: 0.8rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -785,7 +785,7 @@
 .doctor-patients__card.is-loading p {
   min-height: 22px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #e6eef5, #f8fbff, #e6eef5);
+  background: linear-gradient(90deg, #fce7f0, #f8fafc, #fce7f0);
   background-size: 220% 100%;
   animation: doctorDashboardPulse 1.4s infinite linear;
 }

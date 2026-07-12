@@ -2,8 +2,8 @@
   display: flex;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(11, 127, 143, 0.12), transparent 32rem),
-    linear-gradient(180deg, #f7fbfd 0%, #eef5f8 100%);
+    radial-gradient(circle at top left, rgba(237, 13, 99, 0.12), transparent 32rem),
+    linear-gradient(180deg, #f5f7fb 0%, #fff7fb 100%);
 }
 
 .doctor-requests {
@@ -18,9 +18,9 @@
 .doctor-requests__card,
 .doctor-requests__empty,
 .doctor-requests__alert {
-  border: 1px solid #dce8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 14px 36px rgba(21, 48, 66, 0.08);
+  box-shadow: 0 14px 36px rgba(44, 66, 81, 0.08);
 }
 
 .doctor-requests__hero {
@@ -32,7 +32,7 @@
   padding: 28px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(18, 60, 105, 0.96), rgba(11, 127, 143, 0.9)),
+    linear-gradient(135deg, rgba(44, 66, 81, 0.96), rgba(237, 13, 99, 0.9)),
     url("../../public/assets/images/steth.jpg") center / cover;
 }
 
@@ -122,7 +122,7 @@
   border: 0;
   border-radius: 6px;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   cursor: pointer;
   font-weight: 850;
   white-space: nowrap;
@@ -179,7 +179,7 @@
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
-  border: 1px solid #ccdbea;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
   color: #111827;
   font: inherit;
@@ -187,13 +187,13 @@
 }
 
 .doctor-requests__toolbar input:focus {
-  border-color: #0b7f8f;
-  box-shadow: 0 0 0 3px rgba(11, 127, 143, 0.12);
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
 }
 
 .doctor-requests__toolbar button:hover,
 .doctor-requests__empty button:hover {
-  background: #0b7f8f;
+  background: #ed0d63;
 }
 
 .doctor-requests__grid {
@@ -257,7 +257,7 @@
   gap: 3px;
   padding: 10px;
   border-radius: 7px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .doctor-requests__card dl div:last-child:nth-child(odd) {
@@ -310,7 +310,7 @@
 .doctor-requests__card.is-loading p {
   min-height: 22px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #e6eef5, #f8fbff, #e6eef5);
+  background: linear-gradient(90deg, #fce7f0, #f8fafc, #fce7f0);
   background-size: 220% 100%;
   animation: doctorRequestsPulse 1.4s infinite linear;
 }

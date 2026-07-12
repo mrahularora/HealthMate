@@ -11,9 +11,9 @@
 .manage-slots,
 .create-appointment__empty,
 .create-appointment__alert {
-  border: 1px solid #dce8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 14px 36px rgba(21, 48, 66, 0.08);
+  box-shadow: 0 14px 36px rgba(44, 66, 81, 0.08);
 }
 
 .create-appointment__hero {
@@ -25,7 +25,7 @@
   padding: 28px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(18, 60, 105, 0.96), rgba(11, 127, 143, 0.9)),
+    linear-gradient(135deg, rgba(44, 66, 81, 0.96), rgba(237, 13, 99, 0.9)),
     url("../../public/assets/images/steth.jpg") center / cover;
 }
 
@@ -153,7 +153,7 @@
   border: 0;
   border-radius: 6px;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   cursor: pointer;
   font-weight: 850;
   text-decoration: none;
@@ -165,7 +165,7 @@
 .create-appointment__actions button:hover,
 .create-appointment__publish:hover,
 .manage-slots__delete:hover {
-  background: #0b7f8f;
+  background: #ed0d63;
 }
 
 .create-appointment__fields {
@@ -188,7 +188,7 @@
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
-  border: 1px solid #ccdbea;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
   color: #111827;
   background: #ffffff;
@@ -198,8 +198,8 @@
 
 .create-appointment__fields input:focus,
 .create-appointment__fields select:focus {
-  border-color: #0b7f8f;
-  box-shadow: 0 0 0 3px rgba(11, 127, 143, 0.12);
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
 }
 
 .create-appointment__slot-groups {
@@ -225,8 +225,8 @@
   padding: 8px;
   border: 1px solid #d5e5f2;
   border-radius: 7px;
-  color: #123c69;
-  background: #f8fbff;
+  color: #2c4251;
+  background: #f8fafc;
   cursor: pointer;
   font-size: 0.86rem;
   font-weight: 850;
@@ -234,9 +234,9 @@
 
 .create-appointment__slot-groups button:hover,
 .create-appointment__slot-groups button.is-selected {
-  border-color: #0b7f8f;
-  color: #0f5d6c;
-  background: #eaf6f8;
+  border-color: #ed0d63;
+  color: #c5164f;
+  background: #fff1f5;
 }
 
 .create-appointment__actions {
@@ -247,8 +247,8 @@
 }
 
 .create-appointment__actions button.is-secondary {
-  color: #123c69;
-  background: #eaf6f8;
+  color: #2c4251;
+  background: #fff1f5;
 }
 
 .create-appointment__actions button:disabled,
@@ -267,8 +267,8 @@
   min-height: 34px;
   padding: 6px 10px;
   border-radius: 999px;
-  color: #0f5d6c;
-  background: #eaf6f8;
+  color: #c5164f;
+  background: #fff1f5;
   font-weight: 900;
 }
 
@@ -320,7 +320,7 @@
   justify-content: space-between;
   padding: 8px 10px;
   border-radius: 7px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .create-appointment__selected-list li span {
@@ -342,7 +342,7 @@
 
 .create-appointment__empty {
   padding: 24px;
-  background: #f8fbff;
+  background: #f8fafc;
   text-align: center;
 }
 
@@ -368,7 +368,7 @@
   padding: 15px;
   border: 1px solid #dfeaf2;
   border-radius: 8px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .manage-slots__stats span {
@@ -404,7 +404,7 @@
 
 .manage-slots__table th {
   color: #475569;
-  background: #f8fbff;
+  background: #f8fafc;
   font-size: 0.8rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -423,8 +423,8 @@
   min-height: 30px;
   padding: 5px 10px;
   border-radius: 999px;
-  background: #eaf6f8;
-  color: #0f5d6c;
+  background: #fff1f5;
+  color: #c5164f;
   font-size: 0.82rem;
   font-weight: 900;
 }
@@ -441,8 +441,8 @@
 
 .manage-slots__status.is-confirmed,
 .manage-slots__status.is-inprogress {
-  color: #1d4ed8;
-  background: #dbeafe;
+  color: #c5164f;
+  background: #fce7f0;
 }
 
 .manage-slots__status.is-completed {
@@ -474,7 +474,7 @@
   display: block;
   min-height: 54px;
   border-radius: 8px;
-  background: linear-gradient(90deg, #e6eef5, #f8fbff, #e6eef5);
+  background: linear-gradient(90deg, #fce7f0, #f8fafc, #fce7f0);
   background-size: 220% 100%;
   animation: createAppointmentPulse 1.4s infinite linear;
 }

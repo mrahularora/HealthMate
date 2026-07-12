@@ -2,8 +2,8 @@
   display: flex;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(11, 127, 143, 0.12), transparent 32rem),
-    linear-gradient(180deg, #f7fbfd 0%, #eef5f8 100%);
+    radial-gradient(circle at top left, rgba(237, 13, 99, 0.12), transparent 32rem),
+    linear-gradient(180deg, #f5f7fb 0%, #fff7fb 100%);
 }
 
 .appointment-detail {
@@ -18,9 +18,9 @@
 .appointment-detail__empty,
 .appointment-detail__alert,
 .appointment-detail__skeleton {
-  border: 1px solid #dce8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 14px 36px rgba(21, 48, 66, 0.08);
+  box-shadow: 0 14px 36px rgba(44, 66, 81, 0.08);
 }
 
 .appointment-detail__hero {
@@ -32,7 +32,7 @@
   padding: 28px;
   color: #ffffff;
   background:
-    linear-gradient(135deg, rgba(18, 60, 105, 0.96), rgba(11, 127, 143, 0.9)),
+    linear-gradient(135deg, rgba(44, 66, 81, 0.96), rgba(237, 13, 99, 0.9)),
     url("../../public/assets/images/steth.jpg") center / cover;
 }
 
@@ -109,7 +109,7 @@
   padding: 9px 13px;
   border: 0;
   border-radius: 6px;
-  color: #123c69;
+  color: #2c4251;
   background: #ffffff;
   cursor: pointer;
   font-weight: 850;
@@ -121,7 +121,7 @@
 .appointment-detail__action-stack button,
 .appointment-detail__action-stack a {
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
 }
 
 .appointment-detail__hero-actions button:disabled,
@@ -223,8 +223,8 @@
   min-height: 32px;
   padding: 6px 10px;
   border-radius: 999px;
-  color: #0f5d6c;
-  background: #eaf6f8;
+  color: #c5164f;
+  background: #fff1f5;
   font-size: 0.85rem;
   font-weight: 900;
   white-space: nowrap;
@@ -238,7 +238,7 @@
   height: 48px;
   border-radius: 50%;
   color: #ffffff;
-  background: #123c69;
+  background: #2c4251;
   font-weight: 900;
 }
 
@@ -253,7 +253,7 @@
   min-width: 0;
   padding: 11px;
   border-radius: 7px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .appointment-detail__facts dt,
@@ -284,7 +284,7 @@
 .appointment-detail__field textarea,
 .appointment-detail__field select {
   width: 100%;
-  border: 1px solid #ccdbea;
+  border: 1px solid #cbd5e1;
   border-radius: 7px;
   color: #111827;
   font: inherit;
@@ -305,8 +305,8 @@
 
 .appointment-detail__field textarea:focus,
 .appointment-detail__field select:focus {
-  border-color: #0b7f8f;
-  box-shadow: 0 0 0 3px rgba(11, 127, 143, 0.12);
+  border-color: #ed0d63;
+  box-shadow: 0 0 0 3px rgba(237, 13, 99, 0.12);
 }
 
 .appointment-detail__medicine-form {
@@ -340,7 +340,7 @@
   height: 34px;
   border-radius: 50%;
   color: #ffffff;
-  background: #0b7f8f;
+  background: #ed0d63;
   font-weight: 900;
 }
 
@@ -380,11 +380,11 @@
 .appointment-detail__action-stack a:hover,
 .appointment-detail__medicine-form button:hover,
 .appointment-detail__hero-actions button:hover {
-  background: #0b7f8f;
+  background: #ed0d63;
 }
 
 .appointment-detail__action-stack button.is-secondary {
-  background: #0b7f8f;
+  background: #ed0d63;
 }
 
 .appointment-detail__empty {
@@ -395,7 +395,7 @@
 
 .appointment-detail__empty.is-compact {
   padding: 24px;
-  background: #f8fbff;
+  background: #f8fafc;
 }
 
 .appointment-detail__empty p {
@@ -409,7 +409,7 @@
 .appointment-detail__skeleton {
   min-height: 220px;
   overflow: hidden;
-  background: linear-gradient(90deg, #e6eef5, #f8fbff, #e6eef5);
+  background: linear-gradient(90deg, #fce7f0, #f8fafc, #fce7f0);
   background-size: 220% 100%;
   animation: appointmentDetailPulse 1.4s infinite linear;
 }

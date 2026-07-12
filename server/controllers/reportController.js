@@ -5,15 +5,15 @@ require("../models/User");
 const Appointment = require("../models/Appointments");
 
 const COLORS = {
-  navy: "#123c69",
-  teal: "#0b7f8f",
+  navy: "#2c4251",
+  accent: "#ed0d63",
   pink: "#ed0d63",
   green: "#15803d",
   ink: "#102a43",
   body: "#334155",
   muted: "#64748b",
-  line: "#dbe7f0",
-  pale: "#f6fbfd",
+  line: "#e2e8f0",
+  pale: "#fff7fb",
   white: "#ffffff",
 };
 
@@ -69,7 +69,7 @@ const sectionTitle = (doc, title, x, y, width) => {
     .text(title, x, y, { width });
 
   doc
-    .strokeColor(COLORS.teal)
+    .strokeColor(COLORS.accent)
     .lineWidth(1.2)
     .moveTo(x, y + 16)
     .lineTo(x + width, y + 16)
@@ -131,7 +131,7 @@ const paragraphCard = (doc, label, text, x, y, width, height) => {
   doc
     .font("Helvetica-Bold")
     .fontSize(7)
-    .fillColor(COLORS.teal)
+    .fillColor(COLORS.accent)
     .text(label.toUpperCase(), x + 8, y + 7, {
       width: width - 16,
       height: 9,
@@ -220,7 +220,7 @@ const hero = (doc, { generatedAt, status, reportId }) => {
 
   doc
     .rect(36, y + 52, width, 20)
-    .fill(COLORS.teal);
+    .fill(COLORS.accent);
 
   doc
     .font("Helvetica-Bold")
