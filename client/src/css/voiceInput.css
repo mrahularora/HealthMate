@@ -1,31 +1,44 @@
 .voice-input-container {
-    position: relative;
-    width: 100%;
-  }
-  
-  .voice-input-container input {
-    width: 100%;
-    border-radius: 0px;
-    padding: 10px;
-    padding-right: 40px; /* Add space for the button inside the input */
-  }
-  
-  .voice-input-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-  }
-  
-  .voice-input-button.listening {
-    color: #ff0000;
-  }
-  
-  .voice-input-button:focus {
-    outline: none;
-  }
-  
+  position: relative;
+  width: 100%;
+}
+
+.voice-input-container input {
+  width: 100%;
+  padding: 10px 44px 10px 10px;
+}
+
+.voice-input-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #123c69;
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.voice-input-button svg {
+  display: block;
+  fill: currentColor;
+}
+
+.voice-input-button:hover,
+.voice-input-button:focus-visible {
+  color: #0b7f8f;
+  background: #eaf6f8;
+  outline: none;
+}
+
+.voice-input-button.listening {
+  color: #be123c;
+  background: #ffe4e6;
+}
