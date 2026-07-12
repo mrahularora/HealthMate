@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 
-const VoiceInput = ({ value, onChange, placeholder, name }) => {
+const VoiceInput = ({
+  value,
+  onChange,
+  placeholder,
+  name,
+  type = "text",
+  className = "",
+  "aria-label": ariaLabel,
+}) => {
   const [isListening, setIsListening] = useState(false);
 
   const handleVoiceInput = () => {
-    if (!('webkitSpeechRecognition' in window)) {
+    if (!("webkitSpeechRecognition" in window)) {
       alert("Your browser does not support voice input.");
       return;
     }
@@ -33,19 +41,21 @@ const VoiceInput = ({ value, onChange, placeholder, name }) => {
   return (
     <div className="voice-input-container">
       <input
-        type="text"
+        aria-label={ariaLabel || placeholder}
+        className={`form-control ${className}`.trim()}
         name={name}
-        value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="form-control"
+        type={type}
+        value={value}
       />
       <button
-        type="button"
+        aria-label={isListening ? "Listening for voice input" : "Start voice input"}
         className={`voice-input-button ${isListening ? "listening" : ""}`}
         onClick={handleVoiceInput}
+        type="button"
       >
-        🎤
+        Mic
       </button>
     </div>
   );
