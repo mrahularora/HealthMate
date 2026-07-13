@@ -25,7 +25,11 @@ if (missingEnv.length > 0) {
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:3000", "https://capable-halva-678bcb.netlify.app"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://healthmate-project.netlify.app",
+  ...(process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(",") : []),
+];
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
