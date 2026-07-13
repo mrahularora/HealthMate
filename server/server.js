@@ -12,7 +12,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const adminRoutes = require("./routes/adminRoutes")
 const reportRoutes = require("./routes/reportRoutes")
-const cors = require("cors"); // Keep this only here
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const requiredEnv = ["MONGO_URI", "JWT_SECRET"];
@@ -38,9 +38,9 @@ const corsOptions = {
 };
 
 
-app.use(cors(corsOptions)); // Use CORS with options
-app.use(express.json()); // Parse JSON requests
-app.use(cookieParser()); // Parse cookies
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.json({
@@ -56,7 +56,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/patients", patientRoutes);
@@ -65,16 +64,13 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', reportRoutes);
 
-// Serve the reports directory as static files
 app.use('/reports', express.static(path.join(__dirname, 'reports')));
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "An internal server error occurred" });
 });
 
-// Start the server
 const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   await connectDB();

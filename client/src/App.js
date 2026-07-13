@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Add this import to use useState
+import React, { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
@@ -23,7 +23,7 @@ import AcceptedAppointments from "./components/doctor/AllAppointments";
 import BookAppointment from "./components/user/BookAppointment";
 import UserAppointments from "./components/user/UserAppointments";
 import NotFoundPage from "./pages/NotFoundPage";
-import FontSizeControl from "./components/common/FontSizeControl"; // Import FontSizeControl
+import FontSizeControl from "./components/common/FontSizeControl";
 import ManageUsers from "./components/admin/ManageUsers";
 import ContactDetailsPage from "./components/admin/ContactDetails";
 import AllAppointmentsPage from "./components/admin/AllAppointments";
@@ -32,9 +32,8 @@ import ChatbotWidget from "./components/common/ChatbotWidget";
 function App() {
   const navigate = useNavigate();
 
-  const [fontSize, setFontSize] = useState(16); // Default font size
+  const [fontSize, setFontSize] = useState(16);
 
-  // Dynamically apply font size to the entire page
   const pageStyle = {
     fontSize: `${fontSize}px`,
   };
@@ -43,13 +42,11 @@ function App() {
     <div className="App d-flex flex-column min-vh-100" style={pageStyle}>
       <Header />
       <div className="flex-grow-1">
-        {/* Font size control component */}
         <FontSizeControl setFontSize={setFontSize} />
 
         <Routes>
           <Route path="/" element={<HomePage />} />
 
-          {/* Redirect if authenticated */}
           <Route
             path="/login"
             element={
@@ -71,7 +68,6 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
 
-          {/* Protected Routes */}
           <Route
             path="/AdminPage"
             element={
@@ -214,10 +210,8 @@ function App() {
             }
           />
 
-          {/* Unauthorized Route */}
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Catch-all route for undefined paths */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
